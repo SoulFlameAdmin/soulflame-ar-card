@@ -7,12 +7,15 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
 
-  <title>AR Меню | SoulFlame Restaurant Demo</title>
+  <title>AR Меню | SoulFlame Restaurant</title>
 
   <script
     type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
   ></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
 
   <style>
     * {
@@ -26,7 +29,7 @@
       padding: 0;
       width: 100%;
       min-height: 100%;
-      background: #080604;
+      background: #050302;
       font-family: Arial, sans-serif;
       color: #fff;
       overflow-x: hidden;
@@ -34,22 +37,21 @@
 
     body {
       background:
-        radial-gradient(circle at top, rgba(255, 190, 90, 0.18), transparent 36%),
-        linear-gradient(180deg, #120b05 0%, #050403 100%);
+        radial-gradient(circle at top, rgba(255, 184, 88, 0.20), transparent 36%),
+        linear-gradient(180deg, #160d05 0%, #050302 100%);
     }
 
     .app {
       width: 100%;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      padding-bottom: 112px;
     }
 
     .hero {
       position: relative;
       height: 62vh;
       min-height: 460px;
-      background: #090705;
+      background: #090604;
       overflow: hidden;
       border-bottom-left-radius: 34px;
       border-bottom-right-radius: 34px;
@@ -60,8 +62,8 @@
       width: 100%;
       height: 100%;
       background:
-        radial-gradient(circle at center, rgba(255, 180, 80, 0.20), transparent 42%),
-        linear-gradient(180deg, #16100b 0%, #050403 100%);
+        radial-gradient(circle at center, rgba(255, 179, 75, 0.22), transparent 42%),
+        linear-gradient(180deg, #17100a 0%, #050302 100%);
       --poster-color: transparent;
     }
 
@@ -78,29 +80,29 @@
     }
 
     .top-card {
-      width: min(92%, 520px);
+      pointer-events: auto;
+      width: min(92%, 560px);
       padding: 14px 16px;
       border-radius: 22px;
       background: rgba(0, 0, 0, 0.56);
-      border: 1px solid rgba(255, 204, 128, 0.22);
+      border: 1px solid rgba(255, 207, 122, 0.26);
       box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
       backdrop-filter: blur(14px);
       text-align: center;
-      pointer-events: auto;
     }
 
     .brand {
       margin: 0 0 4px;
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: #ffcf7a;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .top-card h1 {
       margin: 0;
-      font-size: 25px;
+      font-size: 24px;
       line-height: 1.08;
     }
 
@@ -111,25 +113,31 @@
       color: rgba(255, 255, 255, 0.88);
     }
 
-    .ar-badge {
-      display: inline-flex;
+    .badge-row {
       margin-top: 10px;
-      padding: 7px 11px;
-      border-radius: 999px;
-      background: rgba(255, 198, 93, 0.14);
-      border: 1px solid rgba(255, 198, 93, 0.38);
-      color: #ffd27e;
-      font-size: 12px;
-      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7px;
     }
 
-    .bottom-hint {
+    .badge {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 198, 93, 0.13);
+      border: 1px solid rgba(255, 198, 93, 0.34);
+      color: #ffd27e;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .hero-hint {
       position: absolute;
       left: 50%;
       bottom: 16px;
       transform: translateX(-50%);
       z-index: 5;
-      width: min(92%, 520px);
+      width: min(92%, 560px);
       padding: 12px 14px;
       border-radius: 18px;
       background: rgba(0, 0, 0, 0.62);
@@ -142,13 +150,12 @@
     }
 
     .content {
-      width: min(94%, 720px);
+      width: min(94%, 760px);
       margin: 0 auto;
       padding: 22px 0 28px;
     }
 
     .dish-card {
-      margin-top: -8px;
       padding: 18px;
       border-radius: 28px;
       background:
@@ -227,17 +234,30 @@
       color: rgba(255, 255, 255, 0.88);
     }
 
+    .notice {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255, 189, 89, 0.10);
+      border: 1px solid rgba(255, 189, 89, 0.20);
+      color: rgba(255,255,255,.82);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
     .cta-grid {
-      position: sticky;
+      position: fixed;
+      left: 50%;
       bottom: 0;
+      transform: translateX(-50%);
       z-index: 20;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      width: min(94%, 720px);
-      margin: 0 auto;
+      width: min(94%, 760px);
       padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0));
-      background: linear-gradient(180deg, transparent, rgba(5, 4, 3, 0.92) 30%);
+      background: linear-gradient(180deg, transparent, rgba(5, 4, 3, 0.96) 30%);
     }
 
     .btn {
@@ -267,28 +287,26 @@
       border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
-    .full {
-      grid-column: 1 / -1;
+    .btn-camera {
+      background: linear-gradient(135deg, #62ffb2, #29b6f6);
+      color: #04110b;
+      box-shadow: 0 14px 34px rgba(41, 182, 246, 0.22);
     }
 
-    .mini-note {
-      margin: 14px 0 0;
-      color: rgba(255,255,255,.58);
-      font-size: 12px;
-      line-height: 1.45;
-      text-align: center;
+    .full {
+      grid-column: 1 / -1;
     }
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 92px;
+      bottom: 122px;
       transform: translateX(-50%) translateY(20px);
       z-index: 100;
-      width: min(92%, 420px);
+      width: min(92%, 460px);
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(0,0,0,.78);
+      background: rgba(0,0,0,.82);
       border: 1px solid rgba(255,255,255,.12);
       backdrop-filter: blur(10px);
       color: #fff;
@@ -305,6 +323,103 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    .camera-mode {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: #000;
+      display: none;
+      overflow: hidden;
+    }
+
+    .camera-mode.active {
+      display: block;
+    }
+
+    #cameraVideo,
+    #overlayCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #cameraVideo {
+      object-fit: cover;
+      z-index: 1;
+      transform: scaleX(-1);
+    }
+
+    #overlayCanvas {
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .camera-ui {
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .camera-top {
+      top: env(safe-area-inset-top, 0);
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .camera-chip {
+      pointer-events: auto;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.62);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      line-height: 1.35;
+      color: rgba(255,255,255,.9);
+      max-width: 72%;
+    }
+
+    .camera-close {
+      pointer-events: auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.62);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .camera-controls {
+      bottom: calc(16px + env(safe-area-inset-bottom, 0));
+      padding: 0 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .camera-controls button {
+      pointer-events: auto;
+      min-height: 44px;
+      border: 0;
+      border-radius: 16px;
+      padding: 10px 8px;
+      background: rgba(0,0,0,.66);
+      border: 1px solid rgba(255,255,255,.14);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      backdrop-filter: blur(10px);
+    }
+
     @media (max-width: 430px) {
       .hero {
         height: 58vh;
@@ -312,7 +427,7 @@
       }
 
       .top-card h1 {
-        font-size: 22px;
+        font-size: 21px;
       }
 
       .dish-title {
@@ -321,6 +436,14 @@
 
       .ingredients {
         grid-template-columns: 1fr;
+      }
+
+      .cta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
       }
     }
   </style>
@@ -342,29 +465,32 @@
         exposure="1"
         auto-rotate
         auto-rotate-delay="700"
-        rotation-per-second="26deg"
+        rotation-per-second="24deg"
         environment-image="neutral"
         placement="floor"
         scale="1 1 1"
         camera-orbit="25deg 70deg 2.4m"
-        min-camera-orbit="auto auto 1.4m"
-        max-camera-orbit="auto auto 4m"
-      >
-      </model-viewer>
+        min-camera-orbit="auto auto 1.2m"
+        max-camera-orbit="auto auto 4.4m"
+      ></model-viewer>
 
       <div class="top-glass">
         <div class="top-card">
           <div class="brand">SoulFlame AR Menu</div>
-          <h1>Виж ястието на масата</h1>
+          <h1>Виж ястието преди поръчка</h1>
           <p>
-            Доближи NFC стикера или сканирай QR кода. Натисни AR бутона и постави продукта върху масата пред теб.
+            NFC/QR отваря страницата. Всеки телефон вижда 3D модел. Съвместимите телефони могат и истински AR върху маса.
           </p>
-          <div class="ar-badge">AR продукт · без инсталиране на приложение</div>
+          <div class="badge-row">
+            <span class="badge">3D за всички</span>
+            <span class="badge">Камера режим</span>
+            <span class="badge">Истински AR</span>
+          </div>
         </div>
       </div>
 
-      <div class="bottom-hint">
-        На Android натисни <b>View in your space</b>. На iPhone ще се отвори <b>AR Quick Look</b>.
+      <div class="hero-hint">
+        Първо разгледай 3D модела. После избери <b>Камера режим</b> или <b>AR на масата</b>.
       </div>
     </section>
 
@@ -374,36 +500,41 @@
           <div>
             <h2 class="dish-title">Signature AR Dish</h2>
             <p class="dish-subtitle">
-              Демонстрационно ястие в 3D. Клиентът вижда как изглежда храната преди да поръча.
+              3D визуализация на ястие за ресторантско меню. Клиентът вижда продукта преди да поръча.
             </p>
           </div>
           <div class="price">12.90€</div>
         </div>
 
         <div class="tags">
-          <span class="tag">3D визуализация</span>
-          <span class="tag">AR меню</span>
-          <span class="tag">NFC маса</span>
-          <span class="tag">QR достъп</span>
+          <span class="tag">NFC меню</span>
+          <span class="tag">QR меню</span>
+          <span class="tag">3D продукт</span>
+          <span class="tag">AR визуализация</span>
         </div>
 
-        <h3 class="section-title">Състав / информация</h3>
+        <h3 class="section-title">Информация</h3>
+
         <div class="ingredients">
-          <div class="ingredient">Основен продукт: демонстрационно ястие</div>
-          <div class="ingredient">Подходящо за: ресторанти, барове, хотели</div>
-          <div class="ingredient">Идея: клиентът вижда порцията преди поръчка</div>
-          <div class="ingredient">Технология: NFC + QR + Web AR</div>
+          <div class="ingredient">Модел: ar/food2.glb</div>
+          <div class="ingredient">Режим 1: 3D преглед на всеки модерен телефон</div>
+          <div class="ingredient">Режим 2: камера overlay без ARCore</div>
+          <div class="ingredient">Режим 3: истинско AR поставяне при съвместими устройства</div>
         </div>
 
-        <p class="mini-note">
-          Ако телефонът не поддържа истински AR режим, моделът пак може да се разгледа като 3D обект на страницата.
-        </p>
+        <div class="notice">
+          Камера режимът е универсален визуален AR overlay. Истинското заключване към маса зависи от AR поддръжката на телефона.
+        </div>
       </div>
     </section>
 
     <nav class="cta-grid">
-      <button class="btn btn-primary full" id="openARBtn">
-        Отвори в AR на масата
+      <button class="btn btn-camera" id="openCameraBtn">
+        Камера режим
+      </button>
+
+      <button class="btn btn-primary" id="openARBtn">
+        AR на масата
       </button>
 
       <a class="btn btn-secondary" href="tel:+359888000000">
@@ -418,26 +549,52 @@
       >
         Локация
       </a>
-
-      <a
-        class="btn btn-secondary full"
-        href="https://soulflame-ar-card.vercel.app"
-        target="_blank"
-        rel="noopener"
-      >
-        Отвори дигиталното меню
-      </a>
     </nav>
   </main>
 
+  <section class="camera-mode" id="cameraMode">
+    <video id="cameraVideo" autoplay playsinline muted></video>
+    <canvas id="overlayCanvas"></canvas>
+
+    <div class="camera-ui camera-top">
+      <div class="camera-chip">
+        Камера режим: продуктът се показва върху камерата. Това работи на повече телефони, дори без ARCore.
+      </div>
+      <button class="camera-close" id="closeCameraBtn">×</button>
+    </div>
+
+    <div class="camera-ui camera-controls">
+      <button id="smallerBtn">− размер</button>
+      <button id="resetBtn">център</button>
+      <button id="biggerBtn">+ размер</button>
+    </div>
+  </section>
+
   <div class="toast" id="toast">
-    Ако AR бутонът не се отвори, използвай иконата AR върху 3D модела. Някои телефони поддържат само 3D преглед без поставяне върху маса.
+    Съобщение
   </div>
 
   <script>
     const modelViewer = document.getElementById("foodAR");
     const openARBtn = document.getElementById("openARBtn");
+    const openCameraBtn = document.getElementById("openCameraBtn");
+    const closeCameraBtn = document.getElementById("closeCameraBtn");
+    const cameraMode = document.getElementById("cameraMode");
+    const cameraVideo = document.getElementById("cameraVideo");
+    const overlayCanvas = document.getElementById("overlayCanvas");
+    const smallerBtn = document.getElementById("smallerBtn");
+    const biggerBtn = document.getElementById("biggerBtn");
+    const resetBtn = document.getElementById("resetBtn");
     const toast = document.getElementById("toast");
+
+    let cameraStream = null;
+    let threeRenderer = null;
+    let threeScene = null;
+    let threeCamera = null;
+    let foodModel = null;
+    let animationId = null;
+    let overlayScale = 1;
+    let overlayY = -0.55;
 
     function showToast(message) {
       toast.textContent = message;
@@ -450,19 +607,178 @@
         if (modelViewer && modelViewer.canActivateAR) {
           await modelViewer.activateAR();
         } else {
-          showToast("Този телефон може да не поддържа истински AR. Можеш да разгледаш продукта като 3D модел тук.");
+          showToast("Този телефон не поддържа истински AR. Използвай Камера режим — той работи на повече устройства.");
         }
       } catch (err) {
-        showToast("AR режимът не се отвори. Натисни AR иконата върху модела или пробвай с Chrome/Safari.");
+        showToast("AR режимът не се отвори. Пробвай с Chrome/Safari или използвай Камера режим.");
       }
-    });
-
-    modelViewer.addEventListener("load", () => {
-      console.log("SoulFlame AR model loaded: ar/food2.glb");
     });
 
     modelViewer.addEventListener("error", () => {
       showToast("Моделът ar/food2.glb не се зареди. Провери дали файлът е качен правилно.");
+    });
+
+    openCameraBtn.addEventListener("click", startCameraMode);
+    closeCameraBtn.addEventListener("click", stopCameraMode);
+
+    smallerBtn.addEventListener("click", () => {
+      overlayScale = Math.max(0.35, overlayScale - 0.15);
+      applyModelTransform();
+    });
+
+    biggerBtn.addEventListener("click", () => {
+      overlayScale = Math.min(2.2, overlayScale + 0.15);
+      applyModelTransform();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      overlayScale = 1;
+      overlayY = -0.55;
+      applyModelTransform();
+    });
+
+    async function startCameraMode() {
+      cameraMode.classList.add("active");
+
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        });
+
+        cameraVideo.srcObject = cameraStream;
+        await cameraVideo.play();
+
+        initThreeOverlay();
+        showToast("Камера режимът е активен. Насочи към масата и използвай размера за настройка.");
+      } catch (error) {
+        cameraMode.classList.remove("active");
+        showToast("Камерата не може да се стартира. Разреши достъп до камерата от браузъра.");
+      }
+    }
+
+    function stopCameraMode() {
+      cameraMode.classList.remove("active");
+
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+
+      if (threeRenderer) {
+        threeRenderer.dispose();
+        threeRenderer = null;
+      }
+
+      foodModel = null;
+      threeScene = null;
+      threeCamera = null;
+    }
+
+    function initThreeOverlay() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      overlayCanvas.width = width * window.devicePixelRatio;
+      overlayCanvas.height = height * window.devicePixelRatio;
+      overlayCanvas.style.width = width + "px";
+      overlayCanvas.style.height = height + "px";
+
+      threeRenderer = new THREE.WebGLRenderer({
+        canvas: overlayCanvas,
+        alpha: true,
+        antialias: true
+      });
+
+      threeRenderer.setPixelRatio(window.devicePixelRatio);
+      threeRenderer.setSize(width, height);
+      threeRenderer.setClearColor(0x000000, 0);
+
+      threeScene = new THREE.Scene();
+
+      threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      threeCamera.position.set(0, 0.9, 3.2);
+      threeScene.add(threeCamera);
+
+      const ambient = new THREE.AmbientLight(0xffffff, 1.35);
+      threeScene.add(ambient);
+
+      const directional = new THREE.DirectionalLight(0xffffff, 1.8);
+      directional.position.set(2, 4, 3);
+      threeScene.add(directional);
+
+      const loader = new THREE.GLTFLoader();
+
+      loader.load(
+        "ar/food2.glb",
+        function(gltf) {
+          foodModel = gltf.scene;
+
+          const bbox = new THREE.Box3().setFromObject(foodModel);
+          const center = bbox.getCenter(new THREE.Vector3());
+          const size = bbox.getSize(new THREE.Vector3());
+          const maxAxis = Math.max(size.x, size.y, size.z);
+
+          foodModel.scale.multiplyScalar(1.45 / maxAxis);
+          foodModel.position.copy(center).multiplyScalar(-1);
+
+          const normalizedBox = new THREE.Box3().setFromObject(foodModel);
+          const normalizedSize = normalizedBox.getSize(new THREE.Vector3());
+
+          foodModel.position.y = overlayY;
+          foodModel.rotation.x = -0.08;
+          foodModel.rotation.y = 0.25;
+
+          threeScene.add(foodModel);
+          applyModelTransform();
+        },
+        undefined,
+        function(error) {
+          showToast("Не успях да заредя ar/food2.glb в камера режим.");
+        }
+      );
+
+      animateOverlay();
+    }
+
+    function applyModelTransform() {
+      if (!foodModel) return;
+
+      foodModel.scale.setScalar(overlayScale);
+      foodModel.position.y = overlayY;
+    }
+
+    function animateOverlay() {
+      animationId = requestAnimationFrame(animateOverlay);
+
+      if (foodModel) {
+        foodModel.rotation.y += 0.006;
+      }
+
+      if (threeRenderer && threeScene && threeCamera) {
+        threeRenderer.render(threeScene, threeCamera);
+      }
+    }
+
+    window.addEventListener("resize", () => {
+      if (!threeRenderer || !threeCamera) return;
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      threeCamera.aspect = width / height;
+      threeCamera.updateProjectionMatrix();
+
+      threeRenderer.setSize(width, height);
     });
   </script>
 </body>
