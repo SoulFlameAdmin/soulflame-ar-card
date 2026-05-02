@@ -1,4 +1,8 @@
+cd /d E:\iamyann
+
 git status
 git add -A
-git commit -m "fix: place AR card files in root"
+git commit -m "fix SoulFlame AR card"
 git push origin main
+
+npx vercel --prod
