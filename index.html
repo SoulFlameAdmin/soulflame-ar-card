@@ -9,13 +9,11 @@
 
   <title>AR Меню | SoulFlame Restaurant</title>
 
-  <!-- Real AR / 3D viewer -->
   <script
     type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
   ></script>
 
-  <!-- Stable legacy Three.js + GLTFLoader for camera fallback -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
@@ -305,7 +303,7 @@
       left: 50%;
       bottom: 132px;
       transform: translateX(-50%) translateY(20px);
-      z-index: 100;
+      z-index: 1000;
       width: min(92%, 460px);
       padding: 12px 14px;
       border-radius: 16px;
@@ -375,6 +373,7 @@
       box-shadow: 0 0 40px rgba(255, 207, 122, 0.16);
       pointer-events: none;
       opacity: 0.9;
+      transition: opacity .25s ease;
     }
 
     .table-guide.hidden {
@@ -444,6 +443,73 @@
       font-size: 11px;
       font-weight: 900;
       backdrop-filter: blur(10px);
+      cursor: pointer;
+    }
+
+    .auto-fallback {
+      position: fixed;
+      inset: 0;
+      z-index: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.84);
+      backdrop-filter: blur(14px);
+    }
+
+    .auto-fallback.active {
+      display: flex;
+    }
+
+    .auto-fallback-card {
+      width: min(92vw, 440px);
+      padding: 22px;
+      border-radius: 28px;
+      text-align: center;
+      background:
+        radial-gradient(circle at top, rgba(255, 189, 89, 0.18), transparent 42%),
+        linear-gradient(180deg, #1b1007, #070403);
+      border: 1px solid rgba(255, 207, 122, 0.25);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+    }
+
+    .auto-fallback-label {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 189, 89, 0.13);
+      border: 1px solid rgba(255, 189, 89, 0.32);
+      color: #ffcf7a;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .auto-fallback-card h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .auto-fallback-card p {
+      margin: 0 0 16px;
+      color: rgba(255,255,255,.8);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #autoCameraBtn {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #62ffb2, #29b6f6);
+      color: #04110b;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
     }
 
     @media (max-width: 430px) {
@@ -549,7 +615,7 @@
         </div>
 
         <div class="notice">
-          Истинското автоматично разпознаване на маса зависи от AR поддръжката на телефона. Камера режимът работи като стабилен fallback: тапваш върху масата и продуктът се поставя визуално там.
+          Ако истинският AR не зареди правилно, системата ще предложи камера режим. Така клиентът пак вижда ястието през камерата.
         </div>
       </div>
     </section>
@@ -598,6 +664,17 @@
     </div>
   </section>
 
+  <div class="auto-fallback" id="autoFallback">
+    <div class="auto-fallback-card">
+      <div class="auto-fallback-label">AR не се зареди правилно</div>
+      <h2>Отвори камера режим</h2>
+      <p>
+        Този телефон може да не поддържа истински AR. Натисни бутона и ще видиш ястието през камерата върху масата.
+      </p>
+      <button id="autoCameraBtn">Отвори камера режим</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast">Съобщение</div>
 
   <script>
@@ -617,6 +694,8 @@
     const rotateBtn = document.getElementById("rotateBtn");
     const resetBtn = document.getElementById("resetBtn");
     const toast = document.getElementById("toast");
+    const autoFallback = document.getElementById("autoFallback");
+    const autoCameraBtn = document.getElementById("autoCameraBtn");
 
     let cameraStream = null;
     let threeRenderer = null;
@@ -627,6 +706,8 @@
     let animationId = null;
     let isCameraRunning = false;
     let isModelLoaded = false;
+    let modelViewerLoaded = false;
+    let autoFallbackShown = false;
 
     let modelScale = 1;
     let modelRotation = 0;
@@ -642,24 +723,61 @@
       }, 4300);
     }
 
+    function showAutoFallback() {
+      if (autoFallbackShown || isCameraRunning) return;
+
+      autoFallbackShown = true;
+      autoFallback.classList.add("active");
+
+      startCameraMode().catch(() => {
+        showToast("Натисни бутона, за да стартираш камера режим.");
+      });
+    }
+
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
     }
+
+    modelViewer.addEventListener("load", () => {
+      modelViewerLoaded = true;
+    });
+
+    modelViewer.addEventListener("error", () => {
+      showToast("3D/AR режимът не се зареди. Отварям камера режим.");
+      showAutoFallback();
+    });
+
+    setTimeout(() => {
+      if (!modelViewerLoaded) {
+        showAutoFallback();
+      }
+    }, 5500);
 
     openARBtn.addEventListener("click", async () => {
       try {
         if (modelViewer && modelViewer.canActivateAR) {
           await modelViewer.activateAR();
         } else {
-          showToast("Този телефон не поддържа истински AR. Използвай Камера режим — той работи на повече устройства.");
+          showToast("Този телефон не поддържа истински AR. Използвай Камера режим.");
+          showAutoFallback();
         }
       } catch (err) {
-        showToast("AR режимът не се отвори. Пробвай с Chrome/Safari или използвай Камера режим.");
+        showToast("AR режимът не се отвори. Отварям камера режим.");
+        showAutoFallback();
       }
     });
 
     openCameraBtn.addEventListener("click", startCameraMode);
     closeCameraBtn.addEventListener("click", stopCameraMode);
+
+    autoCameraBtn.addEventListener("click", async () => {
+      autoFallback.classList.remove("active");
+      try {
+        await startCameraMode();
+      } catch (error) {
+        showToast("Камерата не тръгна. Разреши достъп до камерата.");
+      }
+    });
 
     smallerBtn.addEventListener("click", () => {
       modelScale = clamp(modelScale - 0.12, 0.35, 2.6);
@@ -685,20 +803,17 @@
       showToast("Позицията е върната в центъра.");
     });
 
-    modelViewer.addEventListener("error", () => {
-      showToast("Моделът ar/food2.glb не се зареди. Провери дали файлът е качен правилно.");
-    });
-
     async function startCameraMode() {
-      if (isCameraRunning) return;
+      if (isCameraRunning) return Promise.resolve();
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showToast("Този браузър не позволява директен достъп до камерата. Пробвай Chrome/Safari.");
-        return;
+        return Promise.reject(new Error("Camera API not supported"));
       }
 
       cameraMode.classList.add("active");
       tableGuide.classList.remove("hidden");
+      autoFallback.classList.remove("active");
       isCameraRunning = true;
 
       try {
@@ -721,6 +836,7 @@
       } catch (error) {
         stopCameraMode();
         showToast("Камерата не тръгна. Разреши достъп до камерата или отвори през Chrome/Safari.");
+        throw error;
       }
     }
 
@@ -758,6 +874,8 @@
     }
 
     function initThreeOverlay() {
+      if (threeRenderer) return;
+
       const width = window.innerWidth;
       const height = window.innerHeight;
 
@@ -822,18 +940,18 @@
       loader.load(
         MODEL_URL,
         function(gltf) {
-          foodModel = gltf.scene;
+          const rawModel = gltf.scene;
 
-          const box = new THREE.Box3().setFromObject(foodModel);
+          const box = new THREE.Box3().setFromObject(rawModel);
           const center = box.getCenter(new THREE.Vector3());
           const size = box.getSize(new THREE.Vector3());
           const maxAxis = Math.max(size.x, size.y, size.z) || 1;
 
-          foodModel.position.copy(center).multiplyScalar(-1);
-          foodModel.scale.multiplyScalar(1.35 / maxAxis);
+          rawModel.position.copy(center).multiplyScalar(-1);
+          rawModel.scale.multiplyScalar(1.35 / maxAxis);
 
           const wrapper = new THREE.Group();
-          wrapper.add(foodModel);
+          wrapper.add(rawModel);
           foodModel = wrapper;
 
           foodModel.position.set(anchorX, anchorY, 0);
@@ -859,15 +977,7 @@
       const height = window.innerHeight;
 
       const xNorm = (clientX / width) * 2 - 1;
-      const yNorm = -((clientY / height) * 2 - 1);
-
       const x = xNorm * 1.35;
-
-      /*
-        Това е стабилна симулация на маса:
-        долната част на екрана = по-близо до камерата,
-        горната част = по-далеч.
-      */
       const y = clamp(-0.15 - ((clientY / height) * 1.15), -1.18, -0.28);
 
       return { x, y };
@@ -913,10 +1023,6 @@
 
     function animateOverlay() {
       animationId = requestAnimationFrame(animateOverlay);
-
-      if (foodModel) {
-        foodModel.rotation.y += 0.0025;
-      }
 
       if (threeRenderer && threeScene && threeCamera) {
         threeRenderer.render(threeScene, threeCamera);
