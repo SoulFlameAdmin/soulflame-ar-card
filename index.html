@@ -446,37 +446,55 @@
       cursor: pointer;
     }
 
-    .auto-fallback {
+    .safe-demo {
       position: fixed;
       inset: 0;
-      z-index: 800;
+      z-index: 900;
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 18px;
-      background: rgba(0, 0, 0, 0.84);
+      padding: 16px;
+      background: rgba(0,0,0,.86);
       backdrop-filter: blur(14px);
     }
 
-    .auto-fallback.active {
+    .safe-demo.active {
       display: flex;
     }
 
-    .auto-fallback-card {
-      width: min(92vw, 440px);
-      padding: 22px;
-      border-radius: 28px;
-      text-align: center;
+    .safe-demo-card {
+      position: relative;
+      width: min(94vw, 560px);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 18px;
+      border-radius: 30px;
       background:
-        radial-gradient(circle at top, rgba(255, 189, 89, 0.18), transparent 42%),
-        linear-gradient(180deg, #1b1007, #070403);
-      border: 1px solid rgba(255, 207, 122, 0.25);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+        radial-gradient(circle at top, rgba(255, 189, 89, 0.20), transparent 44%),
+        linear-gradient(180deg, #1b1007, #060302);
+      border: 1px solid rgba(255, 207, 122, 0.24);
+      box-shadow: 0 26px 90px rgba(0,0,0,.70);
+      text-align: center;
     }
 
-    .auto-fallback-label {
+    .safe-close {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .safe-label {
       display: inline-flex;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       padding: 7px 10px;
       border-radius: 999px;
       background: rgba(255, 189, 89, 0.13);
@@ -488,28 +506,90 @@
       letter-spacing: 1px;
     }
 
-    .auto-fallback-card h2 {
+    .safe-demo-card h2 {
       margin: 0 0 8px;
       font-size: 24px;
     }
 
-    .auto-fallback-card p {
-      margin: 0 0 16px;
-      color: rgba(255,255,255,.8);
+    .safe-demo-card p {
+      margin: 0 0 14px;
+      color: rgba(255,255,255,.78);
       font-size: 14px;
       line-height: 1.5;
     }
 
-    #autoCameraBtn {
+    .safe-model-box {
       width: 100%;
-      min-height: 52px;
+      height: min(56vh, 420px);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: #100805;
+    }
+
+    .safe-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .safe-actions button,
+    .safe-actions a {
+      min-height: 48px;
       border: 0;
-      border-radius: 18px;
+      border-radius: 17px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .safe-primary {
       background: linear-gradient(135deg, #62ffb2, #29b6f6);
       color: #04110b;
-      font-size: 15px;
-      font-weight: 900;
-      cursor: pointer;
+    }
+
+    .safe-secondary {
+      background: rgba(255,255,255,.09);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .safe-error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 80, 80, .12);
+      border: 1px solid rgba(255, 80, 80, .28);
+      color: rgba(255,255,255,.86);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .safe-error.active {
+      display: block;
+    }
+
+    .loader-line {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1200;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, #ffbd59, #62ffb2, #29b6f6);
+      transition: width .35s ease, opacity .35s ease;
+      opacity: 1;
+    }
+
+    .loader-line.done {
+      width: 100%;
+      opacity: 0;
     }
 
     @media (max-width: 430px) {
@@ -537,11 +617,17 @@
       .camera-controls {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .safe-actions {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
+  <div class="loader-line" id="loaderLine"></div>
+
   <main class="app">
     <section class="hero">
       <model-viewer
@@ -571,18 +657,18 @@
           <div class="brand">SoulFlame AR Menu</div>
           <h1>Виж ястието преди поръчка</h1>
           <p>
-            NFC/QR отваря менюто. Всеки телефон вижда 3D продукта. Съвместимите телефони могат и истински AR върху маса.
+            NFC/QR отваря менюто. Ако AR не зареди, автоматично ще се отвори безопасен 3D режим без камера.
           </p>
           <div class="badge-row">
-            <span class="badge">3D за всички</span>
-            <span class="badge">Камера режим</span>
+            <span class="badge">3D режим</span>
             <span class="badge">AR маса</span>
+            <span class="badge">Fallback без камера</span>
           </div>
         </div>
       </div>
 
       <div class="hero-hint">
-        За максимална съвместимост използвай <b>Камера режим</b>. За истинско AR натисни <b>AR на масата</b>.
+        Ако 3D/AR не зареди до 10 секунди, ще се отвори резервен 3D режим без камера.
       </div>
     </section>
 
@@ -609,37 +695,32 @@
 
         <div class="ingredients">
           <div class="ingredient">Модел: ar/food2.glb</div>
-          <div class="ingredient">Режим 1: 3D преглед</div>
-          <div class="ingredient">Режим 2: камера + тапни върху масата</div>
-          <div class="ingredient">Режим 3: истински AR при съвместими устройства</div>
+          <div class="ingredient">Ако не зареди: 3D demo без камера</div>
+          <div class="ingredient">Камера режим: ръчно поставяне върху маса</div>
+          <div class="ingredient">Истински AR: само при съвместими устройства</div>
         </div>
 
         <div class="notice">
-          Ако истинският AR не зареди правилно, системата ще предложи камера режим. Така клиентът пак вижда ястието през камерата.
+          Професионален fallback: ако AR/3D не зареди до 10 секунди, клиентът пак вижда ястието в резервен 3D режим без камера.
         </div>
       </div>
     </section>
 
     <nav class="cta-grid">
-      <button class="btn btn-camera" id="openCameraBtn">
-        Камера режим
+      <button class="btn btn-camera" id="openSafeDemoBtn">
+        3D демо
       </button>
 
       <button class="btn btn-primary" id="openARBtn">
         AR на масата
       </button>
 
+      <button class="btn btn-camera" id="openCameraBtn">
+        Камера режим
+      </button>
+
       <a class="btn btn-secondary" href="tel:+359888000000">
         Обади се
-      </a>
-
-      <a
-        class="btn btn-secondary"
-        href="https://www.google.com/maps"
-        target="_blank"
-        rel="noopener"
-      >
-        Локация
       </a>
     </nav>
   </main>
@@ -664,38 +745,77 @@
     </div>
   </section>
 
-  <div class="auto-fallback" id="autoFallback">
-    <div class="auto-fallback-card">
-      <div class="auto-fallback-label">AR не се зареди правилно</div>
-      <h2>Отвори камера режим</h2>
+  <section class="safe-demo" id="safeDemo">
+    <div class="safe-demo-card">
+      <button class="safe-close" id="safeCloseBtn">×</button>
+      <div class="safe-label">Резервен 3D режим</div>
+      <h2>Виж ястието без AR</h2>
       <p>
-        Този телефон може да не поддържа истински AR. Натисни бутона и ще видиш ястието през камерата върху масата.
+        Ако телефонът не поддържа AR или моделът зарежда бавно, тук клиентът пак може да разгледа продукта като 3D обект.
       </p>
-      <button id="autoCameraBtn">Отвори камера режим</button>
+
+      <div class="safe-model-box">
+        <model-viewer
+          id="safeModel"
+          src="ar/food2.glb"
+          alt="Резервен 3D модел"
+          camera-controls
+          auto-rotate
+          auto-rotate-delay="300"
+          rotation-per-second="22deg"
+          shadow-intensity="1"
+          exposure="1"
+          environment-image="neutral"
+        ></model-viewer>
+      </div>
+
+      <div class="safe-error" id="safeError">
+        3D моделът не се зареди. Провери дали файлът <b>ar/food2.glb</b> е качен правилно.
+      </div>
+
+      <div class="safe-actions">
+        <button class="safe-primary" id="safeCameraBtn">
+          Пробвай камера режим
+        </button>
+        <a class="safe-secondary" href="tel:+359888000000">
+          Поръчай / Обади се
+        </a>
+      </div>
     </div>
-  </div>
+  </section>
 
   <div class="toast" id="toast">Съобщение</div>
 
   <script>
     const MODEL_URL = "ar/food2.glb";
+    const FALLBACK_TIMEOUT_MS = 10000;
 
     const modelViewer = document.getElementById("foodAR");
+    const safeModel = document.getElementById("safeModel");
+    const loaderLine = document.getElementById("loaderLine");
+
     const openARBtn = document.getElementById("openARBtn");
     const openCameraBtn = document.getElementById("openCameraBtn");
+    const openSafeDemoBtn = document.getElementById("openSafeDemoBtn");
+
     const closeCameraBtn = document.getElementById("closeCameraBtn");
     const cameraMode = document.getElementById("cameraMode");
     const cameraVideo = document.getElementById("cameraVideo");
     const overlayCanvas = document.getElementById("overlayCanvas");
     const tableGuide = document.getElementById("tableGuide");
     const cameraText = document.getElementById("cameraText");
+
     const smallerBtn = document.getElementById("smallerBtn");
     const biggerBtn = document.getElementById("biggerBtn");
     const rotateBtn = document.getElementById("rotateBtn");
     const resetBtn = document.getElementById("resetBtn");
+
+    const safeDemo = document.getElementById("safeDemo");
+    const safeCloseBtn = document.getElementById("safeCloseBtn");
+    const safeCameraBtn = document.getElementById("safeCameraBtn");
+    const safeError = document.getElementById("safeError");
+
     const toast = document.getElementById("toast");
-    const autoFallback = document.getElementById("autoFallback");
-    const autoCameraBtn = document.getElementById("autoCameraBtn");
 
     let cameraStream = null;
     let threeRenderer = null;
@@ -704,10 +824,12 @@
     let foodModel = null;
     let shadowMesh = null;
     let animationId = null;
+
     let isCameraRunning = false;
     let isModelLoaded = false;
-    let modelViewerLoaded = false;
-    let autoFallbackShown = false;
+    let mainModelLoaded = false;
+    let safeModelLoaded = false;
+    let safeDemoOpened = false;
 
     let modelScale = 1;
     let modelRotation = 0;
@@ -723,59 +845,99 @@
       }, 4300);
     }
 
-    function showAutoFallback() {
-      if (autoFallbackShown || isCameraRunning) return;
-
-      autoFallbackShown = true;
-      autoFallback.classList.add("active");
-
-      startCameraMode().catch(() => {
-        showToast("Натисни бутона, за да стартираш камера режим.");
-      });
-    }
-
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
     }
 
+    function openSafeDemo(reasonText) {
+      if (safeDemoOpened) return;
+
+      safeDemoOpened = true;
+      safeDemo.classList.add("active");
+
+      if (reasonText) {
+        showToast(reasonText);
+      }
+    }
+
+    function closeSafeDemo() {
+      safeDemo.classList.remove("active");
+    }
+
+    function finishLoader() {
+      loaderLine.classList.add("done");
+    }
+
+    let fakeProgress = 0;
+    const progressTimer = setInterval(() => {
+      fakeProgress = Math.min(fakeProgress + 8, 92);
+      loaderLine.style.width = fakeProgress + "%";
+      if (mainModelLoaded) {
+        clearInterval(progressTimer);
+        loaderLine.style.width = "100%";
+        setTimeout(finishLoader, 250);
+      }
+    }, 420);
+
     modelViewer.addEventListener("load", () => {
-      modelViewerLoaded = true;
+      mainModelLoaded = true;
+      clearInterval(progressTimer);
+      loaderLine.style.width = "100%";
+      setTimeout(finishLoader, 250);
     });
 
     modelViewer.addEventListener("error", () => {
-      showToast("3D/AR режимът не се зареди. Отварям камера режим.");
-      showAutoFallback();
+      openSafeDemo("Основният 3D/AR режим не се зареди. Отварям резервен 3D режим.");
+    });
+
+    safeModel.addEventListener("load", () => {
+      safeModelLoaded = true;
+      safeError.classList.remove("active");
+    });
+
+    safeModel.addEventListener("error", () => {
+      safeError.classList.add("active");
     });
 
     setTimeout(() => {
-      if (!modelViewerLoaded) {
-        showAutoFallback();
+      if (!mainModelLoaded) {
+        openSafeDemo("3D/AR режимът зарежда твърде бавно. Отварям резервен 3D режим без камера.");
       }
-    }, 5500);
+    }, FALLBACK_TIMEOUT_MS);
+
+    openSafeDemoBtn.addEventListener("click", () => {
+      openSafeDemo();
+    });
+
+    safeCloseBtn.addEventListener("click", closeSafeDemo);
+
+    safeDemo.addEventListener("click", (event) => {
+      if (event.target === safeDemo) {
+        closeSafeDemo();
+      }
+    });
 
     openARBtn.addEventListener("click", async () => {
       try {
         if (modelViewer && modelViewer.canActivateAR) {
           await modelViewer.activateAR();
         } else {
-          showToast("Този телефон не поддържа истински AR. Използвай Камера режим.");
-          showAutoFallback();
+          openSafeDemo("Този телефон не поддържа истински AR. Отварям 3D демо.");
         }
       } catch (err) {
-        showToast("AR режимът не се отвори. Отварям камера режим.");
-        showAutoFallback();
+        openSafeDemo("AR режимът не се отвори. Отварям 3D демо.");
       }
     });
 
     openCameraBtn.addEventListener("click", startCameraMode);
     closeCameraBtn.addEventListener("click", stopCameraMode);
 
-    autoCameraBtn.addEventListener("click", async () => {
-      autoFallback.classList.remove("active");
+    safeCameraBtn.addEventListener("click", async () => {
+      closeSafeDemo();
       try {
         await startCameraMode();
       } catch (error) {
-        showToast("Камерата не тръгна. Разреши достъп до камерата.");
+        openSafeDemo("Камерата не тръгна. Оставам в 3D демо режим.");
       }
     });
 
@@ -813,7 +975,6 @@
 
       cameraMode.classList.add("active");
       tableGuide.classList.remove("hidden");
-      autoFallback.classList.remove("active");
       isCameraRunning = true;
 
       try {
@@ -862,7 +1023,9 @@
 
       if (threeRenderer) {
         threeRenderer.dispose();
-        threeRenderer.forceContextLoss && threeRenderer.forceContextLoss();
+        if (threeRenderer.forceContextLoss) {
+          threeRenderer.forceContextLoss();
+        }
       }
 
       threeRenderer = null;
@@ -967,7 +1130,7 @@
         },
         undefined,
         function() {
-          showToast("Не успях да заредя ar/food2.glb. Провери името и дали файлът е качен.");
+          showToast("Не успях да заредя ar/food2.glb в камера режим.");
         }
       );
     }
