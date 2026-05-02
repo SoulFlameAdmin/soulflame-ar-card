@@ -15,16 +15,19 @@
   <style>
     :root {
       --bg: #030303;
-      --white: #ffffff;
-      --soft: rgba(255,255,255,.72);
-      --muted: rgba(255,255,255,.52);
-      --glass: rgba(8,8,10,.58);
-      --glass-strong: rgba(0,0,0,.78);
+      --text: #ffffff;
+      --soft: rgba(255,255,255,.74);
+      --muted: rgba(255,255,255,.50);
       --line: rgba(255,255,255,.18);
       --line-strong: rgba(255,255,255,.36);
-      --shadow: 0 0 80px rgba(255,255,255,.16);
+      --glass: rgba(0,0,0,.58);
+      --glass-strong: rgba(0,0,0,.80);
+      --accent: #ffffff;
+      --danger: #ff5b5b;
       --radius-xl: 34px;
       --radius-pill: 999px;
+      --shadow-soft: 0 0 42px rgba(255,255,255,.14);
+      --shadow-strong: 0 0 90px rgba(255,255,255,.18);
     }
 
     * {
@@ -40,8 +43,8 @@
       height: 100%;
       overflow: hidden;
       background: var(--bg);
+      color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      color: #fff;
     }
 
     body {
@@ -54,43 +57,57 @@
       display: none !important;
     }
 
+    #fxCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      opacity: .72;
+      mix-blend-mode: screen;
+    }
+
     body::before,
     body::after {
       content: "";
       position: fixed;
-      inset: -30%;
+      inset: -28%;
       pointer-events: none;
       z-index: 1;
     }
 
     body::before {
       background:
-        radial-gradient(circle at 20% 25%, rgba(255,255,255,.12), transparent 22%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,.08), transparent 28%),
-        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.05), transparent 68%);
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
+        radial-gradient(circle at 82% 72%, rgba(255,255,255,.08), transparent 26%),
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
+        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
-      animation: cosmicMove 12s ease-in-out infinite alternate;
+      animation: universeMove 13s ease-in-out infinite alternate;
     }
 
     body::after {
-      opacity: .16;
+      opacity: .13;
       background-image:
-        linear-gradient(rgba(255,255,255,.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.10) 1px, transparent 1px);
-      background-size: 46px 46px;
-      mask-image: radial-gradient(circle at center, black 0%, transparent 68%);
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
       animation: gridDrift 18s linear infinite;
     }
 
-    @keyframes cosmicMove {
+    @keyframes universeMove {
       from { transform: translate3d(-2%, -1%, 0) scale(1); }
-      to { transform: translate3d(2%, 1%, 0) scale(1.08); }
+      to { transform: translate3d(2%, 1.5%, 0) scale(1.08); }
     }
 
     @keyframes gridDrift {
       from { transform: translate3d(0,0,0); }
-      to { transform: translate3d(46px,46px,0); }
+      to { transform: translate3d(44px,44px,0); }
     }
+
+    /* START SCREEN */
 
     #startScreen {
       position: fixed;
@@ -98,7 +115,7 @@
       z-index: 9999;
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: 22px;
       background:
         radial-gradient(circle at center, rgba(255,255,255,.14), rgba(0,0,0,.96) 62%),
         linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,255,255,.04));
@@ -108,14 +125,14 @@
     #startScreen::before {
       content: "";
       position: absolute;
-      width: 560px;
-      height: 560px;
+      width: min(620px, 116vw);
+      height: min(620px, 116vw);
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,.14);
       box-shadow:
-        0 0 90px rgba(255,255,255,.10),
-        inset 0 0 80px rgba(255,255,255,.05);
-      animation: portalRotate 18s linear infinite;
+        0 0 120px rgba(255,255,255,.12),
+        inset 0 0 90px rgba(255,255,255,.055);
+      animation: portalRotate 20s linear infinite;
     }
 
     #startScreen::after {
@@ -123,16 +140,16 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent),
+        linear-gradient(90deg, transparent, rgba(255,255,255,.055), transparent),
         repeating-linear-gradient(
           0deg,
           transparent 0,
           transparent 7px,
-          rgba(255,255,255,.035) 8px
+          rgba(255,255,255,.032) 8px
         );
-      mix-blend-mode: screen;
       opacity: .32;
-      animation: scanScreen 3.2s linear infinite;
+      mix-blend-mode: screen;
+      animation: scanScreen 3.4s linear infinite alternate;
     }
 
     @keyframes portalRotate {
@@ -141,26 +158,26 @@
     }
 
     @keyframes scanScreen {
-      from { transform: translateY(-20px); }
-      to { transform: translateY(20px); }
+      from { transform: translateY(-18px); }
+      to { transform: translateY(18px); }
     }
 
     .start-card {
       position: relative;
       z-index: 3;
-      width: min(470px, 92vw);
-      padding: 34px 25px 26px;
-      border: 1px solid rgba(255,255,255,.24);
+      width: min(490px, 93vw);
+      padding: 34px 24px 24px;
       border-radius: var(--radius-xl);
+      border: 1px solid rgba(255,255,255,.22);
       background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
-        rgba(0,0,0,.72);
-      backdrop-filter: blur(24px) saturate(140%);
-      -webkit-backdrop-filter: blur(24px) saturate(140%);
+        linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.025)),
+        rgba(0,0,0,.74);
+      backdrop-filter: blur(26px) saturate(150%);
+      -webkit-backdrop-filter: blur(26px) saturate(150%);
       text-align: center;
       box-shadow:
-        0 0 90px rgba(255,255,255,.16),
-        inset 0 0 28px rgba(255,255,255,.06);
+        var(--shadow-strong),
+        inset 0 0 30px rgba(255,255,255,.055);
       overflow: hidden;
     }
 
@@ -170,7 +187,7 @@
       inset: 0;
       border-radius: inherit;
       padding: 1px;
-      background: linear-gradient(135deg, rgba(255,255,255,.72), transparent 32%, rgba(255,255,255,.20));
+      background: linear-gradient(135deg, rgba(255,255,255,.78), transparent 28%, rgba(255,255,255,.18), transparent 74%, rgba(255,255,255,.38));
       -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
@@ -182,34 +199,29 @@
     .start-card::after {
       content: "";
       position: absolute;
-      left: -30%;
-      top: -60%;
-      width: 55%;
-      height: 220%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      left: -40%;
+      top: -80%;
+      width: 65%;
+      height: 250%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
       transform: rotate(18deg);
-      animation: cardShine 4.8s ease-in-out infinite;
+      animation: cardShine 5.4s ease-in-out infinite;
       pointer-events: none;
     }
 
     @keyframes cardShine {
-      0%, 55% { transform: translateX(0) rotate(18deg); opacity: 0; }
-      65% { opacity: 1; }
-      100% { transform: translateX(280%) rotate(18deg); opacity: 0; }
+      0%, 58% { transform: translateX(0) rotate(18deg); opacity: 0; }
+      68% { opacity: 1; }
+      100% { transform: translateX(290%) rotate(18deg); opacity: 0; }
     }
 
     .logo-mark {
-      width: 72px;
-      height: 72px;
+      width: 74px;
+      height: 74px;
       margin: 0 auto;
       position: relative;
-      filter: drop-shadow(0 0 18px rgba(255,255,255,.45));
-      animation: logoFloat 2.8s ease-in-out infinite alternate;
-    }
-
-    @keyframes logoFloat {
-      from { transform: translateY(0) rotate(-2deg); }
-      to { transform: translateY(-8px) rotate(2deg); }
+      filter: drop-shadow(0 0 18px rgba(255,255,255,.48));
+      animation: logoFloat 2.9s ease-in-out infinite alternate;
     }
 
     .logo-mark::before,
@@ -218,7 +230,7 @@
       position: absolute;
       border: 2px solid rgba(255,255,255,.98);
       box-shadow:
-        0 0 12px rgba(255,255,255,.72),
+        0 0 13px rgba(255,255,255,.74),
         inset 0 0 12px rgba(255,255,255,.14);
     }
 
@@ -228,31 +240,43 @@
     }
 
     .logo-mark::after {
-      inset: 20px 5px 5px 33px;
+      inset: 20px 5px 5px 34px;
       transform: rotate(-28deg) skew(10deg);
     }
 
-    .start-card h1 {
-      margin: 20px 0 9px;
-      letter-spacing: .28em;
-      font-size: clamp(24px, 6vw, 32px);
-      line-height: 1;
-      text-shadow: 0 0 26px rgba(255,255,255,.38);
+    @keyframes logoFloat {
+      from { transform: translateY(0) rotate(-2deg); }
+      to { transform: translateY(-8px) rotate(2deg); }
     }
 
-    .start-card .subtitle {
-      margin: 0 0 18px;
+    .start-card h1 {
+      margin: 20px 0 8px;
+      letter-spacing: .28em;
+      font-size: clamp(24px, 6vw, 33px);
+      line-height: 1;
+      text-shadow: 0 0 28px rgba(255,255,255,.40);
+    }
+
+    .subtitle {
+      margin-bottom: 18px;
       font-size: 11px;
       letter-spacing: .34em;
-      color: rgba(255,255,255,.62);
+      color: rgba(255,255,255,.60);
+      text-transform: uppercase;
     }
 
     .start-card p {
-      margin: 0 auto 24px;
-      max-width: 360px;
+      margin: 0 auto 22px;
+      max-width: 370px;
       color: rgba(255,255,255,.82);
-      line-height: 1.5;
+      line-height: 1.52;
       font-size: 15px;
+    }
+
+    .start-actions {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
     }
 
     #startBtn {
@@ -261,15 +285,15 @@
       border: 0;
       border-radius: var(--radius-pill);
       padding: 15px 24px;
-      min-width: 235px;
+      min-width: 240px;
       background: #fff;
       color: #000;
       font-weight: 950;
       letter-spacing: .16em;
       cursor: pointer;
       box-shadow:
-        0 0 34px rgba(255,255,255,.38),
-        inset 0 -12px 22px rgba(0,0,0,.12);
+        0 0 36px rgba(255,255,255,.42),
+        inset 0 -12px 22px rgba(0,0,0,.13);
       transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
     }
 
@@ -278,24 +302,40 @@
       position: absolute;
       inset: -5px;
       border-radius: inherit;
-      border: 1px solid rgba(255,255,255,.45);
-      opacity: .55;
-      animation: btnPulse 1.6s ease-in-out infinite;
+      border: 1px solid rgba(255,255,255,.46);
+      opacity: .5;
+      animation: btnPulse 1.55s ease-in-out infinite alternate;
       z-index: -1;
     }
 
     @keyframes btnPulse {
-      from { transform: scale(.98); opacity: .25; }
-      to { transform: scale(1.08); opacity: .65; }
+      from { transform: scale(.985); opacity: .22; }
+      to { transform: scale(1.08); opacity: .68; }
     }
 
-    #startBtn:active {
-      transform: scale(.96);
+    #startBtn:active,
+    .ghost-btn:active,
+    #fallbackBtn:active,
+    #actionDock button:active {
+      transform: scale(.95);
+    }
+
+    .ghost-btn {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: var(--radius-pill);
+      padding: 12px 16px;
+      min-width: 210px;
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.78);
+      font-weight: 850;
+      letter-spacing: .12em;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
     }
 
     .hint {
       display: block;
-      margin-top: 16px;
+      margin-top: 15px;
       color: rgba(255,255,255,.50);
       font-size: 12px;
       line-height: 1.35;
@@ -306,7 +346,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin: 20px auto 0;
-      max-width: 340px;
+      max-width: 350px;
     }
 
     .mini-grid span {
@@ -316,9 +356,11 @@
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.72);
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 850;
       letter-spacing: .12em;
     }
+
+    /* HUD */
 
     #topHud {
       position: fixed;
@@ -330,15 +372,15 @@
       border-radius: var(--radius-pill);
       border: 1px solid rgba(255,255,255,.20);
       background: rgba(0,0,0,.58);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      color: rgba(255,255,255,.90);
+      backdrop-filter: blur(15px) saturate(150%);
+      -webkit-backdrop-filter: blur(15px) saturate(150%);
+      color: rgba(255,255,255,.92);
       font-size: 11px;
-      font-weight: 850;
+      font-weight: 900;
       letter-spacing: .18em;
       text-align: center;
       pointer-events: none;
-      box-shadow: 0 0 28px rgba(255,255,255,.10);
+      box-shadow: 0 0 30px rgba(255,255,255,.10);
     }
 
     #topHud::before {
@@ -355,8 +397,8 @@
     }
 
     @keyframes dotBlink {
-      from { opacity: .35; transform: scale(.8); }
-      to { opacity: 1; transform: scale(1.12); }
+      from { opacity: .34; transform: scale(.8); }
+      to { opacity: 1; transform: scale(1.15); }
     }
 
     #scanFrame {
@@ -364,10 +406,10 @@
       left: 50%;
       top: 50%;
       z-index: 9997;
-      width: min(68vw, 330px);
+      width: min(68vw, 340px);
       aspect-ratio: .56;
       transform: translate(-50%, -50%);
-      border-radius: 28px;
+      border-radius: 30px;
       pointer-events: none;
       opacity: .72;
       transition: opacity .25s ease, transform .25s ease;
@@ -389,22 +431,22 @@
     #scanFrame::before {
       border: 1px solid rgba(255,255,255,.26);
       box-shadow:
-        0 0 50px rgba(255,255,255,.10),
-        inset 0 0 40px rgba(255,255,255,.06);
+        0 0 54px rgba(255,255,255,.11),
+        inset 0 0 42px rgba(255,255,255,.06);
     }
 
     #scanFrame::after {
       background:
-        linear-gradient(#fff,#fff) left top / 42px 2px no-repeat,
-        linear-gradient(#fff,#fff) left top / 2px 42px no-repeat,
-        linear-gradient(#fff,#fff) right top / 42px 2px no-repeat,
-        linear-gradient(#fff,#fff) right top / 2px 42px no-repeat,
-        linear-gradient(#fff,#fff) left bottom / 42px 2px no-repeat,
-        linear-gradient(#fff,#fff) left bottom / 2px 42px no-repeat,
-        linear-gradient(#fff,#fff) right bottom / 42px 2px no-repeat,
-        linear-gradient(#fff,#fff) right bottom / 2px 42px no-repeat;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,.65));
-      animation: framePulse 1.4s ease-in-out infinite alternate;
+        linear-gradient(#fff,#fff) left top / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) left top / 2px 46px no-repeat,
+        linear-gradient(#fff,#fff) right top / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) right top / 2px 46px no-repeat,
+        linear-gradient(#fff,#fff) left bottom / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) left bottom / 2px 46px no-repeat,
+        linear-gradient(#fff,#fff) right bottom / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) right bottom / 2px 46px no-repeat;
+      filter: drop-shadow(0 0 11px rgba(255,255,255,.70));
+      animation: framePulse 1.35s ease-in-out infinite alternate;
     }
 
     #scanLine {
@@ -416,17 +458,17 @@
       border-radius: 99px;
       background: linear-gradient(90deg, transparent, #fff, transparent);
       box-shadow: 0 0 18px rgba(255,255,255,.85);
-      animation: scanLineMove 2s ease-in-out infinite alternate;
+      animation: scanLineMove 2.1s ease-in-out infinite alternate;
     }
 
     @keyframes framePulse {
-      from { opacity: .45; }
-      to { opacity: 1; }
+      from { opacity: .45; transform: scale(.99); }
+      to { opacity: 1; transform: scale(1.01); }
     }
 
     @keyframes scanLineMove {
       from { transform: translateY(0); opacity: .25; }
-      to { transform: translateY(330px); opacity: .90; }
+      to { transform: translateY(342px); opacity: .9; }
     }
 
     #bottomStatus {
@@ -440,12 +482,12 @@
       border: 1px solid rgba(255,255,255,.16);
       color: rgba(255,255,255,.82);
       font-size: 10px;
-      font-weight: 850;
+      font-weight: 900;
       letter-spacing: .14em;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(11px);
+      -webkit-backdrop-filter: blur(11px);
       pointer-events: none;
-      box-shadow: 0 0 24px rgba(0,0,0,.4);
+      box-shadow: 0 0 24px rgba(0,0,0,.42);
     }
 
     #fallbackBtn {
@@ -456,14 +498,15 @@
       border: 1px solid rgba(255,255,255,.18);
       border-radius: var(--radius-pill);
       background: rgba(0,0,0,.58);
-      color: rgba(255,255,255,.82);
+      color: rgba(255,255,255,.84);
       padding: 9px 12px;
       font-size: 10px;
       font-weight: 900;
       letter-spacing: .13em;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(11px);
+      -webkit-backdrop-filter: blur(11px);
       cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease;
     }
 
     #actionDock {
@@ -473,17 +516,17 @@
       transform: translateX(-50%) translateY(18px) scale(.96);
       z-index: 9999;
       display: flex;
-      gap: 10px;
+      gap: 9px;
       padding: 8px;
       border-radius: var(--radius-pill);
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.58);
       border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(16px) saturate(150%);
-      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      backdrop-filter: blur(17px) saturate(155%);
+      -webkit-backdrop-filter: blur(17px) saturate(155%);
       opacity: 0;
       pointer-events: none;
       transition: opacity .24s ease, transform .24s ease;
-      box-shadow: 0 0 40px rgba(255,255,255,.12);
+      box-shadow: 0 0 44px rgba(255,255,255,.13);
     }
 
     #actionDock.active {
@@ -498,7 +541,7 @@
       padding: 12px 14px;
       font-size: 10px;
       font-weight: 950;
-      letter-spacing: .11em;
+      letter-spacing: .105em;
       background: rgba(255,255,255,.96);
       color: #000;
       box-shadow: 0 0 18px rgba(255,255,255,.20);
@@ -507,15 +550,13 @@
       transition: transform .16s ease, opacity .16s ease;
     }
 
-    #actionDock button:active {
-      transform: scale(.94);
-    }
-
-    #actionDock button:nth-child(2) {
+    #actionDock button.dark {
       background: rgba(0,0,0,.82);
       color: #fff;
       border: 1px solid rgba(255,255,255,.38);
     }
+
+    /* DIGITAL CARD */
 
     #digitalCard {
       position: fixed;
@@ -525,34 +566,77 @@
       place-items: center;
       padding: 22px;
       background:
-        radial-gradient(circle at center, rgba(255,255,255,.12), rgba(0,0,0,.96) 62%),
+        radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.96) 62%),
         #000;
+      overflow: hidden;
     }
 
     .digital-inner {
-      width: min(440px, 94vw);
+      width: min(460px, 94vw);
       border: 1px solid rgba(255,255,255,.20);
       border-radius: 34px;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
-        rgba(0,0,0,.76);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 26px;
+        linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.02)),
+        rgba(0,0,0,.78);
+      backdrop-filter: blur(22px) saturate(145%);
+      -webkit-backdrop-filter: blur(22px) saturate(145%);
+      padding: 27px;
       text-align: center;
-      box-shadow: 0 0 80px rgba(255,255,255,.12);
+      box-shadow: 0 0 85px rgba(255,255,255,.13);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .digital-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent, rgba(255,255,255,.07), transparent);
+      transform: translateX(-100%);
+      animation: digitalShine 4s ease-in-out infinite;
+    }
+
+    @keyframes digitalShine {
+      0%, 55% { transform: translateX(-100%); opacity: 0; }
+      70% { opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+
+    .digital-inner > * {
+      position: relative;
+      z-index: 2;
     }
 
     .digital-inner h2 {
       margin: 16px 0 8px;
-      letter-spacing: .22em;
-      font-size: 25px;
+      letter-spacing: .24em;
+      font-size: 26px;
     }
 
     .digital-inner p {
-      color: rgba(255,255,255,.72);
-      line-height: 1.5;
+      color: rgba(255,255,255,.74);
+      line-height: 1.52;
       margin: 0 0 18px;
+    }
+
+    .digital-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0 20px;
+    }
+
+    .digital-tags span {
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.055);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .11em;
+      color: rgba(255,255,255,.72);
     }
 
     .digital-actions {
@@ -567,7 +651,7 @@
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 999px;
       padding: 13px 14px;
-      background: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.94);
       color: #000;
       font-weight: 950;
       letter-spacing: .12em;
@@ -576,17 +660,22 @@
     }
 
     .digital-actions .dark {
-      background: rgba(0,0,0,.72);
+      background: rgba(0,0,0,.74);
       color: #fff;
+    }
+
+    .digital-actions .ghost {
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.78);
     }
 
     .a-loader-title {
       display: none !important;
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
       .start-card {
-        padding: 30px 20px 24px;
+        padding: 30px 19px 23px;
       }
 
       .mini-grid {
@@ -602,35 +691,62 @@
       }
 
       #actionDock {
-        width: calc(100vw - 24px);
+        width: calc(100vw - 20px);
         justify-content: center;
         border-radius: 26px;
+        gap: 7px;
       }
 
       #actionDock button {
         flex: 1;
-        padding: 13px 8px;
-        font-size: 9px;
+        padding: 13px 7px;
+        font-size: 8.8px;
       }
 
       #fallbackBtn {
         display: none;
+      }
+
+      #bottomStatus {
+        font-size: 9px;
+      }
+
+      #scanFrame {
+        width: min(72vw, 315px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
       }
     }
   </style>
 </head>
 
 <body>
+  <canvas id="fxCanvas"></canvas>
+
   <section id="startScreen">
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
       <div class="subtitle">TAP · SCAN · EXPERIENCE</div>
+
       <p>
         Насочи камерата към <b>черната страна</b> на визитката.
         AR слоят ще се заключи върху реалната карта и ще се движи с нея.
       </p>
-      <button id="startBtn">START AR</button>
+
+      <div class="start-actions">
+        <button id="startBtn">START AR</button>
+        <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
+      </div>
+
       <span class="hint">Работи през HTTPS / Vercel. Не през file:///</span>
 
       <div class="mini-grid">
@@ -651,8 +767,9 @@
   <button id="fallbackBtn">DIGITAL CARD</button>
 
   <div id="actionDock">
-    <button id="openSite">OPEN WEBSITE</button>
-    <button id="contactMail">CONTACT</button>
+    <button id="openSite">WEBSITE</button>
+    <button id="callBtn" class="dark">CALL</button>
+    <button id="contactMail">EMAIL</button>
   </div>
 
   <section id="digitalCard" class="hidden">
@@ -664,10 +781,18 @@
         които искат да изглеждат като бъдещето.
       </p>
 
+      <div class="digital-tags">
+        <span>AR CARDS</span>
+        <span>NFC</span>
+        <span>WEBSITES</span>
+        <span>AI SYSTEMS</span>
+      </div>
+
       <div class="digital-actions">
-        <a href="https://soulflameAR.vercel.app" target="_blank">OPEN WEBSITE</a>
-        <a href="mailto:soulflame.mitko@gmail.com?subject=SoulFlame%20AR" class="dark">CONTACT</a>
-        <button id="closeDigital">BACK TO AR</button>
+        <a id="digitalWebsite" href="#" target="_blank">OPEN WEBSITE</a>
+        <a id="digitalCall" href="#" class="dark">CALL NOW</a>
+        <a id="digitalEmail" href="#" class="dark">EMAIL</a>
+        <button id="closeDigital" class="ghost">BACK TO AR</button>
       </div>
     </div>
   </section>
@@ -688,67 +813,75 @@
     device-orientation-permission-ui="enabled: false"
     embedded
   >
-    <a-assets>
-      <canvas id="holoTexture" width="1024" height="1024"></canvas>
-    </a-assets>
+    <a-assets></a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
 
       <a-plane
-        position="0 0 0.006"
-        width="1.02"
-        height="1.78"
+        position="0 0 0.004"
+        width="1.05"
+        height="1.82"
         color="#ffffff"
-        opacity="0.10"
+        opacity="0.08"
         material="transparent: true; depthWrite: false"
       ></a-plane>
 
       <a-plane
-        position="0 0 0.012"
-        width="1.08"
-        height="1.86"
+        position="0 0 0.010"
+        width="1.12"
+        height="1.92"
         color="#ffffff"
-        opacity="0.055"
+        opacity="0.045"
         material="transparent: true; depthWrite: false; side: double"
-        animation="property: opacity; from: 0.035; to: 0.10; dur: 1200; dir: alternate; loop: true; easing: easeInOutSine"
+        animation="property: opacity; from: 0.025; to: 0.10; dur: 1250; dir: alternate; loop: true; easing: easeInOutSine"
       ></a-plane>
 
       <a-ring
         position="0 0.62 0.035"
         radius-inner="0.17"
-        radius-outer="0.185"
+        radius-outer="0.186"
         color="#ffffff"
-        opacity="0.84"
+        opacity="0.88"
         material="transparent: true; depthWrite: false"
-        animation="property: rotation; to: 0 0 360; dur: 9000; loop: true; easing: linear"
+        animation="property: rotation; to: 0 0 360; dur: 8800; loop: true; easing: linear"
       ></a-ring>
 
       <a-ring
         position="0 0.62 0.04"
         radius-inner="0.235"
-        radius-outer="0.242"
+        radius-outer="0.244"
         color="#ffffff"
-        opacity="0.40"
+        opacity="0.42"
         material="transparent: true; depthWrite: false"
-        animation="property: rotation; to: 0 0 -360; dur: 12000; loop: true; easing: linear"
+        animation="property: rotation; to: 0 0 -360; dur: 11800; loop: true; easing: linear"
+      ></a-ring>
+
+      <a-ring
+        position="0 0.62 0.045"
+        radius-inner="0.29"
+        radius-outer="0.296"
+        color="#ffffff"
+        opacity="0.22"
+        material="transparent: true; depthWrite: false"
+        animation="property: scale; from: 0.92 0.92 0.92; to: 1.10 1.10 1.10; dur: 1600; dir: alternate; loop: true; easing: easeInOutSine"
       ></a-ring>
 
       <a-text
         value="SOULFLAME"
-        position="-0.29 0.39 0.05"
+        position="-0.29 0.39 0.055"
         width="1.2"
         align="center"
         color="#ffffff"
-        opacity="0.96"
+        opacity="0.98"
         material="transparent: true; depthWrite: false"
-        animation="property: position; from: -0.29 0.39 0.05; to: -0.29 0.43 0.05; dur: 1800; dir: alternate; loop: true; easing: easeInOutSine"
+        animation="property: position; from: -0.29 0.39 0.055; to: -0.29 0.43 0.055; dur: 1750; dir: alternate; loop: true; easing: easeInOutSine"
       ></a-text>
 
       <a-text
         value="AR / NFC / AI SYSTEMS"
-        position="-0.33 0.28 0.05"
+        position="-0.33 0.28 0.055"
         width="0.95"
         align="center"
         color="#ffffff"
@@ -756,10 +889,10 @@
         material="transparent: true; depthWrite: false"
       ></a-text>
 
-      <a-entity position="0.72 0.22 0.07">
+      <a-entity position="0.72 0.22 0.075">
         <a-plane
-          width="0.92"
-          height="0.46"
+          width="0.94"
+          height="0.48"
           color="#ffffff"
           opacity="0.16"
           material="transparent: true; depthWrite: false"
@@ -767,10 +900,10 @@
 
         <a-text
           value="PORTFOLIO"
-          position="-0.39 0.16 0.025"
+          position="-0.40 0.16 0.025"
           width="0.92"
           color="#ffffff"
-          opacity="0.92"
+          opacity="0.94"
           align="left"
           material="transparent: true; depthWrite: false"
         ></a-text>
@@ -798,7 +931,7 @@
           width="0.32"
           height="0.22"
           color="#111111"
-          opacity="0.70"
+          opacity="0.72"
           material="transparent: true; depthWrite: false"
         ></a-plane>
 
@@ -812,10 +945,10 @@
         ></a-text>
       </a-entity>
 
-      <a-entity position="0.72 -0.30 0.07">
+      <a-entity position="0.72 -0.30 0.075">
         <a-plane
-          width="0.92"
-          height="0.56"
+          width="0.94"
+          height="0.58"
           color="#ffffff"
           opacity="0.15"
           material="transparent: true; depthWrite: false"
@@ -823,16 +956,16 @@
 
         <a-plane
           position="0 0.20 0.025"
-          width="0.80"
+          width="0.82"
           height="0.13"
           color="#ffffff"
-          opacity="0.90"
+          opacity="0.92"
           material="transparent: true; depthWrite: false"
         ></a-plane>
 
         <a-text
           value="SERVICES"
-          position="-0.32 0.16 0.05"
+          position="-0.33 0.16 0.05"
           width="0.8"
           color="#000000"
           align="left"
@@ -841,7 +974,7 @@
 
         <a-text
           value="AR VIZITKI\nNFC + AR USLUGI\nSAITOVE I AI SISTEMI"
-          position="-0.36 0.03 0.05"
+          position="-0.37 0.03 0.05"
           width="0.78"
           color="#ffffff"
           align="left"
@@ -850,12 +983,12 @@
         ></a-text>
       </a-entity>
 
-      <a-entity position="-0.08 -0.96 0.07">
+      <a-entity position="-0.08 -0.96 0.075">
         <a-sphere
           position="-0.36 0.18 0"
           radius="0.025"
           color="#ffffff"
-          opacity="0.92"
+          opacity="0.94"
           material="transparent: true; depthWrite: false"
         ></a-sphere>
 
@@ -864,7 +997,7 @@
           radius="0.004"
           height="0.24"
           color="#ffffff"
-          opacity="0.80"
+          opacity="0.82"
           material="transparent: true; depthWrite: false"
         ></a-cylinder>
 
@@ -888,7 +1021,7 @@
         ></a-text>
       </a-entity>
 
-      <a-entity position="0 0 0.09">
+      <a-entity position="0 0 0.095">
         <a-sphere position="-0.38 0.62 0" radius="0.012" color="#ffffff" opacity="0.85"></a-sphere>
         <a-sphere position="0.38 0.54 0" radius="0.009" color="#ffffff" opacity="0.60"></a-sphere>
         <a-sphere position="-0.32 -0.12 0" radius="0.008" color="#ffffff" opacity="0.60"></a-sphere>
@@ -896,7 +1029,7 @@
         <a-sphere position="0.06 -0.74 0" radius="0.006" color="#ffffff" opacity="0.54"></a-sphere>
       </a-entity>
 
-      <a-entity position="0 0 0.08">
+      <a-entity position="0 0 0.085">
         <a-cylinder
           position="0.42 -0.55 0"
           radius="0.003"
@@ -922,12 +1055,22 @@
   </a-scene>
 
   <script>
+    const CONFIG = {
+      siteUrl: "https://soulflameAR.vercel.app",
+      email: "soulflame.mitko@gmail.com",
+      phone: "+359000000000",
+      mailSubject: "SoulFlame AR",
+      scanTimeoutMs: 14000
+    };
+
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
+    const openDigitalFromStart = document.getElementById("openDigitalFromStart");
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
     const actionDock = document.getElementById("actionDock");
     const openSite = document.getElementById("openSite");
+    const callBtn = document.getElementById("callBtn");
     const contactMail = document.getElementById("contactMail");
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
@@ -935,33 +1078,48 @@
     const fallbackBtn = document.getElementById("fallbackBtn");
     const digitalCard = document.getElementById("digitalCard");
     const closeDigital = document.getElementById("closeDigital");
+    const digitalWebsite = document.getElementById("digitalWebsite");
+    const digitalCall = document.getElementById("digitalCall");
+    const digitalEmail = document.getElementById("digitalEmail");
 
-    const SITE_URL = "https://soulflameAR.vercel.app";
-    const EMAIL = "soulflame.mitko@gmail.com";
+    const fxCanvas = document.getElementById("fxCanvas");
+    const fxCtx = fxCanvas.getContext("2d");
 
     let arSystem = null;
     let started = false;
     let visible = false;
+    let scanTimer = null;
 
-    openSite.addEventListener("click", () => {
-      window.open(SITE_URL, "_blank");
-    });
+    digitalWebsite.href = CONFIG.siteUrl;
+    digitalCall.href = `tel:${CONFIG.phone}`;
+    digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
 
+    openSite.addEventListener("click", () => window.open(CONFIG.siteUrl, "_blank"));
+    callBtn.addEventListener("click", () => window.location.href = `tel:${CONFIG.phone}`);
     contactMail.addEventListener("click", () => {
-      window.location.href = `mailto:${EMAIL}?subject=SoulFlame%20AR`;
+      window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
     });
 
-    fallbackBtn.addEventListener("click", () => {
+    fallbackBtn.addEventListener("click", openDigitalCard);
+    openDigitalFromStart.addEventListener("click", openDigitalCard);
+    closeDigital.addEventListener("click", () => digitalCard.classList.add("hidden"));
+
+    function openDigitalCard() {
       digitalCard.classList.remove("hidden");
-    });
+    }
 
-    closeDigital.addEventListener("click", () => {
-      digitalCard.classList.add("hidden");
-    });
+    function setStatus(top, bottom) {
+      topHud.textContent = top;
+      bottomStatus.textContent = bottom;
+    }
+
+    function haptic(ms = 35) {
+      if (navigator.vibrate) navigator.vibrate(ms);
+    }
 
     scene.addEventListener("loaded", () => {
       arSystem = scene.systems["mindar-image-system"];
-      bottomStatus.textContent = "AR READY";
+      setStatus("AR SYSTEM READY", "READY");
     });
 
     startBtn.addEventListener("click", async () => {
@@ -981,14 +1139,22 @@
         await arSystem.start();
 
         startScreen.classList.add("hidden");
-        topHud.textContent = "SCAN SOULFLAME CARD";
-        bottomStatus.textContent = "SCANNING";
         scanFrame.classList.remove("locked");
+        setStatus("SCAN SOULFLAME CARD", "SCANNING");
+
+        clearTimeout(scanTimer);
+        scanTimer = setTimeout(() => {
+          if (started && !visible) {
+            setStatus("TARGET NOT FOUND", "TRY MORE LIGHT");
+            openDigitalCard();
+          }
+        }, CONFIG.scanTimeoutMs);
+
       } catch (error) {
         started = false;
         startBtn.textContent = "START AR";
-        bottomStatus.textContent = "CAMERA ERROR";
-        digitalCard.classList.remove("hidden");
+        setStatus("CAMERA ERROR", "OPEN DIGITAL CARD");
+        openDigitalCard();
         alert("Камерата не тръгна. Отвори през HTTPS/Vercel и разреши достъп до камерата.");
         console.error(error);
       }
@@ -996,20 +1162,16 @@
 
     target.addEventListener("targetFound", () => {
       visible = true;
-      topHud.textContent = "SOULFLAME LOCKED";
-      bottomStatus.textContent = "TARGET FOUND";
+      clearTimeout(scanTimer);
+      setStatus("SOULFLAME LOCKED", "TARGET FOUND");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
-
-      if (navigator.vibrate) {
-        navigator.vibrate(35);
-      }
+      haptic(38);
     });
 
     target.addEventListener("targetLost", () => {
       visible = false;
-      topHud.textContent = "SCAN SOULFLAME CARD";
-      bottomStatus.textContent = "TARGET LOST";
+      setStatus("SCAN SOULFLAME CARD", "TARGET LOST");
       actionDock.classList.remove("active");
       scanFrame.classList.remove("locked");
     });
@@ -1020,16 +1182,94 @@
           await arSystem.stop();
           started = false;
           visible = false;
+          clearTimeout(scanTimer);
           actionDock.classList.remove("active");
           scanFrame.classList.remove("locked");
           startScreen.classList.remove("hidden");
           startBtn.textContent = "START AR";
-          bottomStatus.textContent = "PAUSED";
+          setStatus("AR PAUSED", "PAUSED");
         } catch (error) {
           console.warn(error);
         }
       }
     });
+
+    /* PARTICLE BACKGROUND */
+
+    const particles = [];
+    const PARTICLE_COUNT = 70;
+
+    function resizeFx() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      fxCanvas.width = Math.floor(window.innerWidth * dpr);
+      fxCanvas.height = Math.floor(window.innerHeight * dpr);
+      fxCanvas.style.width = window.innerWidth + "px";
+      fxCanvas.style.height = window.innerHeight + "px";
+      fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function createParticles() {
+      particles.length = 0;
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 1.8 + .4,
+          vx: (Math.random() - .5) * .22,
+          vy: (Math.random() - .5) * .22,
+          a: Math.random() * .55 + .15
+        });
+      }
+    }
+
+    function drawParticles() {
+      fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = window.innerWidth;
+        if (p.x > window.innerWidth) p.x = 0;
+        if (p.y < 0) p.y = window.innerHeight;
+        if (p.y > window.innerHeight) p.y = 0;
+
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        fxCtx.fillStyle = `rgba(255,255,255,${p.a})`;
+        fxCtx.fill();
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 105) {
+            fxCtx.beginPath();
+            fxCtx.moveTo(a.x, a.y);
+            fxCtx.lineTo(b.x, b.y);
+            fxCtx.strokeStyle = `rgba(255,255,255,${(1 - dist / 105) * .10})`;
+            fxCtx.lineWidth = 1;
+            fxCtx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener("resize", () => {
+      resizeFx();
+      createParticles();
+    });
+
+    resizeFx();
+    createParticles();
+    drawParticles();
   </script>
 </body>
 </html>
