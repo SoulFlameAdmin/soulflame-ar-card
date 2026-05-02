@@ -519,12 +519,29 @@
     }
 
     .safe-model-box {
+      position: relative;
       width: 100%;
       height: min(56vh, 420px);
       border-radius: 24px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,.10);
       background: #100805;
+    }
+
+    .safe-model-box model-viewer.hidden {
+      display: none;
+    }
+
+    .fallback-image {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 24px;
+    }
+
+    .fallback-image.active {
+      display: block;
     }
 
     .safe-actions {
@@ -657,12 +674,12 @@
           <div class="brand">SoulFlame AR Menu</div>
           <h1>Виж ястието преди поръчка</h1>
           <p>
-            NFC/QR отваря менюто. Ако AR не зареди, автоматично ще се отвори безопасен 3D режим без камера.
+            NFC/QR отваря менюто. Ако AR не зареди, системата показва 3D режим, а при нужда — снимка на ястието.
           </p>
           <div class="badge-row">
             <span class="badge">3D режим</span>
             <span class="badge">AR маса</span>
-            <span class="badge">Fallback без камера</span>
+            <span class="badge">Снимка fallback</span>
           </div>
         </div>
       </div>
@@ -676,12 +693,12 @@
       <div class="dish-card">
         <div class="dish-row">
           <div>
-            <h2 class="dish-title">Signature AR Dish</h2>
+            <h2 class="dish-title">Печена риба със свежа гарнитура</h2>
             <p class="dish-subtitle">
-              3D визуализация на ястие за ресторантско меню. Клиентът вижда продукта преди да поръча.
+              Виж размера, формата и презентацията на ястието преди да поръчаш. 3D/AR визуализация директно от NFC или QR.
             </p>
           </div>
-          <div class="price">12.90€</div>
+          <div class="price">18.90€</div>
         </div>
 
         <div class="tags">
@@ -694,33 +711,33 @@
         <h3 class="section-title">Информация</h3>
 
         <div class="ingredients">
-          <div class="ingredient">Модел: ar/food2.glb</div>
-          <div class="ingredient">Ако не зареди: 3D demo без камера</div>
-          <div class="ingredient">Камера режим: ръчно поставяне върху маса</div>
-          <div class="ingredient">Истински AR: само при съвместими устройства</div>
+          <div class="ingredient">Основен продукт: риба</div>
+          <div class="ingredient">Гарнитура: зеленчуци / картофи</div>
+          <div class="ingredient">Ако 3D не зареди: показва снимка</div>
+          <div class="ingredient">Истински AR: при съвместими устройства</div>
         </div>
 
         <div class="notice">
-          Професионален fallback: ако AR/3D не зареди до 10 секунди, клиентът пак вижда ястието в резервен 3D режим без камера.
+          Професионален fallback: ако AR/3D не зареди до 10 секунди, клиентът вижда резервен 3D режим; ако и той не зареди — реална снимка на ястието.
         </div>
       </div>
     </section>
 
     <nav class="cta-grid">
       <button class="btn btn-camera" id="openSafeDemoBtn">
-        3D демо
+        Разгледай в 3D
       </button>
 
       <button class="btn btn-primary" id="openARBtn">
-        AR на масата
+        Виж върху масата
       </button>
 
       <button class="btn btn-camera" id="openCameraBtn">
-        Камера режим
+        Отвори камера
       </button>
 
       <a class="btn btn-secondary" href="tel:+359888000000">
-        Обади се
+        Поръчай / Обади се
       </a>
     </nav>
   </main>
@@ -748,10 +765,10 @@
   <section class="safe-demo" id="safeDemo">
     <div class="safe-demo-card">
       <button class="safe-close" id="safeCloseBtn">×</button>
-      <div class="safe-label">Резервен 3D режим</div>
+      <div class="safe-label">Резервен режим</div>
       <h2>Виж ястието без AR</h2>
       <p>
-        Ако телефонът не поддържа AR или моделът зарежда бавно, тук клиентът пак може да разгледа продукта като 3D обект.
+        Ако телефонът не поддържа AR или моделът зарежда бавно, тук клиентът пак може да разгледа продукта.
       </p>
 
       <div class="safe-model-box">
@@ -767,15 +784,22 @@
           exposure="1"
           environment-image="neutral"
         ></model-viewer>
+
+        <img
+          id="fallbackImage"
+          class="fallback-image"
+          src="images/food2.jpg"
+          alt="Снимка на ястието"
+        />
       </div>
 
       <div class="safe-error" id="safeError">
-        3D моделът не се зареди. Провери дали файлът <b>ar/food2.glb</b> е качен правилно.
+        3D моделът не се зареди, затова показваме реална снимка на ястието. Клиентът пак вижда продукта.
       </div>
 
       <div class="safe-actions">
         <button class="safe-primary" id="safeCameraBtn">
-          Пробвай камера режим
+          Пробвай камера
         </button>
         <a class="safe-secondary" href="tel:+359888000000">
           Поръчай / Обади се
@@ -792,6 +816,7 @@
 
     const modelViewer = document.getElementById("foodAR");
     const safeModel = document.getElementById("safeModel");
+    const fallbackImage = document.getElementById("fallbackImage");
     const loaderLine = document.getElementById("loaderLine");
 
     const openARBtn = document.getElementById("openARBtn");
@@ -850,10 +875,8 @@
     }
 
     function openSafeDemo(reasonText) {
-      if (safeDemoOpened) return;
-
-      safeDemoOpened = true;
       safeDemo.classList.add("active");
+      safeDemoOpened = true;
 
       if (reasonText) {
         showToast(reasonText);
@@ -887,21 +910,30 @@
     });
 
     modelViewer.addEventListener("error", () => {
-      openSafeDemo("Основният 3D/AR режим не се зареди. Отварям резервен 3D режим.");
+      openSafeDemo("Основният 3D/AR режим не се зареди. Отварям резервен режим.");
     });
 
     safeModel.addEventListener("load", () => {
       safeModelLoaded = true;
       safeError.classList.remove("active");
+      safeModel.classList.remove("hidden");
+      fallbackImage.classList.remove("active");
     });
 
     safeModel.addEventListener("error", () => {
       safeError.classList.add("active");
+      safeModel.classList.add("hidden");
+      fallbackImage.classList.add("active");
+    });
+
+    fallbackImage.addEventListener("error", () => {
+      safeError.classList.add("active");
+      safeError.innerHTML = "Не се зареди нито 3D моделът, нито снимката. Провери файловете <b>ar/food2.glb</b> и <b>images/food2.jpg</b>.";
     });
 
     setTimeout(() => {
       if (!mainModelLoaded) {
-        openSafeDemo("3D/AR режимът зарежда твърде бавно. Отварям резервен 3D режим без камера.");
+        openSafeDemo("3D/AR режимът зарежда твърде бавно. Отварям резервен режим без камера.");
       }
     }, FALLBACK_TIMEOUT_MS);
 
@@ -922,10 +954,10 @@
         if (modelViewer && modelViewer.canActivateAR) {
           await modelViewer.activateAR();
         } else {
-          openSafeDemo("Този телефон не поддържа истински AR. Отварям 3D демо.");
+          openSafeDemo("Този телефон не поддържа истински AR. Отварям 3D/снимка режим.");
         }
       } catch (err) {
-        openSafeDemo("AR режимът не се отвори. Отварям 3D демо.");
+        openSafeDemo("AR режимът не се отвори. Отварям 3D/снимка режим.");
       }
     });
 
@@ -937,7 +969,7 @@
       try {
         await startCameraMode();
       } catch (error) {
-        openSafeDemo("Камерата не тръгна. Оставам в 3D демо режим.");
+        openSafeDemo("Камерата не тръгна. Оставам в резервен режим.");
       }
     });
 
@@ -993,7 +1025,7 @@
         initThreeOverlay();
         bindPlacementEvents();
 
-        showToast("Камера режимът е активен. Тапни върху масата, за да поставиш ястието.");
+        showToast("Камерата е активна. Тапни върху масата, за да поставиш ястието.");
       } catch (error) {
         stopCameraMode();
         showToast("Камерата не тръгна. Разреши достъп до камерата или отвори през Chrome/Safari.");
