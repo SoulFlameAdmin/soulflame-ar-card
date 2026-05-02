@@ -6,7 +6,8 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
-  <title>SoulFlame AR Food</title>
+
+  <title>AR Меню | SoulFlame Restaurant Demo</title>
 
   <script
     type="module"
@@ -16,29 +17,60 @@
   <style>
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
-      background: #000;
+      min-height: 100%;
+      background: #080604;
       font-family: Arial, sans-serif;
-      overflow: hidden;
+      color: #fff;
+      overflow-x: hidden;
     }
 
     body {
+      background:
+        radial-gradient(circle at top, rgba(255, 190, 90, 0.18), transparent 36%),
+        linear-gradient(180deg, #120b05 0%, #050403 100%);
+    }
+
+    .app {
+      width: 100%;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    .top-ui {
-      position: fixed;
-      top: 0;
+    .hero {
+      position: relative;
+      height: 62vh;
+      min-height: 460px;
+      background: #090705;
+      overflow: hidden;
+      border-bottom-left-radius: 34px;
+      border-bottom-right-radius: 34px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at center, rgba(255, 180, 80, 0.20), transparent 42%),
+        linear-gradient(180deg, #16100b 0%, #050403 100%);
+      --poster-color: transparent;
+    }
+
+    .top-glass {
+      position: absolute;
+      top: env(safe-area-inset-top, 0);
       left: 0;
       right: 0;
-      z-index: 10;
+      z-index: 5;
       padding: 14px;
       display: flex;
       justify-content: center;
@@ -46,102 +78,392 @@
     }
 
     .top-card {
-      pointer-events: auto;
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 16px;
+      width: min(92%, 520px);
+      padding: 14px 16px;
+      border-radius: 22px;
+      background: rgba(0, 0, 0, 0.56);
+      border: 1px solid rgba(255, 204, 128, 0.22);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(14px);
       text-align: center;
-      max-width: 92%;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      pointer-events: auto;
+    }
+
+    .brand {
+      margin: 0 0 4px;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ffcf7a;
+      font-weight: 800;
     }
 
     .top-card h1 {
-      margin: 0 0 6px 0;
-      font-size: 20px;
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.08;
     }
 
     .top-card p {
-      margin: 0;
-      font-size: 14px;
+      margin: 8px 0 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .ar-badge {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255, 198, 93, 0.14);
+      border: 1px solid rgba(255, 198, 93, 0.38);
+      color: #ffd27e;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .bottom-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      z-index: 5;
+      width: min(92%, 520px);
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      font-size: 13px;
       line-height: 1.4;
-      opacity: 0.95;
+      color: rgba(255, 255, 255, 0.9);
     }
 
-    model-viewer {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, #101010 0%, #1c1c1c 100%);
-      --poster-color: transparent;
+    .content {
+      width: min(94%, 720px);
+      margin: 0 auto;
+      padding: 22px 0 28px;
     }
 
-    .hint {
+    .dish-card {
+      margin-top: -8px;
+      padding: 18px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.38);
+    }
+
+    .dish-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .dish-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.08;
+    }
+
+    .dish-subtitle {
+      margin: 8px 0 0;
+      font-size: 14px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.76);
+    }
+
+    .price {
+      flex: 0 0 auto;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: #ffbd59;
+      color: #1b1005;
+      font-weight: 900;
+      font-size: 18px;
+      box-shadow: 0 10px 30px rgba(255, 189, 89, 0.25);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .section-title {
+      margin: 22px 0 10px;
+      font-size: 15px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #ffcf7a;
+    }
+
+    .ingredients {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .ingredient {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .cta-grid {
+      position: sticky;
+      bottom: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: min(94%, 720px);
+      margin: 0 auto;
+      padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0));
+      background: linear-gradient(180deg, transparent, rgba(5, 4, 3, 0.92) 30%);
+    }
+
+    .btn {
+      min-height: 48px;
+      border: none;
+      border-radius: 18px;
+      padding: 12px 14px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ffbd59, #ff7a18);
+      color: #1b1005;
+      box-shadow: 0 14px 34px rgba(255, 122, 24, 0.32);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .mini-note {
+      margin: 14px 0 0;
+      color: rgba(255,255,255,.58);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .toast {
       position: fixed;
       left: 50%;
-      bottom: 20px;
-      transform: translateX(-50%);
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.6);
+      bottom: 92px;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 100;
+      width: min(92%, 420px);
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.78);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
       color: #fff;
-      padding: 10px 14px;
-      border-radius: 14px;
-      font-size: 14px;
-      text-align: center;
-      max-width: 92%;
+      font-size: 13px;
       line-height: 1.4;
-      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      text-align: center;
     }
 
-    .ar-note {
-      color: #ffd166;
-      font-weight: bold;
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-    .fallback-note {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-top: 4px;
+    @media (max-width: 430px) {
+      .hero {
+        height: 58vh;
+        min-height: 430px;
+      }
+
+      .top-card h1 {
+        font-size: 22px;
+      }
+
+      .dish-title {
+        font-size: 21px;
+      }
+
+      .ingredients {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
+  <main class="app">
+    <section class="hero">
+      <model-viewer
+        id="foodAR"
+        src="ar/food2.glb"
+        alt="3D AR ресторантски продукт"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        camera-controls
+        touch-action="pan-y"
+        shadow-intensity="1.25"
+        shadow-softness="0.8"
+        exposure="1"
+        auto-rotate
+        auto-rotate-delay="700"
+        rotation-per-second="26deg"
+        environment-image="neutral"
+        placement="floor"
+        scale="1 1 1"
+        camera-orbit="25deg 70deg 2.4m"
+        min-camera-orbit="auto auto 1.4m"
+        max-camera-orbit="auto auto 4m"
+      >
+      </model-viewer>
 
-  <div class="top-ui">
-    <div class="top-card">
-      <h1>SoulFlame AR Food</h1>
-      <p>
-        Натисни <span class="ar-note">View in your space</span> / <span class="ar-note">AR</span>,
-        насочи към масата и постави храната върху повърхността.
-      </p>
-      <div class="fallback-note">
-        NFC само отваря страницата. AR режимът се стартира с бутон заради защитата на браузъра.
+      <div class="top-glass">
+        <div class="top-card">
+          <div class="brand">SoulFlame AR Menu</div>
+          <h1>Виж ястието на масата</h1>
+          <p>
+            Доближи NFC стикера или сканирай QR кода. Натисни AR бутона и постави продукта върху масата пред теб.
+          </p>
+          <div class="ar-badge">AR продукт · без инсталиране на приложение</div>
+        </div>
       </div>
-    </div>
+
+      <div class="bottom-hint">
+        На Android натисни <b>View in your space</b>. На iPhone ще се отвори <b>AR Quick Look</b>.
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="dish-card">
+        <div class="dish-row">
+          <div>
+            <h2 class="dish-title">Signature AR Dish</h2>
+            <p class="dish-subtitle">
+              Демонстрационно ястие в 3D. Клиентът вижда как изглежда храната преди да поръча.
+            </p>
+          </div>
+          <div class="price">12.90€</div>
+        </div>
+
+        <div class="tags">
+          <span class="tag">3D визуализация</span>
+          <span class="tag">AR меню</span>
+          <span class="tag">NFC маса</span>
+          <span class="tag">QR достъп</span>
+        </div>
+
+        <h3 class="section-title">Състав / информация</h3>
+        <div class="ingredients">
+          <div class="ingredient">Основен продукт: демонстрационно ястие</div>
+          <div class="ingredient">Подходящо за: ресторанти, барове, хотели</div>
+          <div class="ingredient">Идея: клиентът вижда порцията преди поръчка</div>
+          <div class="ingredient">Технология: NFC + QR + Web AR</div>
+        </div>
+
+        <p class="mini-note">
+          Ако телефонът не поддържа истински AR режим, моделът пак може да се разгледа като 3D обект на страницата.
+        </p>
+      </div>
+    </section>
+
+    <nav class="cta-grid">
+      <button class="btn btn-primary full" id="openARBtn">
+        Отвори в AR на масата
+      </button>
+
+      <a class="btn btn-secondary" href="tel:+359888000000">
+        Обади се
+      </a>
+
+      <a
+        class="btn btn-secondary"
+        href="https://www.google.com/maps"
+        target="_blank"
+        rel="noopener"
+      >
+        Локация
+      </a>
+
+      <a
+        class="btn btn-secondary full"
+        href="https://soulflame-ar-card.vercel.app"
+        target="_blank"
+        rel="noopener"
+      >
+        Отвори дигиталното меню
+      </a>
+    </nav>
+  </main>
+
+  <div class="toast" id="toast">
+    Ако AR бутонът не се отвори, използвай иконата AR върху 3D модела. Някои телефони поддържат само 3D преглед без поставяне върху маса.
   </div>
 
-  <model-viewer
-    id="foodAR"
-    src="ar/food2.glb"
-    alt="AR food model"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    camera-controls
-    touch-action="pan-y"
-    shadow-intensity="1"
-    exposure="1"
-    auto-rotate
-    disable-zoom
-    poster=""
-    environment-image="neutral"
-    placement="floor"
-    scale="1 1 1"
-  >
-  </model-viewer>
+  <script>
+    const modelViewer = document.getElementById("foodAR");
+    const openARBtn = document.getElementById("openARBtn");
+    const toast = document.getElementById("toast");
 
-  <div class="hint">
-    След като страницата се отвори от NFC, натисни AR бутона и насочи телефона към маса или под.
-  </div>
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 4200);
+    }
 
+    openARBtn.addEventListener("click", async () => {
+      try {
+        if (modelViewer && modelViewer.canActivateAR) {
+          await modelViewer.activateAR();
+        } else {
+          showToast("Този телефон може да не поддържа истински AR. Можеш да разгледаш продукта като 3D модел тук.");
+        }
+      } catch (err) {
+        showToast("AR режимът не се отвори. Натисни AR иконата върху модела или пробвай с Chrome/Safari.");
+      }
+    });
+
+    modelViewer.addEventListener("load", () => {
+      console.log("SoulFlame AR model loaded: ar/food2.glb");
+    });
+
+    modelViewer.addEventListener("error", () => {
+      showToast("Моделът ar/food2.glb не се зареди. Провери дали файлът е качен правилно.");
+    });
+  </script>
 </body>
 </html>
