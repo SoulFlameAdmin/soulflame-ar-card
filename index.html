@@ -13,6 +13,20 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
+    :root {
+      --bg: #030303;
+      --white: #ffffff;
+      --soft: rgba(255,255,255,.72);
+      --muted: rgba(255,255,255,.52);
+      --glass: rgba(8,8,10,.58);
+      --glass-strong: rgba(0,0,0,.78);
+      --line: rgba(255,255,255,.18);
+      --line-strong: rgba(255,255,255,.36);
+      --shadow: 0 0 80px rgba(255,255,255,.16);
+      --radius-xl: 34px;
+      --radius-pill: 999px;
+    }
+
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -25,18 +39,57 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #030303;
-      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       color: #fff;
     }
 
     body {
       position: fixed;
       inset: 0;
+      touch-action: manipulation;
     }
 
     .hidden {
       display: none !important;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -30%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255,255,255,.12), transparent 22%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,.08), transparent 28%),
+        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.05), transparent 68%);
+      filter: blur(18px);
+      animation: cosmicMove 12s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      opacity: .16;
+      background-image:
+        linear-gradient(rgba(255,255,255,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.10) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 68%);
+      animation: gridDrift 18s linear infinite;
+    }
+
+    @keyframes cosmicMove {
+      from { transform: translate3d(-2%, -1%, 0) scale(1); }
+      to { transform: translate3d(2%, 1%, 0) scale(1.08); }
+    }
+
+    @keyframes gridDrift {
+      from { transform: translate3d(0,0,0); }
+      to { transform: translate3d(46px,46px,0); }
     }
 
     #startScreen {
@@ -47,158 +100,522 @@
       place-items: center;
       padding: 24px;
       background:
-        radial-gradient(circle at center, rgba(255,255,255,.12), rgba(0,0,0,.96) 62%),
-        linear-gradient(135deg, rgba(255,255,255,.06), transparent);
+        radial-gradient(circle at center, rgba(255,255,255,.14), rgba(0,0,0,.96) 62%),
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,255,255,.04));
+      overflow: hidden;
+    }
+
+    #startScreen::before {
+      content: "";
+      position: absolute;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 0 90px rgba(255,255,255,.10),
+        inset 0 0 80px rgba(255,255,255,.05);
+      animation: portalRotate 18s linear infinite;
+    }
+
+    #startScreen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent),
+        repeating-linear-gradient(
+          0deg,
+          transparent 0,
+          transparent 7px,
+          rgba(255,255,255,.035) 8px
+        );
+      mix-blend-mode: screen;
+      opacity: .32;
+      animation: scanScreen 3.2s linear infinite;
+    }
+
+    @keyframes portalRotate {
+      from { transform: rotate(0deg) scale(.92); }
+      to { transform: rotate(360deg) scale(1.02); }
+    }
+
+    @keyframes scanScreen {
+      from { transform: translateY(-20px); }
+      to { transform: translateY(20px); }
     }
 
     .start-card {
-      width: min(440px, 92vw);
-      padding: 32px 24px;
+      position: relative;
+      z-index: 3;
+      width: min(470px, 92vw);
+      padding: 34px 25px 26px;
       border: 1px solid rgba(255,255,255,.24);
-      border-radius: 30px;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(20px);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        rgba(0,0,0,.72);
+      backdrop-filter: blur(24px) saturate(140%);
+      -webkit-backdrop-filter: blur(24px) saturate(140%);
       text-align: center;
       box-shadow:
-        0 0 80px rgba(255,255,255,.16),
-        inset 0 0 28px rgba(255,255,255,.05);
+        0 0 90px rgba(255,255,255,.16),
+        inset 0 0 28px rgba(255,255,255,.06);
+      overflow: hidden;
+    }
+
+    .start-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,.72), transparent 32%, rgba(255,255,255,.20));
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .start-card::after {
+      content: "";
+      position: absolute;
+      left: -30%;
+      top: -60%;
+      width: 55%;
+      height: 220%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      transform: rotate(18deg);
+      animation: cardShine 4.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes cardShine {
+      0%, 55% { transform: translateX(0) rotate(18deg); opacity: 0; }
+      65% { opacity: 1; }
+      100% { transform: translateX(280%) rotate(18deg); opacity: 0; }
     }
 
     .logo-mark {
-      width: 62px;
-      height: 62px;
+      width: 72px;
+      height: 72px;
       margin: 0 auto;
       position: relative;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,.45));
+      animation: logoFloat 2.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoFloat {
+      from { transform: translateY(0) rotate(-2deg); }
+      to { transform: translateY(-8px) rotate(2deg); }
     }
 
     .logo-mark::before,
     .logo-mark::after {
       content: "";
       position: absolute;
-      border: 2px solid rgba(255,255,255,.95);
+      border: 2px solid rgba(255,255,255,.98);
       box-shadow:
-        0 0 10px rgba(255,255,255,.65),
-        inset 0 0 10px rgba(255,255,255,.12);
+        0 0 12px rgba(255,255,255,.72),
+        inset 0 0 12px rgba(255,255,255,.14);
     }
 
     .logo-mark::before {
-      inset: 8px;
+      inset: 9px;
       transform: rotate(30deg) skew(-8deg);
     }
 
     .logo-mark::after {
-      inset: 17px 4px 4px 28px;
+      inset: 20px 5px 5px 33px;
       transform: rotate(-28deg) skew(10deg);
     }
 
     .start-card h1 {
-      margin: 18px 0 10px;
-      letter-spacing: .24em;
-      font-size: 25px;
+      margin: 20px 0 9px;
+      letter-spacing: .28em;
+      font-size: clamp(24px, 6vw, 32px);
+      line-height: 1;
+      text-shadow: 0 0 26px rgba(255,255,255,.38);
+    }
+
+    .start-card .subtitle {
+      margin: 0 0 18px;
+      font-size: 11px;
+      letter-spacing: .34em;
+      color: rgba(255,255,255,.62);
     }
 
     .start-card p {
-      margin: 0 auto 22px;
-      max-width: 340px;
+      margin: 0 auto 24px;
+      max-width: 360px;
       color: rgba(255,255,255,.82);
-      line-height: 1.45;
+      line-height: 1.5;
+      font-size: 15px;
     }
 
     #startBtn {
+      position: relative;
+      isolation: isolate;
       border: 0;
-      border-radius: 999px;
-      padding: 14px 22px;
-      min-width: 220px;
+      border-radius: var(--radius-pill);
+      padding: 15px 24px;
+      min-width: 235px;
       background: #fff;
       color: #000;
-      font-weight: 900;
-      letter-spacing: .14em;
+      font-weight: 950;
+      letter-spacing: .16em;
       cursor: pointer;
-      box-shadow: 0 0 28px rgba(255,255,255,.42);
+      box-shadow:
+        0 0 34px rgba(255,255,255,.38),
+        inset 0 -12px 22px rgba(0,0,0,.12);
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+
+    #startBtn::before {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border-radius: inherit;
+      border: 1px solid rgba(255,255,255,.45);
+      opacity: .55;
+      animation: btnPulse 1.6s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes btnPulse {
+      from { transform: scale(.98); opacity: .25; }
+      to { transform: scale(1.08); opacity: .65; }
+    }
+
+    #startBtn:active {
+      transform: scale(.96);
     }
 
     .hint {
       display: block;
       margin-top: 16px;
-      color: rgba(255,255,255,.52);
+      color: rgba(255,255,255,.50);
       font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 20px auto 0;
+      max-width: 340px;
+    }
+
+    .mini-grid span {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 10px 7px;
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.72);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
     }
 
     #topHud {
       position: fixed;
-      top: 14px;
+      top: max(14px, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%);
       z-index: 9998;
-      padding: 9px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(10px);
-      color: rgba(255,255,255,.86);
-      font-size: 12px;
-      letter-spacing: .16em;
+      padding: 10px 15px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      color: rgba(255,255,255,.90);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .18em;
       text-align: center;
       pointer-events: none;
+      box-shadow: 0 0 28px rgba(255,255,255,.10);
+    }
+
+    #topHud::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 14px #fff;
+      vertical-align: 1px;
+      animation: dotBlink 1s infinite alternate;
+    }
+
+    @keyframes dotBlink {
+      from { opacity: .35; transform: scale(.8); }
+      to { opacity: 1; transform: scale(1.12); }
+    }
+
+    #scanFrame {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 9997;
+      width: min(68vw, 330px);
+      aspect-ratio: .56;
+      transform: translate(-50%, -50%);
+      border-radius: 28px;
+      pointer-events: none;
+      opacity: .72;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    #scanFrame.locked {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.92);
+    }
+
+    #scanFrame::before,
+    #scanFrame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    #scanFrame::before {
+      border: 1px solid rgba(255,255,255,.26);
+      box-shadow:
+        0 0 50px rgba(255,255,255,.10),
+        inset 0 0 40px rgba(255,255,255,.06);
+    }
+
+    #scanFrame::after {
+      background:
+        linear-gradient(#fff,#fff) left top / 42px 2px no-repeat,
+        linear-gradient(#fff,#fff) left top / 2px 42px no-repeat,
+        linear-gradient(#fff,#fff) right top / 42px 2px no-repeat,
+        linear-gradient(#fff,#fff) right top / 2px 42px no-repeat,
+        linear-gradient(#fff,#fff) left bottom / 42px 2px no-repeat,
+        linear-gradient(#fff,#fff) left bottom / 2px 42px no-repeat,
+        linear-gradient(#fff,#fff) right bottom / 42px 2px no-repeat,
+        linear-gradient(#fff,#fff) right bottom / 2px 42px no-repeat;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.65));
+      animation: framePulse 1.4s ease-in-out infinite alternate;
+    }
+
+    #scanLine {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 10%;
+      height: 2px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, transparent, #fff, transparent);
+      box-shadow: 0 0 18px rgba(255,255,255,.85);
+      animation: scanLineMove 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes framePulse {
+      from { opacity: .45; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scanLineMove {
+      from { transform: translateY(0); opacity: .25; }
+      to { transform: translateY(330px); opacity: .90; }
     }
 
     #bottomStatus {
       position: fixed;
-      left: 12px;
-      bottom: 12px;
+      left: max(12px, env(safe-area-inset-left));
+      bottom: max(12px, env(safe-area-inset-bottom));
       z-index: 9998;
-      padding: 8px 11px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.58);
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(255,255,255,.80);
-      font-size: 11px;
-      letter-spacing: .12em;
-      backdrop-filter: blur(8px);
+      padding: 9px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,.62);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.82);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .14em;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       pointer-events: none;
+      box-shadow: 0 0 24px rgba(0,0,0,.4);
+    }
+
+    #fallbackBtn {
+      position: fixed;
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 9998;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,.58);
+      color: rgba(255,255,255,.82);
+      padding: 9px 12px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .13em;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer;
     }
 
     #actionDock {
       position: fixed;
       left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%);
+      bottom: max(24px, calc(env(safe-area-inset-bottom) + 18px));
+      transform: translateX(-50%) translateY(18px) scale(.96);
       z-index: 9999;
-      display: none;
+      display: flex;
       gap: 10px;
       padding: 8px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.52);
-      border: 1px solid rgba(255,255,255,.16);
-      backdrop-filter: blur(12px);
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .24s ease, transform .24s ease;
+      box-shadow: 0 0 40px rgba(255,255,255,.12);
     }
 
     #actionDock.active {
-      display: flex;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     #actionDock button {
       border: 0;
-      border-radius: 999px;
-      padding: 11px 13px;
+      border-radius: var(--radius-pill);
+      padding: 12px 14px;
       font-size: 10px;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing: .11em;
-      background: rgba(255,255,255,.94);
+      background: rgba(255,255,255,.96);
       color: #000;
       box-shadow: 0 0 18px rgba(255,255,255,.20);
       cursor: pointer;
       white-space: nowrap;
+      transition: transform .16s ease, opacity .16s ease;
+    }
+
+    #actionDock button:active {
+      transform: scale(.94);
     }
 
     #actionDock button:nth-child(2) {
-      background: rgba(0,0,0,.78);
+      background: rgba(0,0,0,.82);
       color: #fff;
       border: 1px solid rgba(255,255,255,.38);
     }
 
+    #digitalCard {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.12), rgba(0,0,0,.96) 62%),
+        #000;
+    }
+
+    .digital-inner {
+      width: min(440px, 94vw);
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        rgba(0,0,0,.76);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 0 80px rgba(255,255,255,.12);
+    }
+
+    .digital-inner h2 {
+      margin: 16px 0 8px;
+      letter-spacing: .22em;
+      font-size: 25px;
+    }
+
+    .digital-inner p {
+      color: rgba(255,255,255,.72);
+      line-height: 1.5;
+      margin: 0 0 18px;
+    }
+
+    .digital-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .digital-actions button,
+    .digital-actions a {
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      padding: 13px 14px;
+      background: rgba(255,255,255,.92);
+      color: #000;
+      font-weight: 950;
+      letter-spacing: .12em;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .digital-actions .dark {
+      background: rgba(0,0,0,.72);
+      color: #fff;
+    }
+
     .a-loader-title {
       display: none !important;
+    }
+
+    @media (max-width: 520px) {
+      .start-card {
+        padding: 30px 20px 24px;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #topHud {
+        max-width: calc(100vw - 24px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 10px;
+      }
+
+      #actionDock {
+        width: calc(100vw - 24px);
+        justify-content: center;
+        border-radius: 26px;
+      }
+
+      #actionDock button {
+        flex: 1;
+        padding: 13px 8px;
+        font-size: 9px;
+      }
+
+      #fallbackBtn {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -208,22 +625,52 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
+      <div class="subtitle">TAP · SCAN · EXPERIENCE</div>
       <p>
         Насочи камерата към <b>черната страна</b> на визитката.
-        AR ще се появи само когато бъде разпозната реалната SoulFlame карта.
+        AR слоят ще се заключи върху реалната карта и ще се движи с нея.
       </p>
       <button id="startBtn">START AR</button>
       <span class="hint">Работи през HTTPS / Vercel. Не през file:///</span>
+
+      <div class="mini-grid">
+        <span>AR VIZITKI</span>
+        <span>NFC USLUGI</span>
+        <span>AI SYSTEMS</span>
+      </div>
     </div>
   </section>
 
   <div id="topHud">SCAN SOULFLAME CARD</div>
+
+  <div id="scanFrame">
+    <div id="scanLine"></div>
+  </div>
+
   <div id="bottomStatus">READY</div>
+  <button id="fallbackBtn">DIGITAL CARD</button>
 
   <div id="actionDock">
     <button id="openSite">OPEN WEBSITE</button>
     <button id="contactMail">CONTACT</button>
   </div>
+
+  <section id="digitalCard" class="hidden">
+    <div class="digital-inner">
+      <div class="logo-mark"></div>
+      <h2>SOULFLAME</h2>
+      <p>
+        AR/NFC визитки, сайтове и AI системи за бизнеси,
+        които искат да изглеждат като бъдещето.
+      </p>
+
+      <div class="digital-actions">
+        <a href="https://soulflameAR.vercel.app" target="_blank">OPEN WEBSITE</a>
+        <a href="mailto:soulflame.mitko@gmail.com?subject=SoulFlame%20AR" class="dark">CONTACT</a>
+        <button id="closeDigital">BACK TO AR</button>
+      </div>
+    </div>
+  </section>
 
   <a-scene
     id="scene"
@@ -484,6 +931,10 @@
     const contactMail = document.getElementById("contactMail");
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
+    const scanFrame = document.getElementById("scanFrame");
+    const fallbackBtn = document.getElementById("fallbackBtn");
+    const digitalCard = document.getElementById("digitalCard");
+    const closeDigital = document.getElementById("closeDigital");
 
     const SITE_URL = "https://soulflameAR.vercel.app";
     const EMAIL = "soulflame.mitko@gmail.com";
@@ -498,6 +949,14 @@
 
     contactMail.addEventListener("click", () => {
       window.location.href = `mailto:${EMAIL}?subject=SoulFlame%20AR`;
+    });
+
+    fallbackBtn.addEventListener("click", () => {
+      digitalCard.classList.remove("hidden");
+    });
+
+    closeDigital.addEventListener("click", () => {
+      digitalCard.classList.add("hidden");
     });
 
     scene.addEventListener("loaded", () => {
@@ -524,10 +983,12 @@
         startScreen.classList.add("hidden");
         topHud.textContent = "SCAN SOULFLAME CARD";
         bottomStatus.textContent = "SCANNING";
+        scanFrame.classList.remove("locked");
       } catch (error) {
         started = false;
         startBtn.textContent = "START AR";
         bottomStatus.textContent = "CAMERA ERROR";
+        digitalCard.classList.remove("hidden");
         alert("Камерата не тръгна. Отвори през HTTPS/Vercel и разреши достъп до камерата.");
         console.error(error);
       }
@@ -538,6 +999,11 @@
       topHud.textContent = "SOULFLAME LOCKED";
       bottomStatus.textContent = "TARGET FOUND";
       actionDock.classList.add("active");
+      scanFrame.classList.add("locked");
+
+      if (navigator.vibrate) {
+        navigator.vibrate(35);
+      }
     });
 
     target.addEventListener("targetLost", () => {
@@ -545,6 +1011,7 @@
       topHud.textContent = "SCAN SOULFLAME CARD";
       bottomStatus.textContent = "TARGET LOST";
       actionDock.classList.remove("active");
+      scanFrame.classList.remove("locked");
     });
 
     document.addEventListener("visibilitychange", async () => {
@@ -554,6 +1021,7 @@
           started = false;
           visible = false;
           actionDock.classList.remove("active");
+          scanFrame.classList.remove("locked");
           startScreen.classList.remove("hidden");
           startBtn.textContent = "START AR";
           bottomStatus.textContent = "PAUSED";
