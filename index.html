@@ -9,13 +9,15 @@
 
   <title>AR Меню | SoulFlame Restaurant</title>
 
+  <!-- Real AR / 3D viewer -->
   <script
     type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
   ></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- Stable legacy Three.js + GLTFLoader for camera fallback -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
   <style>
     * {
@@ -41,10 +43,15 @@
         linear-gradient(180deg, #160d05 0%, #050302 100%);
     }
 
+    button,
+    a {
+      font-family: inherit;
+    }
+
     .app {
       width: 100%;
       min-height: 100vh;
-      padding-bottom: 112px;
+      padding-bottom: 126px;
     }
 
     .hero {
@@ -293,20 +300,16 @@
       box-shadow: 0 14px 34px rgba(41, 182, 246, 0.22);
     }
 
-    .full {
-      grid-column: 1 / -1;
-    }
-
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 122px;
+      bottom: 132px;
       transform: translateX(-50%) translateY(20px);
       z-index: 100;
       width: min(92%, 460px);
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(0,0,0,.82);
+      background: rgba(0,0,0,.84);
       border: 1px solid rgba(255,255,255,.12);
       backdrop-filter: blur(10px);
       color: #fff;
@@ -330,6 +333,7 @@
       background: #000;
       display: none;
       overflow: hidden;
+      touch-action: none;
     }
 
     .camera-mode.active {
@@ -347,12 +351,34 @@
     #cameraVideo {
       object-fit: cover;
       z-index: 1;
-      transform: scaleX(-1);
+      background: #000;
     }
 
     #overlayCanvas {
       z-index: 2;
       pointer-events: none;
+    }
+
+    .table-guide {
+      position: absolute;
+      left: 50%;
+      top: 67%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      width: 64vw;
+      max-width: 420px;
+      height: 22vw;
+      max-height: 150px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 207, 122, 0.72);
+      background: radial-gradient(circle, rgba(255, 207, 122, 0.18), transparent 65%);
+      box-shadow: 0 0 40px rgba(255, 207, 122, 0.16);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .table-guide.hidden {
+      opacity: 0;
     }
 
     .camera-ui {
@@ -376,13 +402,13 @@
       pointer-events: auto;
       padding: 10px 12px;
       border-radius: 16px;
-      background: rgba(0,0,0,.62);
+      background: rgba(0,0,0,.64);
       border: 1px solid rgba(255,255,255,.12);
       backdrop-filter: blur(10px);
       font-size: 12px;
       line-height: 1.35;
-      color: rgba(255,255,255,.9);
-      max-width: 72%;
+      color: rgba(255,255,255,.92);
+      max-width: 76%;
     }
 
     .camera-close {
@@ -391,7 +417,7 @@
       height: 44px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.62);
+      background: rgba(0,0,0,.66);
       color: #fff;
       font-size: 22px;
       font-weight: 900;
@@ -402,7 +428,7 @@
       bottom: calc(16px + env(safe-area-inset-bottom, 0));
       padding: 0 14px;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
     }
 
@@ -411,11 +437,11 @@
       min-height: 44px;
       border: 0;
       border-radius: 16px;
-      padding: 10px 8px;
-      background: rgba(0,0,0,.66);
+      padding: 10px 6px;
+      background: rgba(0,0,0,.68);
       border: 1px solid rgba(255,255,255,.14);
       color: #fff;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       backdrop-filter: blur(10px);
     }
@@ -442,8 +468,8 @@
         grid-template-columns: 1fr;
       }
 
-      .full {
-        grid-column: auto;
+      .camera-controls {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -455,7 +481,7 @@
       <model-viewer
         id="foodAR"
         src="ar/food2.glb"
-        alt="3D AR ресторантски продукт"
+        alt="3D ресторантски продукт"
         ar
         ar-modes="webxr scene-viewer quick-look"
         camera-controls
@@ -479,18 +505,18 @@
           <div class="brand">SoulFlame AR Menu</div>
           <h1>Виж ястието преди поръчка</h1>
           <p>
-            NFC/QR отваря страницата. Всеки телефон вижда 3D модел. Съвместимите телефони могат и истински AR върху маса.
+            NFC/QR отваря менюто. Всеки телефон вижда 3D продукта. Съвместимите телефони могат и истински AR върху маса.
           </p>
           <div class="badge-row">
             <span class="badge">3D за всички</span>
             <span class="badge">Камера режим</span>
-            <span class="badge">Истински AR</span>
+            <span class="badge">AR маса</span>
           </div>
         </div>
       </div>
 
       <div class="hero-hint">
-        Първо разгледай 3D модела. После избери <b>Камера режим</b> или <b>AR на масата</b>.
+        За максимална съвместимост използвай <b>Камера режим</b>. За истинско AR натисни <b>AR на масата</b>.
       </div>
     </section>
 
@@ -517,13 +543,13 @@
 
         <div class="ingredients">
           <div class="ingredient">Модел: ar/food2.glb</div>
-          <div class="ingredient">Режим 1: 3D преглед на всеки модерен телефон</div>
-          <div class="ingredient">Режим 2: камера overlay без ARCore</div>
-          <div class="ingredient">Режим 3: истинско AR поставяне при съвместими устройства</div>
+          <div class="ingredient">Режим 1: 3D преглед</div>
+          <div class="ingredient">Режим 2: камера + тапни върху масата</div>
+          <div class="ingredient">Режим 3: истински AR при съвместими устройства</div>
         </div>
 
         <div class="notice">
-          Камера режимът е универсален визуален AR overlay. Истинското заключване към маса зависи от AR поддръжката на телефона.
+          Истинското автоматично разпознаване на маса зависи от AR поддръжката на телефона. Камера режимът работи като стабилен fallback: тапваш върху масата и продуктът се поставя визуално там.
         </div>
       </div>
     </section>
@@ -555,26 +581,28 @@
   <section class="camera-mode" id="cameraMode">
     <video id="cameraVideo" autoplay playsinline muted></video>
     <canvas id="overlayCanvas"></canvas>
+    <div class="table-guide" id="tableGuide"></div>
 
     <div class="camera-ui camera-top">
-      <div class="camera-chip">
-        Камера режим: продуктът се показва върху камерата. Това работи на повече телефони, дори без ARCore.
+      <div class="camera-chip" id="cameraText">
+        Насочи към масата и тапни върху мястото, където искаш да поставиш ястието.
       </div>
       <button class="camera-close" id="closeCameraBtn">×</button>
     </div>
 
     <div class="camera-ui camera-controls">
       <button id="smallerBtn">− размер</button>
-      <button id="resetBtn">център</button>
       <button id="biggerBtn">+ размер</button>
+      <button id="rotateBtn">завърти</button>
+      <button id="resetBtn">център</button>
     </div>
   </section>
 
-  <div class="toast" id="toast">
-    Съобщение
-  </div>
+  <div class="toast" id="toast">Съобщение</div>
 
   <script>
+    const MODEL_URL = "ar/food2.glb";
+
     const modelViewer = document.getElementById("foodAR");
     const openARBtn = document.getElementById("openARBtn");
     const openCameraBtn = document.getElementById("openCameraBtn");
@@ -582,8 +610,11 @@
     const cameraMode = document.getElementById("cameraMode");
     const cameraVideo = document.getElementById("cameraVideo");
     const overlayCanvas = document.getElementById("overlayCanvas");
+    const tableGuide = document.getElementById("tableGuide");
+    const cameraText = document.getElementById("cameraText");
     const smallerBtn = document.getElementById("smallerBtn");
     const biggerBtn = document.getElementById("biggerBtn");
+    const rotateBtn = document.getElementById("rotateBtn");
     const resetBtn = document.getElementById("resetBtn");
     const toast = document.getElementById("toast");
 
@@ -592,14 +623,27 @@
     let threeScene = null;
     let threeCamera = null;
     let foodModel = null;
+    let shadowMesh = null;
     let animationId = null;
-    let overlayScale = 1;
-    let overlayY = -0.55;
+    let isCameraRunning = false;
+    let isModelLoaded = false;
+
+    let modelScale = 1;
+    let modelRotation = 0;
+    let anchorX = 0;
+    let anchorY = -0.75;
 
     function showToast(message) {
       toast.textContent = message;
       toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 4200);
+      clearTimeout(showToast.timeout);
+      showToast.timeout = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 4300);
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
     }
 
     openARBtn.addEventListener("click", async () => {
@@ -614,31 +658,48 @@
       }
     });
 
-    modelViewer.addEventListener("error", () => {
-      showToast("Моделът ar/food2.glb не се зареди. Провери дали файлът е качен правилно.");
-    });
-
     openCameraBtn.addEventListener("click", startCameraMode);
     closeCameraBtn.addEventListener("click", stopCameraMode);
 
     smallerBtn.addEventListener("click", () => {
-      overlayScale = Math.max(0.35, overlayScale - 0.15);
+      modelScale = clamp(modelScale - 0.12, 0.35, 2.6);
       applyModelTransform();
     });
 
     biggerBtn.addEventListener("click", () => {
-      overlayScale = Math.min(2.2, overlayScale + 0.15);
+      modelScale = clamp(modelScale + 0.12, 0.35, 2.6);
+      applyModelTransform();
+    });
+
+    rotateBtn.addEventListener("click", () => {
+      modelRotation += Math.PI / 6;
       applyModelTransform();
     });
 
     resetBtn.addEventListener("click", () => {
-      overlayScale = 1;
-      overlayY = -0.55;
+      modelScale = 1;
+      modelRotation = 0;
+      anchorX = 0;
+      anchorY = -0.75;
       applyModelTransform();
+      showToast("Позицията е върната в центъра.");
+    });
+
+    modelViewer.addEventListener("error", () => {
+      showToast("Моделът ar/food2.glb не се зареди. Провери дали файлът е качен правилно.");
     });
 
     async function startCameraMode() {
+      if (isCameraRunning) return;
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast("Този браузър не позволява директен достъп до камерата. Пробвай Chrome/Safari.");
+        return;
+      }
+
       cameraMode.classList.add("active");
+      tableGuide.classList.remove("hidden");
+      isCameraRunning = true;
 
       try {
         cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -654,19 +715,28 @@
         await cameraVideo.play();
 
         initThreeOverlay();
-        showToast("Камера режимът е активен. Насочи към масата и използвай размера за настройка.");
+        bindPlacementEvents();
+
+        showToast("Камера режимът е активен. Тапни върху масата, за да поставиш ястието.");
       } catch (error) {
-        cameraMode.classList.remove("active");
-        showToast("Камерата не може да се стартира. Разреши достъп до камерата от браузъра.");
+        stopCameraMode();
+        showToast("Камерата не тръгна. Разреши достъп до камерата или отвори през Chrome/Safari.");
       }
     }
 
     function stopCameraMode() {
       cameraMode.classList.remove("active");
+      tableGuide.classList.add("hidden");
+      isCameraRunning = false;
 
       if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
         cameraStream = null;
+      }
+
+      if (cameraVideo) {
+        cameraVideo.pause();
+        cameraVideo.srcObject = null;
       }
 
       if (animationId) {
@@ -676,12 +746,15 @@
 
       if (threeRenderer) {
         threeRenderer.dispose();
-        threeRenderer = null;
+        threeRenderer.forceContextLoss && threeRenderer.forceContextLoss();
       }
 
-      foodModel = null;
+      threeRenderer = null;
       threeScene = null;
       threeCamera = null;
+      foodModel = null;
+      shadowMesh = null;
+      isModelLoaded = false;
     }
 
     function initThreeOverlay() {
@@ -696,72 +769,153 @@
       threeRenderer = new THREE.WebGLRenderer({
         canvas: overlayCanvas,
         alpha: true,
-        antialias: true
+        antialias: true,
+        preserveDrawingBuffer: false
       });
 
-      threeRenderer.setPixelRatio(window.devicePixelRatio);
+      threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       threeRenderer.setSize(width, height);
       threeRenderer.setClearColor(0x000000, 0);
 
       threeScene = new THREE.Scene();
 
-      threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-      threeCamera.position.set(0, 0.9, 3.2);
+      threeCamera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+      threeCamera.position.set(0, 0.55, 3.4);
+      threeCamera.lookAt(0, -0.55, 0);
       threeScene.add(threeCamera);
 
-      const ambient = new THREE.AmbientLight(0xffffff, 1.35);
+      const ambient = new THREE.AmbientLight(0xffffff, 1.45);
       threeScene.add(ambient);
 
-      const directional = new THREE.DirectionalLight(0xffffff, 1.8);
-      directional.position.set(2, 4, 3);
-      threeScene.add(directional);
+      const dir1 = new THREE.DirectionalLight(0xffffff, 1.8);
+      dir1.position.set(2.5, 4, 3);
+      threeScene.add(dir1);
 
-      const loader = new THREE.GLTFLoader();
+      const dir2 = new THREE.DirectionalLight(0xffd2a1, 0.7);
+      dir2.position.set(-3, 2, 2);
+      threeScene.add(dir2);
 
-      loader.load(
-        "ar/food2.glb",
-        function(gltf) {
-          foodModel = gltf.scene;
-
-          const bbox = new THREE.Box3().setFromObject(foodModel);
-          const center = bbox.getCenter(new THREE.Vector3());
-          const size = bbox.getSize(new THREE.Vector3());
-          const maxAxis = Math.max(size.x, size.y, size.z);
-
-          foodModel.scale.multiplyScalar(1.45 / maxAxis);
-          foodModel.position.copy(center).multiplyScalar(-1);
-
-          const normalizedBox = new THREE.Box3().setFromObject(foodModel);
-          const normalizedSize = normalizedBox.getSize(new THREE.Vector3());
-
-          foodModel.position.y = overlayY;
-          foodModel.rotation.x = -0.08;
-          foodModel.rotation.y = 0.25;
-
-          threeScene.add(foodModel);
-          applyModelTransform();
-        },
-        undefined,
-        function(error) {
-          showToast("Не успях да заредя ar/food2.glb в камера режим.");
-        }
-      );
-
+      createTableShadow();
+      loadFoodModel();
       animateOverlay();
     }
 
-    function applyModelTransform() {
-      if (!foodModel) return;
+    function createTableShadow() {
+      const shadowGeometry = new THREE.CircleGeometry(0.62, 64);
+      const shadowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.26,
+        depthWrite: false
+      });
 
-      foodModel.scale.setScalar(overlayScale);
-      foodModel.position.y = overlayY;
+      shadowMesh = new THREE.Mesh(shadowGeometry, shadowMaterial);
+      shadowMesh.rotation.x = -Math.PI / 2;
+      shadowMesh.position.set(anchorX, anchorY - 0.08, 0);
+      shadowMesh.scale.set(1.55, 0.42, 1);
+      threeScene.add(shadowMesh);
+    }
+
+    function loadFoodModel() {
+      const loader = new THREE.GLTFLoader();
+
+      loader.load(
+        MODEL_URL,
+        function(gltf) {
+          foodModel = gltf.scene;
+
+          const box = new THREE.Box3().setFromObject(foodModel);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+
+          foodModel.position.copy(center).multiplyScalar(-1);
+          foodModel.scale.multiplyScalar(1.35 / maxAxis);
+
+          const wrapper = new THREE.Group();
+          wrapper.add(foodModel);
+          foodModel = wrapper;
+
+          foodModel.position.set(anchorX, anchorY, 0);
+          foodModel.rotation.x = -0.06;
+          foodModel.rotation.y = modelRotation;
+          foodModel.scale.setScalar(modelScale);
+
+          threeScene.add(foodModel);
+
+          isModelLoaded = true;
+          applyModelTransform();
+          cameraText.textContent = "Готово. Тапни върху масата, за да преместиш ястието. Използвай бутоните за размер и завъртане.";
+        },
+        undefined,
+        function() {
+          showToast("Не успях да заредя ar/food2.glb. Провери името и дали файлът е качен.");
+        }
+      );
+    }
+
+    function screenToWorld(clientX, clientY) {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const xNorm = (clientX / width) * 2 - 1;
+      const yNorm = -((clientY / height) * 2 - 1);
+
+      const x = xNorm * 1.35;
+
+      /*
+        Това е стабилна симулация на маса:
+        долната част на екрана = по-близо до камерата,
+        горната част = по-далеч.
+      */
+      const y = clamp(-0.15 - ((clientY / height) * 1.15), -1.18, -0.28);
+
+      return { x, y };
+    }
+
+    function bindPlacementEvents() {
+      cameraMode.onclick = function(event) {
+        const target = event.target;
+
+        if (
+          target.closest(".camera-close") ||
+          target.closest(".camera-controls") ||
+          target.closest(".camera-chip")
+        ) {
+          return;
+        }
+
+        const point = screenToWorld(event.clientX, event.clientY);
+        anchorX = point.x;
+        anchorY = point.y;
+
+        tableGuide.classList.add("hidden");
+        applyModelTransform();
+
+        if (isModelLoaded) {
+          showToast("Ястието е поставено. Тапни пак върху масата, ако искаш да го преместиш.");
+        }
+      };
+    }
+
+    function applyModelTransform() {
+      if (foodModel) {
+        foodModel.position.set(anchorX, anchorY, 0);
+        foodModel.rotation.y = modelRotation;
+        foodModel.scale.setScalar(modelScale);
+      }
+
+      if (shadowMesh) {
+        shadowMesh.position.set(anchorX, anchorY - 0.10, 0);
+        shadowMesh.scale.set(1.55 * modelScale, 0.42 * modelScale, 1);
+      }
     }
 
     function animateOverlay() {
       animationId = requestAnimationFrame(animateOverlay);
 
       if (foodModel) {
-        foodModel.rotation.y += 0.006;
+        foodModel.rotation.y += 0.0025;
       }
 
       if (threeRenderer && threeScene && threeCamera) {
@@ -775,10 +929,21 @@
       const width = window.innerWidth;
       const height = window.innerHeight;
 
+      overlayCanvas.width = width * window.devicePixelRatio;
+      overlayCanvas.height = height * window.devicePixelRatio;
+      overlayCanvas.style.width = width + "px";
+      overlayCanvas.style.height = height + "px";
+
       threeCamera.aspect = width / height;
       threeCamera.updateProjectionMatrix();
 
       threeRenderer.setSize(width, height);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && isCameraRunning) {
+        stopCameraMode();
+      }
     });
   </script>
 </body>

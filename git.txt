@@ -1,0 +1,5 @@
+cd /d E:\iamyann
+git add .
+git commit -m "upgrade: universal restaurant AR modes"
+git push
+npx vercel --prod
