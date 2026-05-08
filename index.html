@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza</title>
+  <title>SoulFlame AR Pizza · Giant Anchor</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -14,7 +14,7 @@
       --bg: #030303;
       --text: #ffffff;
       --gold: #ffb347;
-      --glass: rgba(0,0,0,.66);
+      --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
       --radius-pill: 999px;
@@ -54,7 +54,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .5;
+      opacity: .45;
       mix-blend-mode: screen;
     }
 
@@ -70,7 +70,7 @@
     body::before {
       background:
         radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
-        radial-gradient(circle at 82% 72%, rgba(255,179,71,.15), transparent 26%),
+        radial-gradient(circle at 82% 72%, rgba(255,179,71,.16), transparent 26%),
         radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
         linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
@@ -414,7 +414,7 @@
       left: 12px;
       top: 54px;
       z-index: 10002;
-      width: min(450px, calc(100vw - 24px));
+      width: min(460px, calc(100vw - 24px));
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.35);
       border-radius: 16px;
@@ -485,7 +485,7 @@
       left: 50%;
       bottom: max(88px, calc(env(safe-area-inset-bottom) + 86px));
       transform: translateX(-50%) translateY(16px) scale(.96);
-      width: min(430px, calc(100vw - 24px));
+      width: min(440px, calc(100vw - 24px));
       z-index: 10001;
       padding: 14px;
       border-radius: 28px;
@@ -686,11 +686,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">PIZZA · GLB · AR MENU</div>
+      <div class="subtitle">GIANT PIZZA · CARD ANCHOR</div>
 
       <p>
         Постави визитката на маса. Насочи камерата към <b>черната страна</b>.
-        След заключване натисни <b>MENU</b> → <b>PIZZA</b>.
+        Дръж визитката в кадър и движи телефона, за да разглеждаш пицата.
       </p>
 
       <div class="start-actions">
@@ -701,8 +701,8 @@
       <span class="hint">Файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
 
       <div class="mini-grid">
-        <span>AR MENU</span>
-        <span>CGTRADER GLB</span>
+        <span>X20 SIZE</span>
+        <span>ANCHOR</span>
         <span>NFC CARD</span>
       </div>
     </div>
@@ -727,12 +727,12 @@
   <div id="menuSheet">
     <div class="sheet-title">
       <strong>SOULFLAME MENU</strong>
-      <span>AR OPTIONS</span>
+      <span>GIANT AR OPTIONS</span>
     </div>
 
     <div class="sheet-grid">
-      <button id="pizzaBtn" class="primary">PIZZA</button>
-      <button id="sizeBtn">SIZE</button>
+      <button id="pizzaBtn" class="primary">PIZZA X20</button>
+      <button id="sizeBtn">SIZE +</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
       <button id="resetBtn">RESET</button>
@@ -768,9 +768,9 @@
       uiScanning: yes;
       uiLoading: no;
       warmupTolerance: 5;
-      missTolerance: 24;
-      filterMinCF: 0.0001;
-      filterBeta: 0.001;
+      missTolerance: 35;
+      filterMinCF: 0.00005;
+      filterBeta: 0.0008;
     "
     color-space="sRGB"
     renderer="
@@ -779,6 +779,7 @@
       antialias: true;
       alpha: true;
       precision: high;
+      logarithmicDepthBuffer: true;
     "
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
@@ -788,7 +789,11 @@
       <a-asset-item id="pizzaGLB" src="./uploads_files_6479452_187.glb"></a-asset-item>
     </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false"
+      camera="near: 0.001; far: 100000"
+    ></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
       <a-light type="ambient" intensity="0.95" color="#ffffff"></a-light>
@@ -818,8 +823,8 @@
         ></a-ring>
 
         <a-text
-          value="ПОСТАВЕТЕ ВИЗИТКАТА НА МАСА"
-          position="-0.47 -0.68 0.083"
+          value="ДРЪЖТЕ ВИЗИТКАТА В КАДЪР"
+          position="-0.48 -0.68 0.083"
           width="0.92"
           align="center"
           color="#ffffff"
@@ -828,8 +833,8 @@
         ></a-text>
 
         <a-text
-          value="MENU -> PIZZA"
-          position="-0.25 -0.77 0.083"
+          value="GIANT PIZZA X20"
+          position="-0.29 -0.77 0.083"
           width="0.78"
           align="center"
           color="#ffb347"
@@ -922,7 +927,7 @@
           ></a-text>
 
           <a-text
-            value="PIZZA GLB\nWEBSITE\nEMAIL\nDIGITAL CARD"
+            value="PIZZA X20\nPHONE MOVE\nCARD ANCHOR\nWEBSITE\nEMAIL"
             position="-0.37 0.025 0.05"
             width="0.78"
             color="#ffffff"
@@ -951,7 +956,16 @@
       mailSubject: "SoulFlame AR Pizza",
       scanTimeoutMs: 14000,
       glbFile: "./uploads_files_6479452_187.glb",
-      targetFile: "./targets/soulflame-black.mind"
+      targetFile: "./targets/soulflame-black.mind",
+
+      /*
+        Предишният MAX беше приблизително:
+        wantedWidth 0.82 * maxSizeButton 1.75 = 1.435
+
+        X20 от това = 28.7
+        Това е умишлено огромна пица, заключена за визитката.
+      */
+      giantPizzaWidth: 28.7
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -1000,7 +1014,7 @@
     let scanTimer = null;
 
     let pizzaVisible = false;
-    let sizeIndex = 1;
+    let sizeIndex = 2;
     let rotateOn = false;
     let flipped = false;
     let rotationRAF = null;
@@ -1009,11 +1023,12 @@
     let modelDebugInfo = "MODEL NOT LOADED";
 
     const pizzaScales = [
-      "0.82 0.82 0.82",
+      "0.35 0.35 0.35",
+      "0.65 0.65 0.65",
       "1 1 1",
-      "1.22 1.22 1.22",
-      "1.48 1.48 1.48",
-      "1.75 1.75 1.75"
+      "1.35 1.35 1.35",
+      "1.75 1.75 1.75",
+      "2.25 2.25 2.25"
     ];
 
     digitalWebsite.href = CONFIG.siteUrl;
@@ -1055,37 +1070,38 @@
 
     closeMenuBtn.addEventListener("click", () => {
       menuSheet.classList.remove("active");
-      setStatus("SOULFLAME LOCKED", "CARD CENTER ACTIVE");
+      setStatus("SOULFLAME LOCKED", "MOVE PHONE SLOWLY");
       haptic(20);
     });
 
     pizzaBtn.addEventListener("click", () => {
       pizzaVisible = true;
       pizzaRig.setAttribute("visible", "true");
+      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
       menuSheet.classList.remove("active");
       setPizzaRotation();
-      setStatus("PIZZA ACTIVE", modelAutoFitted ? "GLB TEXTURE MODE" : "PIZZA LOADING");
+      setStatus("GIANT PIZZA X20", modelAutoFitted ? "MOVE PHONE AROUND CARD" : "PIZZA LOADING");
       haptic(45);
     });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "GLB ON" : "GLB OFF");
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ANCHOR ON" : "ANCHOR OFF");
       haptic(25);
     });
 
     sizeBtn.addEventListener("click", () => {
       sizeIndex = (sizeIndex + 1) % pizzaScales.length;
       pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
-      setStatus("PIZZA SIZE", `SIZE ${sizeIndex + 1}`);
+      setStatus("PIZZA SIZE", `X20 MODE · SIZE ${sizeIndex + 1}`);
       haptic(25);
     });
 
     rotateBtn.addEventListener("click", () => {
       rotateOn = !rotateOn;
       rotateBtn.textContent = rotateOn ? "STOP ROTATE" : "ROTATE";
-      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "PIZZA GLB");
+      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "GIANT PIZZA");
       haptic(25);
 
       if (rotateOn) startPizzaRotation();
@@ -1095,22 +1111,25 @@
     flipBtn.addEventListener("click", () => {
       flipped = !flipped;
       setPizzaRotation();
-      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA TOP SIDE", flipped ? "CHECK OTHER SIDE" : "NORMAL SIDE");
+      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA TOP SIDE", flipped ? "OTHER SIDE" : "NORMAL SIDE");
       haptic(35);
     });
 
     resetBtn.addEventListener("click", () => {
       pizzaVisible = true;
-      sizeIndex = 1;
+      sizeIndex = 2;
       currentPizzaY = 0;
       rotateOn = false;
       flipped = false;
+
       pizzaRig.setAttribute("visible", "true");
       pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
       setPizzaRotation();
+
       rotateBtn.textContent = "ROTATE";
       stopPizzaRotation();
-      setStatus("PIZZA RESET", "CENTER LOCKED");
+
+      setStatus("PIZZA RESET", "X20 ANCHOR LOCK");
       haptic(35);
     });
 
@@ -1130,7 +1149,7 @@
       const tick = () => {
         if (!rotateOn) return;
 
-        currentPizzaY = (currentPizzaY + 0.28) % 360;
+        currentPizzaY = (currentPizzaY + 0.18) % 360;
         setPizzaRotation();
         rotationRAF = requestAnimationFrame(tick);
       };
@@ -1159,7 +1178,7 @@
           preparePizzaModel(model);
           autoFitPizza(model);
           modelAutoFitted = true;
-          setStatus("PIZZA GLB READY", "MENU → PIZZA");
+          setStatus("PIZZA GLB READY", "MENU → PIZZA X20");
         } catch (error) {
           showDebug("AUTO-FIT ERROR: " + error.message);
           setStatus("PIZZA GLB READY", "MANUAL SCALE");
@@ -1197,7 +1216,11 @@
 
           if (mat.map) {
             textureCount += 1;
-            mat.map.colorSpace = THREE.SRGBColorSpace || mat.map.colorSpace;
+
+            if (THREE.SRGBColorSpace) {
+              mat.map.colorSpace = THREE.SRGBColorSpace;
+            }
+
             mat.map.needsUpdate = true;
           }
 
@@ -1214,7 +1237,8 @@
         "MESHES: " + meshCount + "\n" +
         "MATERIALS: " + materialCount + "\n" +
         "TEXTURES FOUND: " + textureCount + "\n" +
-        "TIP: Ако TEXTURES FOUND е 0, GLB файлът няма вградена текстура или браузърът зарежда грешен файл.";
+        "GIANT WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
+        "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
       console.log(modelDebugInfo);
     }
@@ -1239,8 +1263,7 @@
       model.position.y -= center.y;
       model.position.z -= center.z;
 
-      const wantedWidth = 0.82;
-      const scale = wantedWidth / maxSize;
+      const scale = CONFIG.giantPizzaWidth / maxSize;
 
       model.scale.setScalar(scale);
       model.updateMatrixWorld(true);
@@ -1252,6 +1275,7 @@
       });
 
       modelDebugInfo += "\nAUTO SCALE: " + Number(scale.toFixed(4));
+      modelDebugInfo += "\nRESULT: X20 GIANT ANCHOR MODE";
     }
 
     function openDigitalCard() {
@@ -1338,15 +1362,18 @@
       visible = true;
       clearTimeout(scanTimer);
       hideDebug();
-      setStatus("SOULFLAME LOCKED", "OPEN MENU → PIZZA");
+
+      setStatus("SOULFLAME LOCKED", "MOVE PHONE · KEEP CARD VISIBLE");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
+
       haptic(38);
     });
 
     target.addEventListener("targetLost", () => {
       visible = false;
-      setStatus("SCAN SOULFLAME CARD", "TARGET LOST");
+
+      setStatus("TARGET LOST", "SHOW CARD TO CAMERA");
       actionDock.classList.remove("active");
       menuSheet.classList.remove("active");
       scanFrame.classList.remove("locked");
@@ -1356,8 +1383,10 @@
       if (document.hidden && arSystem && started) {
         try {
           await arSystem.stop();
+
           started = false;
           visible = false;
+
           clearTimeout(scanTimer);
           actionDock.classList.remove("active");
           menuSheet.classList.remove("active");
