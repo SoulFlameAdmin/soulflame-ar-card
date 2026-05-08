@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Giant Anchor</title>
+  <title>SoulFlame AR Pizza · Pro Size Menu</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -54,7 +54,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .45;
+      opacity: .36;
       mix-blend-mode: screen;
     }
 
@@ -485,7 +485,7 @@
       left: 50%;
       bottom: max(88px, calc(env(safe-area-inset-bottom) + 86px));
       transform: translateX(-50%) translateY(16px) scale(.96);
-      width: min(440px, calc(100vw - 24px));
+      width: min(460px, calc(100vw - 24px));
       z-index: 10001;
       padding: 14px;
       border-radius: 28px;
@@ -686,11 +686,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">GIANT PIZZA · CARD ANCHOR</div>
+      <div class="subtitle">PIZZA SIZE MENU · CARD ANCHOR</div>
 
       <p>
         Постави визитката на маса. Насочи камерата към <b>черната страна</b>.
-        Дръж визитката в кадър и движи телефона, за да разглеждаш пицата.
+        Отвори <b>MENU</b> и избирай много размери чрез <b>SIZE +</b>.
       </p>
 
       <div class="start-actions">
@@ -701,9 +701,9 @@
       <span class="hint">Файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
 
       <div class="mini-grid">
-        <span>X20 SIZE</span>
-        <span>ANCHOR</span>
-        <span>NFC CARD</span>
+        <span>20CM</span>
+        <span>90CM</span>
+        <span>MAX</span>
       </div>
     </div>
   </section>
@@ -727,12 +727,12 @@
   <div id="menuSheet">
     <div class="sheet-title">
       <strong>SOULFLAME MENU</strong>
-      <span>GIANT AR OPTIONS</span>
+      <span id="sizeLabel">30 CM</span>
     </div>
 
     <div class="sheet-grid">
-      <button id="pizzaBtn" class="primary">PIZZA X20</button>
-      <button id="sizeBtn">SIZE +</button>
+      <button id="pizzaBtn" class="primary">PIZZA</button>
+      <button id="sizeBtn">30 CM</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
       <button id="resetBtn">RESET</button>
@@ -768,9 +768,9 @@
       uiScanning: yes;
       uiLoading: no;
       warmupTolerance: 5;
-      missTolerance: 35;
-      filterMinCF: 0.00005;
-      filterBeta: 0.0008;
+      missTolerance: 80;
+      filterMinCF: 0.00004;
+      filterBeta: 0.0006;
     "
     color-space="sRGB"
     renderer="
@@ -780,6 +780,7 @@
       alpha: true;
       precision: high;
       logarithmicDepthBuffer: true;
+      powerPreference: high-performance;
     "
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
@@ -823,22 +824,23 @@
         ></a-ring>
 
         <a-text
-          value="ДРЪЖТЕ ВИЗИТКАТА В КАДЪР"
-          position="-0.48 -0.68 0.083"
-          width="0.92"
+          id="arSizeText"
+          value="PIZZA 30 CM"
+          position="-0.28 -0.73 0.083"
+          width="0.95"
           align="center"
-          color="#ffffff"
-          opacity="0.88"
+          color="#ffb347"
+          opacity="0.98"
           material="transparent: true; depthWrite: false"
         ></a-text>
 
         <a-text
-          value="GIANT PIZZA X20"
-          position="-0.29 -0.77 0.083"
-          width="0.78"
+          value="ДРЪЖТЕ ВИЗИТКАТА В КАДЪР"
+          position="-0.48 -0.88 0.083"
+          width="0.92"
           align="center"
-          color="#ffb347"
-          opacity="0.95"
+          color="#ffffff"
+          opacity="0.82"
           material="transparent: true; depthWrite: false"
         ></a-text>
 
@@ -927,7 +929,8 @@
           ></a-text>
 
           <a-text
-            value="PIZZA X20\nPHONE MOVE\nCARD ANCHOR\nWEBSITE\nEMAIL"
+            id="menuInfoText"
+            value="PIZZA 30 CM\nSIZE +\nROTATE\nFLIP"
             position="-0.37 0.025 0.05"
             width="0.78"
             color="#ffffff"
@@ -935,14 +938,6 @@
             opacity="0.96"
             material="transparent: true; depthWrite: false"
           ></a-text>
-        </a-entity>
-
-        <a-entity position="0 0 0.095">
-          <a-sphere position="-0.38 0.62 0" radius="0.012" color="#ffffff" opacity="0.85"></a-sphere>
-          <a-sphere position="0.38 0.54 0" radius="0.009" color="#ffffff" opacity="0.60"></a-sphere>
-          <a-sphere position="-0.32 -0.12 0" radius="0.008" color="#ffffff" opacity="0.60"></a-sphere>
-          <a-sphere position="0.28 -0.58 0" radius="0.010" color="#ffffff" opacity="0.74"></a-sphere>
-          <a-sphere position="0.06 -0.74 0" radius="0.006" color="#ffffff" opacity="0.54"></a-sphere>
         </a-entity>
       </a-entity>
     </a-entity>
@@ -959,13 +954,11 @@
       targetFile: "./targets/soulflame-black.mind",
 
       /*
-        Предишният MAX беше приблизително:
-        wantedWidth 0.82 * maxSizeButton 1.75 = 1.435
-
-        X20 от това = 28.7
-        Това е умишлено огромна пица, заключена за визитката.
+        ОСНОВЕН РАЗМЕР:
+        3.33 ≈ реална 30 см пица, ако визитката е около 9 см.
+        Всички SIZE + степени умножават тази база.
       */
-      giantPizzaWidth: 28.7
+      giantPizzaWidth: 3.33
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -990,6 +983,10 @@
     const resetBtn = document.getElementById("resetBtn");
     const hidePizzaBtn = document.getElementById("hidePizzaBtn");
     const debugBtn = document.getElementById("debugBtn");
+
+    const sizeLabel = document.getElementById("sizeLabel");
+    const arSizeText = document.getElementById("arSizeText");
+    const menuInfoText = document.getElementById("menuInfoText");
 
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
@@ -1023,12 +1020,39 @@
     let modelDebugInfo = "MODEL NOT LOADED";
 
     const pizzaScales = [
-      "0.35 0.35 0.35",
-      "0.65 0.65 0.65",
+      "0.55 0.55 0.55",
+      "0.75 0.75 0.75",
       "1 1 1",
-      "1.35 1.35 1.35",
-      "1.75 1.75 1.75",
-      "2.25 2.25 2.25"
+      "1.25 1.25 1.25",
+      "1.45 1.45 1.45",
+      "1.65 1.65 1.65",
+      "1.9 1.9 1.9",
+      "2.2 2.2 2.2",
+      "2.6 2.6 2.6",
+      "3 3 3",
+      "3.6 3.6 3.6",
+      "4.3 4.3 4.3",
+      "5.2 5.2 5.2",
+      "6.3 6.3 6.3",
+      "7.5 7.5 7.5"
+    ];
+
+    const pizzaSizeLabels = [
+      "SMALL",
+      "20 CM",
+      "30 CM",
+      "37 CM",
+      "43 CM",
+      "50 CM",
+      "57 CM",
+      "66 CM",
+      "78 CM",
+      "90 CM",
+      "XL",
+      "XXL",
+      "GIANT",
+      "SHOWCASE",
+      "MAX"
     ];
 
     digitalWebsite.href = CONFIG.siteUrl;
@@ -1077,10 +1101,12 @@
     pizzaBtn.addEventListener("click", () => {
       pizzaVisible = true;
       pizzaRig.setAttribute("visible", "true");
-      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
+      applyPizzaSize();
       menuSheet.classList.remove("active");
       setPizzaRotation();
-      setStatus("GIANT PIZZA X20", modelAutoFitted ? "MOVE PHONE AROUND CARD" : "PIZZA LOADING");
+
+      const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
+      setStatus(`PIZZA ${label}`, modelAutoFitted ? "MOVE PHONE AROUND CARD" : "PIZZA LOADING");
       haptic(45);
     });
 
@@ -1093,15 +1119,17 @@
 
     sizeBtn.addEventListener("click", () => {
       sizeIndex = (sizeIndex + 1) % pizzaScales.length;
-      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
-      setStatus("PIZZA SIZE", `X20 MODE · SIZE ${sizeIndex + 1}`);
+      applyPizzaSize();
+
+      const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
+      setStatus("PIZZA SIZE", label);
       haptic(25);
     });
 
     rotateBtn.addEventListener("click", () => {
       rotateOn = !rotateOn;
       rotateBtn.textContent = rotateOn ? "STOP ROTATE" : "ROTATE";
-      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "GIANT PIZZA");
+      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "PIZZA");
       haptic(25);
 
       if (rotateOn) startPizzaRotation();
@@ -1123,13 +1151,13 @@
       flipped = false;
 
       pizzaRig.setAttribute("visible", "true");
-      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
+      applyPizzaSize();
       setPizzaRotation();
 
       rotateBtn.textContent = "ROTATE";
       stopPizzaRotation();
 
-      setStatus("PIZZA RESET", "X20 ANCHOR LOCK");
+      setStatus("PIZZA RESET", "30 CM");
       haptic(35);
     });
 
@@ -1137,6 +1165,26 @@
       showDebug(modelDebugInfo);
       haptic(20);
     });
+
+    function applyPizzaSize() {
+      const scale = pizzaScales[sizeIndex] || "1 1 1";
+      const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
+
+      pizzaRig.setAttribute("scale", scale);
+      sizeBtn.textContent = label;
+      sizeLabel.textContent = label;
+
+      if (arSizeText) {
+        arSizeText.setAttribute("value", `PIZZA ${label}`);
+      }
+
+      if (menuInfoText) {
+        menuInfoText.setAttribute("value", `PIZZA ${label}\\nSIZE +\\nROTATE\\nFLIP`);
+      }
+
+      modelDebugInfo += `\nSIZE SELECTED: ${label}`;
+      modelDebugInfo += `\nRIG SCALE: ${scale}`;
+    }
 
     function setPizzaRotation() {
       const baseX = flipped ? -90 : 90;
@@ -1177,8 +1225,9 @@
         try {
           preparePizzaModel(model);
           autoFitPizza(model);
+          applyPizzaSize();
           modelAutoFitted = true;
-          setStatus("PIZZA GLB READY", "MENU → PIZZA X20");
+          setStatus("PIZZA GLB READY", "MENU → PIZZA");
         } catch (error) {
           showDebug("AUTO-FIT ERROR: " + error.message);
           setStatus("PIZZA GLB READY", "MANUAL SCALE");
@@ -1237,7 +1286,7 @@
         "MESHES: " + meshCount + "\n" +
         "MATERIALS: " + materialCount + "\n" +
         "TEXTURES FOUND: " + textureCount + "\n" +
-        "GIANT WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
+        "BASE WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
         "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
       console.log(modelDebugInfo);
@@ -1275,7 +1324,7 @@
       });
 
       modelDebugInfo += "\nAUTO SCALE: " + Number(scale.toFixed(4));
-      modelDebugInfo += "\nRESULT: X20 GIANT ANCHOR MODE";
+      modelDebugInfo += "\nRESULT: MULTI SIZE MODE";
     }
 
     function openDigitalCard() {
@@ -1308,8 +1357,10 @@
       if (scene.renderer && window.THREE) {
         if (THREE.SRGBColorSpace) scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
         scene.renderer.toneMappingExposure = 1.0;
+        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
 
+      applyPizzaSize();
       setStatus("AR SYSTEM READY", "READY");
     });
 
@@ -1363,7 +1414,7 @@
       clearTimeout(scanTimer);
       hideDebug();
 
-      setStatus("SOULFLAME LOCKED", "MOVE PHONE · KEEP CARD VISIBLE");
+      setStatus("SOULFLAME LOCKED", "MENU → PIZZA → SIZE +");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
@@ -1401,10 +1452,10 @@
     });
 
     const particles = [];
-    const PARTICLE_COUNT = 58;
+    const PARTICLE_COUNT = 38;
 
     function resizeFx() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.4);
       fxCanvas.width = Math.floor(window.innerWidth * dpr);
       fxCanvas.height = Math.floor(window.innerHeight * dpr);
       fxCanvas.style.width = window.innerWidth + "px";
@@ -1419,10 +1470,10 @@
         particles.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 1.8 + .4,
-          vx: (Math.random() - .5) * .22,
-          vy: (Math.random() - .5) * .22,
-          a: Math.random() * .55 + .15
+          r: Math.random() * 1.6 + .35,
+          vx: (Math.random() - .5) * .18,
+          vy: (Math.random() - .5) * .18,
+          a: Math.random() * .48 + .12
         });
       }
     }
@@ -1451,6 +1502,10 @@
     window.addEventListener("resize", () => {
       resizeFx();
       createParticles();
+
+      if (scene.renderer) {
+        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+      }
     });
 
     resizeFx();
