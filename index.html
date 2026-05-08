@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Real Size</title>
+  <title>SoulFlame AR Pizza · Giant Anchor</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -12,14 +12,12 @@
   <style>
     :root {
       --bg: #030303;
-      --text: #fff;
-      --muted: rgba(255,255,255,.66);
-      --glass: rgba(0,0,0,.66);
-      --line: rgba(255,255,255,.18);
+      --text: #ffffff;
       --gold: #ffb347;
-      --green: #8dffca;
-      --red: #ff5b5b;
-      --pill: 999px;
+      --glass: rgba(0,0,0,.68);
+      --line: rgba(255,255,255,.18);
+      --radius-xl: 34px;
+      --radius-pill: 999px;
     }
 
     * {
@@ -28,7 +26,8 @@
       user-select: none;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       width: 100%;
       height: 100%;
@@ -48,18 +47,54 @@
       display: none !important;
     }
 
-    body::before {
+    #fxCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      opacity: .45;
+      mix-blend-mode: screen;
+    }
+
+    body::before,
+    body::after {
       content: "";
       position: fixed;
-      inset: -20%;
-      z-index: 0;
+      inset: -28%;
       pointer-events: none;
+      z-index: 1;
+    }
+
+    body::before {
       background:
-        radial-gradient(circle at 18% 20%, rgba(255,255,255,.11), transparent 22%),
-        radial-gradient(circle at 82% 75%, rgba(255,179,71,.16), transparent 25%),
-        radial-gradient(circle at 50% 50%, rgba(141,255,202,.045), transparent 34%),
-        #030303;
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
+        radial-gradient(circle at 82% 72%, rgba(255,179,71,.16), transparent 26%),
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
+        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
+      animation: universeMove 13s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      opacity: .10;
+      background-image:
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+      animation: gridDrift 18s linear infinite;
+    }
+
+    @keyframes universeMove {
+      from { transform: translate3d(-2%, -1%, 0) scale(1); }
+      to { transform: translate3d(2%, 1.5%, 0) scale(1.08); }
+    }
+
+    @keyframes gridDrift {
+      from { transform: translate3d(0,0,0); }
+      to { transform: translate3d(44px,44px,0); }
     }
 
     #startScreen {
@@ -70,8 +105,9 @@
       place-items: center;
       padding: 22px;
       background:
-        radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.96) 64%),
+        radial-gradient(circle at center, rgba(255,255,255,.14), rgba(0,0,0,.96) 62%),
         linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,179,71,.08));
+      overflow: hidden;
     }
 
     #startScreen::before {
@@ -80,28 +116,35 @@
       width: min(620px, 116vw);
       height: min(620px, 116vw);
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.13);
-      box-shadow: 0 0 100px rgba(255,255,255,.12), inset 0 0 80px rgba(255,255,255,.05);
-      animation: portal 22s linear infinite;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 0 120px rgba(255,255,255,.12),
+        inset 0 0 90px rgba(255,255,255,.055);
+      animation: portalRotate 20s linear infinite;
     }
 
-    @keyframes portal {
-      from { transform: rotate(0deg) scale(.94); }
-      to { transform: rotate(360deg) scale(1.03); }
+    @keyframes portalRotate {
+      from { transform: rotate(0deg) scale(.92); }
+      to { transform: rotate(360deg) scale(1.02); }
     }
 
     .start-card {
       position: relative;
       z-index: 3;
-      width: min(510px, 94vw);
+      width: min(500px, 93vw);
       padding: 34px 24px 24px;
-      border-radius: 34px;
+      border-radius: var(--radius-xl);
       border: 1px solid rgba(255,255,255,.22);
-      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.025)), rgba(0,0,0,.74);
-      backdrop-filter: blur(24px) saturate(145%);
-      -webkit-backdrop-filter: blur(24px) saturate(145%);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.025)),
+        rgba(0,0,0,.74);
+      backdrop-filter: blur(26px) saturate(150%);
+      -webkit-backdrop-filter: blur(26px) saturate(150%);
       text-align: center;
-      box-shadow: 0 0 80px rgba(255,255,255,.16), inset 0 0 30px rgba(255,255,255,.045);
+      box-shadow:
+        0 0 90px rgba(255,255,255,.18),
+        inset 0 0 30px rgba(255,255,255,.055);
+      overflow: hidden;
     }
 
     .logo-mark {
@@ -109,7 +152,8 @@
       height: 74px;
       margin: 0 auto;
       position: relative;
-      filter: drop-shadow(0 0 18px rgba(255,255,255,.46));
+      filter: drop-shadow(0 0 18px rgba(255,255,255,.48));
+      animation: logoFloat 2.9s ease-in-out infinite alternate;
     }
 
     .logo-mark::before,
@@ -117,7 +161,9 @@
       content: "";
       position: absolute;
       border: 2px solid rgba(255,255,255,.98);
-      box-shadow: 0 0 13px rgba(255,255,255,.70), inset 0 0 12px rgba(255,255,255,.13);
+      box-shadow:
+        0 0 13px rgba(255,255,255,.74),
+        inset 0 0 12px rgba(255,255,255,.14);
     }
 
     .logo-mark::before {
@@ -130,12 +176,17 @@
       transform: rotate(-28deg) skew(10deg);
     }
 
+    @keyframes logoFloat {
+      from { transform: translateY(0) rotate(-2deg); }
+      to { transform: translateY(-8px) rotate(2deg); }
+    }
+
     .start-card h1 {
       margin: 20px 0 8px;
       letter-spacing: .20em;
-      font-size: clamp(23px, 6vw, 34px);
+      font-size: clamp(23px, 6vw, 33px);
       line-height: 1;
-      text-shadow: 0 0 28px rgba(255,255,255,.38);
+      text-shadow: 0 0 28px rgba(255,255,255,.40);
     }
 
     .subtitle {
@@ -148,7 +199,7 @@
 
     .start-card p {
       margin: 0 auto 22px;
-      max-width: 405px;
+      max-width: 390px;
       color: rgba(255,255,255,.82);
       line-height: 1.52;
       font-size: 15px;
@@ -160,42 +211,45 @@
       justify-items: center;
     }
 
-    button, a {
-      font: inherit;
-    }
-
-    button {
+    #startBtn,
+    .ghost-btn,
+    #fallbackBtn,
+    #actionDock button,
+    #menuSheet button {
       cursor: pointer;
       font-weight: 950;
       letter-spacing: .12em;
-      transition: transform .16s ease, opacity .16s ease, background .16s ease;
-    }
-
-    button:active, a:active {
-      transform: scale(.95);
+      transition: transform .18s ease, opacity .18s ease;
     }
 
     #startBtn {
       border: 0;
-      border-radius: var(--pill);
+      border-radius: var(--radius-pill);
       padding: 15px 24px;
       min-width: 240px;
       background: #fff;
       color: #000;
-      box-shadow: 0 0 34px rgba(255,255,255,.38), inset 0 -12px 22px rgba(0,0,0,.12);
+      box-shadow:
+        0 0 36px rgba(255,255,255,.42),
+        inset 0 -12px 22px rgba(0,0,0,.13);
     }
 
     .ghost-btn {
       border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--pill);
+      border-radius: var(--radius-pill);
       padding: 12px 16px;
       min-width: 210px;
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
       backdrop-filter: blur(10px);
-      cursor: pointer;
-      font-weight: 950;
-      letter-spacing: .12em;
+    }
+
+    #startBtn:active,
+    .ghost-btn:active,
+    #fallbackBtn:active,
+    #actionDock button:active,
+    #menuSheet button:active {
+      transform: scale(.95);
     }
 
     .hint {
@@ -211,7 +265,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin: 20px auto 0;
-      max-width: 360px;
+      max-width: 350px;
     }
 
     .mini-grid span {
@@ -225,57 +279,29 @@
       letter-spacing: .12em;
     }
 
-    #topHud, #bottomStatus, #fpsBadge, #fallbackBtn {
-      position: fixed;
-      z-index: 9998;
-      border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.60);
-      backdrop-filter: blur(14px) saturate(150%);
-      -webkit-backdrop-filter: blur(14px) saturate(150%);
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: .12em;
-    }
-
     #topHud {
+      position: fixed;
       top: max(14px, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%);
+      z-index: 9998;
       padding: 10px 15px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(15px) saturate(150%);
+      -webkit-backdrop-filter: blur(15px) saturate(150%);
       color: rgba(255,255,255,.92);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .15em;
+      text-align: center;
       pointer-events: none;
-      max-width: calc(100vw - 96px);
+      box-shadow: 0 0 30px rgba(255,255,255,.10);
+      max-width: calc(100vw - 20px);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    #fpsBadge {
-      right: max(12px, env(safe-area-inset-right));
-      top: max(14px, env(safe-area-inset-top));
-      padding: 9px 11px;
-      color: var(--green);
-      pointer-events: none;
-    }
-
-    #bottomStatus {
-      left: max(12px, env(safe-area-inset-left));
-      bottom: max(12px, env(safe-area-inset-bottom));
-      padding: 9px 12px;
-      color: rgba(255,255,255,.82);
-      pointer-events: none;
-      max-width: 58vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #fallbackBtn {
-      right: max(12px, env(safe-area-inset-right));
-      bottom: max(12px, env(safe-area-inset-bottom));
-      padding: 9px 12px;
-      color: rgba(255,255,255,.84);
     }
 
     #scanFrame {
@@ -307,7 +333,9 @@
 
     #scanFrame::before {
       border: 1px solid rgba(255,255,255,.26);
-      box-shadow: 0 0 54px rgba(255,255,255,.11), inset 0 0 42px rgba(255,255,255,.06);
+      box-shadow:
+        0 0 54px rgba(255,255,255,.11),
+        inset 0 0 42px rgba(255,255,255,.06);
     }
 
     #scanFrame::after {
@@ -324,22 +352,74 @@
       animation: framePulse 1.35s ease-in-out infinite alternate;
     }
 
+    #scanLine {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 10%;
+      height: 2px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, transparent, #fff, transparent);
+      box-shadow: 0 0 18px rgba(255,255,255,.85);
+      animation: scanLineMove 2.1s ease-in-out infinite alternate;
+    }
+
     @keyframes framePulse {
       from { opacity: .45; transform: scale(.99); }
       to { opacity: 1; transform: scale(1.01); }
     }
 
+    @keyframes scanLineMove {
+      from { transform: translateY(0); opacity: .25; }
+      to { transform: translateY(342px); opacity: .9; }
+    }
+
+    #bottomStatus {
+      position: fixed;
+      left: max(12px, env(safe-area-inset-left));
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 9998;
+      padding: 9px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,.62);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.82);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      backdrop-filter: blur(11px);
+      pointer-events: none;
+      max-width: 55vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #fallbackBtn {
+      position: fixed;
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 9998;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,.58);
+      color: rgba(255,255,255,.84);
+      padding: 9px 12px;
+      font-size: 10px;
+      backdrop-filter: blur(11px);
+    }
+
     #debugBox {
       position: fixed;
       left: 12px;
-      top: 58px;
+      top: 54px;
       z-index: 10002;
-      width: min(470px, calc(100vw - 24px));
+      width: min(460px, calc(100vw - 24px));
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.35);
       border-radius: 16px;
-      background: rgba(0,0,0,.82);
-      color: rgba(255,255,255,.90);
+      background: rgba(0,0,0,.78);
+      color: rgba(255,255,255,.86);
       font-size: 11px;
       line-height: 1.38;
       display: none;
@@ -360,8 +440,8 @@
       display: flex;
       gap: 9px;
       padding: 8px;
-      border-radius: var(--pill);
-      background: rgba(0,0,0,.60);
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,.58);
       border: 1px solid rgba(255,255,255,.18);
       backdrop-filter: blur(17px) saturate(155%);
       -webkit-backdrop-filter: blur(17px) saturate(155%);
@@ -379,7 +459,7 @@
 
     #actionDock button {
       border: 0;
-      border-radius: var(--pill);
+      border-radius: var(--radius-pill);
       padding: 12px 14px;
       font-size: 10px;
       background: rgba(255,255,255,.96);
@@ -405,18 +485,22 @@
       left: 50%;
       bottom: max(88px, calc(env(safe-area-inset-bottom) + 86px));
       transform: translateX(-50%) translateY(16px) scale(.96);
-      width: min(470px, calc(100vw - 24px));
+      width: min(440px, calc(100vw - 24px));
       z-index: 10001;
       padding: 14px;
       border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.035)), rgba(0,0,0,.78);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.035)),
+        rgba(0,0,0,.76);
       border: 1px solid rgba(255,255,255,.2);
       backdrop-filter: blur(22px) saturate(160%);
       -webkit-backdrop-filter: blur(22px) saturate(160%);
       opacity: 0;
       pointer-events: none;
       transition: opacity .22s ease, transform .22s ease;
-      box-shadow: 0 0 70px rgba(255,255,255,.16), inset 0 0 25px rgba(255,255,255,.05);
+      box-shadow:
+        0 0 70px rgba(255,255,255,.16),
+        inset 0 0 25px rgba(255,255,255,.05);
     }
 
     #menuSheet.active {
@@ -447,17 +531,17 @@
 
     .sheet-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 9px;
     }
 
     #menuSheet button {
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 20px;
-      padding: 13px 8px;
+      padding: 13px 12px;
       background: rgba(255,255,255,.075);
       color: #fff;
-      font-size: 10px;
+      font-size: 11px;
       min-height: 48px;
     }
 
@@ -481,7 +565,9 @@
       display: grid;
       place-items: center;
       padding: 22px;
-      background: radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.96) 62%), #000;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.96) 62%),
+        #000;
       overflow: hidden;
     }
 
@@ -489,7 +575,9 @@
       width: min(460px, 94vw);
       border: 1px solid rgba(255,255,255,.20);
       border-radius: 34px;
-      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.02)), rgba(0,0,0,.78);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.02)),
+        rgba(0,0,0,.78);
       backdrop-filter: blur(22px) saturate(145%);
       -webkit-backdrop-filter: blur(22px) saturate(145%);
       padding: 27px;
@@ -521,7 +609,7 @@
     .digital-actions a {
       text-decoration: none;
       border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--pill);
+      border-radius: 999px;
       padding: 13px 14px;
       background: rgba(255,255,255,.94);
       color: #000;
@@ -556,7 +644,6 @@
 
       #topHud {
         font-size: 10px;
-        max-width: calc(100vw - 96px);
       }
 
       #actionDock {
@@ -585,24 +672,25 @@
       }
 
       .sheet-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 
 <body>
+  <canvas id="fxCanvas"></canvas>
   <div id="debugBox"></div>
 
   <section id="startScreen">
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">REAL SIZE · 20 / 30 / 40 CM</div>
+      <div class="subtitle">GIANT PIZZA · CARD ANCHOR</div>
 
       <p>
-        Постави визитката на маса. Сканирай я и избери реален размер:
-        <b>20 см</b>, <b>30 см</b>, <b>40 см</b> или <b>50 см</b>.
+        Постави визитката на маса. Насочи камерата към <b>черната страна</b>.
+        Дръж визитката в кадър и движи телефона, за да разглеждаш пицата.
       </p>
 
       <div class="start-actions">
@@ -613,17 +701,18 @@
       <span class="hint">Файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
 
       <div class="mini-grid">
-        <span>REAL CM</span>
-        <span>CARD ANCHOR</span>
-        <span>PRO FPS</span>
+        <span>X20 SIZE</span>
+        <span>ANCHOR</span>
+        <span>NFC CARD</span>
       </div>
     </div>
   </section>
 
   <div id="topHud">SCAN SOULFLAME CARD</div>
-  <div id="fpsBadge">FPS --</div>
 
-  <div id="scanFrame"></div>
+  <div id="scanFrame">
+    <div id="scanLine"></div>
+  </div>
 
   <div id="bottomStatus">READY</div>
   <button id="fallbackBtn">DIGITAL CARD</button>
@@ -637,21 +726,19 @@
 
   <div id="menuSheet">
     <div class="sheet-title">
-      <strong>REAL PIZZA SIZE</strong>
-      <span id="sizeLabel">30 CM</span>
+      <strong>SOULFLAME MENU</strong>
+      <span>GIANT AR OPTIONS</span>
     </div>
 
     <div class="sheet-grid">
-      <button id="pizza20Btn">20 CM</button>
-      <button id="pizza30Btn" class="primary">30 CM</button>
-      <button id="pizza40Btn">40 CM</button>
-      <button id="pizza50Btn">50 CM</button>
+      <button id="pizzaBtn" class="primary">PIZZA X20</button>
+      <button id="sizeBtn">SIZE +</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
-      <button id="qualityBtn">QUALITY</button>
-      <button id="hidePizzaBtn">HIDE</button>
-      <button id="debugBtn" class="light">DEBUG</button>
+      <button id="resetBtn">RESET</button>
+      <button id="hidePizzaBtn">HIDE / SHOW</button>
       <button id="closeMenuBtn" class="light">CLOSE</button>
+      <button id="debugBtn" class="light">DEBUG</button>
     </div>
   </div>
 
@@ -681,9 +768,9 @@
       uiScanning: yes;
       uiLoading: no;
       warmupTolerance: 5;
-      missTolerance: 34;
-      filterMinCF: 0.00006;
-      filterBeta: 0.0009;
+      missTolerance: 35;
+      filterMinCF: 0.00005;
+      filterBeta: 0.0008;
     "
     color-space="sRGB"
     renderer="
@@ -691,8 +778,7 @@
       physicallyCorrectLights: false;
       antialias: true;
       alpha: true;
-      precision: mediump;
-      powerPreference: high-performance;
+      precision: high;
       logarithmicDepthBuffer: true;
     "
     vr-mode-ui="enabled: false"
@@ -711,47 +797,48 @@
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
       <a-light type="ambient" intensity="0.95" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="1.25" color="#ffffff" position="0 1.3 1"></a-light>
-      <a-light type="point" intensity="0.38" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="directional" intensity="1.35" color="#ffffff" position="0 1.3 1"></a-light>
+      <a-light type="point" intensity="0.45" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity id="stableWorld" position="0 0 0">
         <a-circle
-          id="realSizeCircle"
+          id="arTable"
           position="0 -0.09 0.052"
-          radius="1.66"
-          color="#ffb347"
+          radius="0.58"
+          color="#ffffff"
           opacity="0.10"
           material="transparent: true; depthWrite: false; side: double"
+          animation="property: opacity; from: 0.055; to: 0.15; dur: 1600; dir: alternate; loop: true; easing: easeInOutSine"
         ></a-circle>
 
         <a-ring
-          id="realSizeRing"
-          position="0 -0.09 0.066"
-          radius-inner="1.63"
-          radius-outer="1.66"
-          color="#ffb347"
-          opacity="0.75"
+          id="tableRing"
+          position="0 -0.09 0.064"
+          radius-inner="0.49"
+          radius-outer="0.505"
+          color="#ffffff"
+          opacity="0.58"
           material="transparent: true; depthWrite: false"
+          animation="property: rotation; to: 0 0 360; dur: 16000; loop: true; easing: linear"
         ></a-ring>
 
         <a-text
-          id="realSizeText"
-          value="REAL 30 CM PIZZA"
-          position="-0.50 -0.76 0.083"
-          width="1.1"
+          value="ДРЪЖТЕ ВИЗИТКАТА В КАДЪР"
+          position="-0.48 -0.68 0.083"
+          width="0.92"
           align="center"
-          color="#ffb347"
-          opacity="0.98"
+          color="#ffffff"
+          opacity="0.88"
           material="transparent: true; depthWrite: false"
         ></a-text>
 
         <a-text
-          value="ДРЪЖТЕ ВИЗИТКАТА В КАДЪР"
-          position="-0.48 -0.92 0.083"
-          width="0.92"
+          value="GIANT PIZZA X20"
+          position="-0.29 -0.77 0.083"
+          width="0.78"
           align="center"
-          color="#ffffff"
-          opacity="0.82"
+          color="#ffb347"
+          opacity="0.95"
           material="transparent: true; depthWrite: false"
         ></a-text>
 
@@ -776,8 +863,19 @@
           radius-inner="0.17"
           radius-outer="0.186"
           color="#ffffff"
-          opacity="0.68"
+          opacity="0.88"
           material="transparent: true; depthWrite: false"
+          animation="property: rotation; to: 0 0 360; dur: 12000; loop: true; easing: linear"
+        ></a-ring>
+
+        <a-ring
+          position="0 0.62 0.04"
+          radius-inner="0.235"
+          radius-outer="0.244"
+          color="#ffffff"
+          opacity="0.42"
+          material="transparent: true; depthWrite: false"
+          animation="property: rotation; to: 0 0 -360; dur: 16000; loop: true; easing: linear"
         ></a-ring>
 
         <a-text
@@ -788,6 +886,7 @@
           color="#ffffff"
           opacity="0.98"
           material="transparent: true; depthWrite: false"
+          animation="property: position; from: -0.29 0.39 0.055; to: -0.29 0.425 0.055; dur: 2100; dir: alternate; loop: true; easing: easeInOutSine"
         ></a-text>
 
         <a-text
@@ -796,9 +895,55 @@
           width="0.95"
           align="center"
           color="#ffffff"
-          opacity="0.72"
+          opacity="0.78"
           material="transparent: true; depthWrite: false"
         ></a-text>
+
+        <a-entity position="0.72 0.10 0.075">
+          <a-plane
+            width="0.94"
+            height="0.65"
+            color="#ffffff"
+            opacity="0.14"
+            material="transparent: true; depthWrite: false"
+          ></a-plane>
+
+          <a-plane
+            position="0 0.23 0.025"
+            width="0.82"
+            height="0.13"
+            color="#ffffff"
+            opacity="0.94"
+            material="transparent: true; depthWrite: false"
+          ></a-plane>
+
+          <a-text
+            value="AR MENU"
+            position="-0.31 0.19 0.05"
+            width="0.8"
+            color="#000000"
+            align="left"
+            material="transparent: true; depthWrite: false"
+          ></a-text>
+
+          <a-text
+            value="PIZZA X20\nPHONE MOVE\nCARD ANCHOR\nWEBSITE\nEMAIL"
+            position="-0.37 0.025 0.05"
+            width="0.78"
+            color="#ffffff"
+            align="left"
+            opacity="0.96"
+            material="transparent: true; depthWrite: false"
+          ></a-text>
+        </a-entity>
+
+        <a-entity position="0 0 0.095">
+          <a-sphere position="-0.38 0.62 0" radius="0.012" color="#ffffff" opacity="0.85"></a-sphere>
+          <a-sphere position="0.38 0.54 0" radius="0.009" color="#ffffff" opacity="0.60"></a-sphere>
+          <a-sphere position="-0.32 -0.12 0" radius="0.008" color="#ffffff" opacity="0.60"></a-sphere>
+          <a-sphere position="0.28 -0.58 0" radius="0.010" color="#ffffff" opacity="0.74"></a-sphere>
+          <a-sphere position="0.06 -0.74 0" radius="0.006" color="#ffffff" opacity="0.54"></a-sphere>
+        </a-entity>
       </a-entity>
     </a-entity>
   </a-scene>
@@ -813,25 +958,21 @@
       glbFile: "./uploads_files_6479452_187.glb",
       targetFile: "./targets/soulflame-black.mind",
 
-      // ТУК Е РЕАЛНАТА МАТЕМАТИКА:
-      // Ако визитката ти е 9 см широка, остави 9.0.
-      // Ако е 8.5 см, напиши 8.5.
-      cardWidthCm: 9.0,
+      /*
+        Предишният MAX беше приблизително:
+        wantedWidth 0.82 * maxSizeButton 1.75 = 1.435
 
-      // Начален реален размер.
-      pizzaDiameterCm: 30,
-
-      maxPixelRatioFast: 1.15,
-      maxPixelRatioQuality: 1.55
+        X20 от това = 28.7
+        Това е умишлено огромна пица, заключена за визитката.
+      */
+      giantPizzaWidth: 28.7
     };
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
-
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
-    const fpsBadge = document.getElementById("fpsBadge");
     const debugBox = document.getElementById("debugBox");
 
     const actionDock = document.getElementById("actionDock");
@@ -842,16 +983,13 @@
 
     const menuSheet = document.getElementById("menuSheet");
     const closeMenuBtn = document.getElementById("closeMenuBtn");
-    const pizza20Btn = document.getElementById("pizza20Btn");
-    const pizza30Btn = document.getElementById("pizza30Btn");
-    const pizza40Btn = document.getElementById("pizza40Btn");
-    const pizza50Btn = document.getElementById("pizza50Btn");
+    const pizzaBtn = document.getElementById("pizzaBtn");
+    const sizeBtn = document.getElementById("sizeBtn");
     const rotateBtn = document.getElementById("rotateBtn");
     const flipBtn = document.getElementById("flipBtn");
-    const qualityBtn = document.getElementById("qualityBtn");
+    const resetBtn = document.getElementById("resetBtn");
     const hidePizzaBtn = document.getElementById("hidePizzaBtn");
     const debugBtn = document.getElementById("debugBtn");
-    const sizeLabel = document.getElementById("sizeLabel");
 
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
@@ -866,25 +1004,32 @@
 
     const pizzaRig = document.getElementById("pizzaRig");
     const pizzaModel = document.getElementById("pizzaModel");
-    const realSizeCircle = document.getElementById("realSizeCircle");
-    const realSizeRing = document.getElementById("realSizeRing");
-    const realSizeText = document.getElementById("realSizeText");
+
+    const fxCanvas = document.getElementById("fxCanvas");
+    const fxCtx = fxCanvas.getContext("2d");
 
     let arSystem = null;
     let started = false;
     let visible = false;
     let scanTimer = null;
 
-    let modelReady = false;
     let pizzaVisible = false;
+    let sizeIndex = 2;
     let rotateOn = false;
     let flipped = false;
-    let qualityMode = "FAST";
     let rotationRAF = null;
     let currentPizzaY = 0;
-    let modelRoot = null;
-    let modelMaxSize = 1;
+    let modelAutoFitted = false;
     let modelDebugInfo = "MODEL NOT LOADED";
+
+    const pizzaScales = [
+      "0.35 0.35 0.35",
+      "0.65 0.65 0.65",
+      "1 1 1",
+      "1.35 1.35 1.35",
+      "1.75 1.75 1.75",
+      "2.25 2.25 2.25"
+    ];
 
     digitalWebsite.href = CONFIG.siteUrl;
     digitalCall.href = `tel:${CONFIG.phone}`;
@@ -919,7 +1064,7 @@
 
     menuBtn.addEventListener("click", () => {
       menuSheet.classList.toggle("active");
-      setStatus("REAL SIZE MENU", "CHOOSE CM SIZE");
+      setStatus("SOULFLAME MENU", "CHOOSE AR OPTION");
       haptic(30);
     });
 
@@ -929,23 +1074,34 @@
       haptic(20);
     });
 
-    pizza20Btn.addEventListener("click", () => setRealPizzaSize(20));
-    pizza30Btn.addEventListener("click", () => setRealPizzaSize(30));
-    pizza40Btn.addEventListener("click", () => setRealPizzaSize(40));
-    pizza50Btn.addEventListener("click", () => setRealPizzaSize(50));
+    pizzaBtn.addEventListener("click", () => {
+      pizzaVisible = true;
+      pizzaRig.setAttribute("visible", "true");
+      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
+      menuSheet.classList.remove("active");
+      setPizzaRotation();
+      setStatus("GIANT PIZZA X20", modelAutoFitted ? "MOVE PHONE AROUND CARD" : "PIZZA LOADING");
+      haptic(45);
+    });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
-      hidePizzaBtn.textContent = pizzaVisible ? "HIDE" : "SHOW";
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", `${CONFIG.pizzaDiameterCm} CM`);
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ANCHOR ON" : "ANCHOR OFF");
+      haptic(25);
+    });
+
+    sizeBtn.addEventListener("click", () => {
+      sizeIndex = (sizeIndex + 1) % pizzaScales.length;
+      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
+      setStatus("PIZZA SIZE", `X20 MODE · SIZE ${sizeIndex + 1}`);
       haptic(25);
     });
 
     rotateBtn.addEventListener("click", () => {
       rotateOn = !rotateOn;
-      rotateBtn.textContent = rotateOn ? "STOP" : "ROTATE";
-      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", `${CONFIG.pizzaDiameterCm} CM`);
+      rotateBtn.textContent = rotateOn ? "STOP ROTATE" : "ROTATE";
+      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "GIANT PIZZA");
       haptic(25);
 
       if (rotateOn) startPizzaRotation();
@@ -955,68 +1111,32 @@
     flipBtn.addEventListener("click", () => {
       flipped = !flipped;
       setPizzaRotation();
-      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA TOP SIDE", `${CONFIG.pizzaDiameterCm} CM`);
+      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA TOP SIDE", flipped ? "OTHER SIDE" : "NORMAL SIDE");
       haptic(35);
     });
 
-    qualityBtn.addEventListener("click", () => {
-      qualityMode = qualityMode === "FAST" ? "QUALITY" : "FAST";
-      applyRenderQuality();
-      qualityBtn.textContent = qualityMode;
-      setStatus("RENDER MODE", qualityMode);
-      haptic(25);
+    resetBtn.addEventListener("click", () => {
+      pizzaVisible = true;
+      sizeIndex = 2;
+      currentPizzaY = 0;
+      rotateOn = false;
+      flipped = false;
+
+      pizzaRig.setAttribute("visible", "true");
+      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
+      setPizzaRotation();
+
+      rotateBtn.textContent = "ROTATE";
+      stopPizzaRotation();
+
+      setStatus("PIZZA RESET", "X20 ANCHOR LOCK");
+      haptic(35);
     });
 
     debugBtn.addEventListener("click", () => {
       showDebug(modelDebugInfo);
       haptic(20);
     });
-
-    function setRealPizzaSize(cm) {
-      CONFIG.pizzaDiameterCm = cm;
-      pizzaVisible = true;
-      pizzaRig.setAttribute("visible", "true");
-      hidePizzaBtn.textContent = "HIDE";
-
-      updateSizeButtons(cm);
-      updateRealGuides(cm);
-
-      if (modelReady && modelRoot) {
-        fitPizzaToRealCm(modelRoot, cm);
-        setStatus(`REAL PIZZA ${cm} CM`, "MOVE PHONE AROUND CARD");
-      } else {
-        setStatus(`REAL PIZZA ${cm} CM`, "MODEL LOADING");
-      }
-
-      menuSheet.classList.remove("active");
-      haptic(45);
-    }
-
-    function updateSizeButtons(cm) {
-      [pizza20Btn, pizza30Btn, pizza40Btn, pizza50Btn].forEach((btn) => {
-        btn.classList.remove("primary");
-      });
-
-      if (cm === 20) pizza20Btn.classList.add("primary");
-      if (cm === 30) pizza30Btn.classList.add("primary");
-      if (cm === 40) pizza40Btn.classList.add("primary");
-      if (cm === 50) pizza50Btn.classList.add("primary");
-
-      sizeLabel.textContent = `${cm} CM`;
-    }
-
-    function updateRealGuides(cm) {
-      const targetUnitsDiameter = cm / CONFIG.cardWidthCm;
-      const radius = targetUnitsDiameter / 2;
-
-      realSizeCircle.setAttribute("radius", String(radius));
-      realSizeRing.setAttribute("radius-inner", String(Math.max(0.01, radius - 0.03)));
-      realSizeRing.setAttribute("radius-outer", String(radius));
-      realSizeText.setAttribute("value", `REAL ${cm} CM PIZZA`);
-
-      modelDebugInfo += `\nREAL SIZE SET: ${cm} cm`;
-      modelDebugInfo += `\nTARGET UNITS DIAMETER: ${targetUnitsDiameter.toFixed(4)}`;
-    }
 
     function setPizzaRotation() {
       const baseX = flipped ? -90 : 90;
@@ -1029,7 +1149,7 @@
       const tick = () => {
         if (!rotateOn) return;
 
-        currentPizzaY = (currentPizzaY + 0.16) % 360;
+        currentPizzaY = (currentPizzaY + 0.18) % 360;
         setPizzaRotation();
         rotationRAF = requestAnimationFrame(tick);
       };
@@ -1044,8 +1164,8 @@
       }
     }
 
-    pizzaModel.addEventListener("model-loaded", (event) => {
-      const model = event.detail.model || pizzaModel.getObject3D("mesh");
+    pizzaModel.addEventListener("model-loaded", () => {
+      const model = pizzaModel.getObject3D("mesh");
 
       if (!model || !window.THREE) {
         showDebug("GLB loaded, but THREE object not ready.");
@@ -1055,22 +1175,19 @@
 
       requestAnimationFrame(() => {
         try {
-          modelRoot = model;
           preparePizzaModel(model);
-          measureModel(model);
-          fitPizzaToRealCm(model, CONFIG.pizzaDiameterCm);
-          updateRealGuides(CONFIG.pizzaDiameterCm);
-          modelReady = true;
-          setStatus("PIZZA GLB READY", `${CONFIG.pizzaDiameterCm} CM REAL SIZE`);
+          autoFitPizza(model);
+          modelAutoFitted = true;
+          setStatus("PIZZA GLB READY", "MENU → PIZZA X20");
         } catch (error) {
-          showDebug("MODEL ERROR: " + error.message);
-          setStatus("PIZZA GLB READY", "MANUAL CHECK");
+          showDebug("AUTO-FIT ERROR: " + error.message);
+          setStatus("PIZZA GLB READY", "MANUAL SCALE");
         }
       });
     });
 
     pizzaModel.addEventListener("model-error", () => {
-      const msg = "GLB ERROR: uploads_files_6479452_187.glb не се зареди. Провери дали файлът е до index.html.";
+      const msg = "GLB ERROR: Файлът не се зареди. Провери дали uploads_files_6479452_187.glb е до index.html.";
       setStatus("GLB ERROR", "CHECK FILE PATH");
       showDebug(msg);
       alert(msg);
@@ -1102,8 +1219,6 @@
 
             if (THREE.SRGBColorSpace) {
               mat.map.colorSpace = THREE.SRGBColorSpace;
-            } else if (THREE.sRGBEncoding) {
-              mat.map.encoding = THREE.sRGBEncoding;
             }
 
             mat.map.needsUpdate = true;
@@ -1119,15 +1234,16 @@
 
       modelDebugInfo =
         "GLB FILE: " + CONFIG.glbFile + "\n" +
-        "CARD WIDTH CM: " + CONFIG.cardWidthCm + "\n" +
-        "PIZZA DIAMETER CM: " + CONFIG.pizzaDiameterCm + "\n" +
         "MESHES: " + meshCount + "\n" +
         "MATERIALS: " + materialCount + "\n" +
         "TEXTURES FOUND: " + textureCount + "\n" +
-        "NOTE: 1 AR unit = card width, ако .mind target-ът е направен от цялата визитка.";
+        "GIANT WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
+        "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
+
+      console.log(modelDebugInfo);
     }
 
-    function measureModel(model) {
+    function autoFitPizza(model) {
       model.updateMatrixWorld(true);
 
       const box = new THREE.Box3().setFromObject(model);
@@ -1137,16 +1253,20 @@
       box.getSize(size);
       box.getCenter(center);
 
+      const maxSize = Math.max(size.x, size.y, size.z);
+
+      if (!Number.isFinite(maxSize) || maxSize <= 0) {
+        throw new Error("Invalid GLB bounds");
+      }
+
       model.position.x -= center.x;
       model.position.y -= center.y;
       model.position.z -= center.z;
+
+      const scale = CONFIG.giantPizzaWidth / maxSize;
+
+      model.scale.setScalar(scale);
       model.updateMatrixWorld(true);
-
-      modelMaxSize = Math.max(size.x, size.y, size.z);
-
-      if (!Number.isFinite(modelMaxSize) || modelMaxSize <= 0) {
-        throw new Error("Invalid GLB bounds");
-      }
 
       modelDebugInfo += "\nMODEL SIZE: " + JSON.stringify({
         x: Number(size.x.toFixed(4)),
@@ -1154,38 +1274,8 @@
         z: Number(size.z.toFixed(4))
       });
 
-      modelDebugInfo += "\nMODEL MAX SIZE: " + Number(modelMaxSize.toFixed(4));
-    }
-
-    function fitPizzaToRealCm(model, cm) {
-      const targetUnitsDiameter = cm / CONFIG.cardWidthCm;
-      const scale = targetUnitsDiameter / modelMaxSize;
-
-      model.scale.setScalar(scale);
-      model.updateMatrixWorld(true);
-
-      setPizzaRotation();
-
-      modelDebugInfo += "\nCURRENT REAL CM: " + cm;
-      modelDebugInfo += "\nCURRENT TARGET UNITS: " + Number(targetUnitsDiameter.toFixed(4));
-      modelDebugInfo += "\nCURRENT SCALE: " + Number(scale.toFixed(4));
-    }
-
-    function applyRenderQuality() {
-      if (!scene.renderer) return;
-
-      const maxPR = qualityMode === "QUALITY"
-        ? CONFIG.maxPixelRatioQuality
-        : CONFIG.maxPixelRatioFast;
-
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, maxPR);
-      scene.renderer.setPixelRatio(pixelRatio);
-
-      if (scene.renderer.shadowMap) {
-        scene.renderer.shadowMap.enabled = false;
-      }
-
-      scene.renderer.toneMappingExposure = qualityMode === "QUALITY" ? 1.08 : 1.0;
+      modelDebugInfo += "\nAUTO SCALE: " + Number(scale.toFixed(4));
+      modelDebugInfo += "\nRESULT: X20 GIANT ANCHOR MODE";
     }
 
     function openDigitalCard() {
@@ -1216,14 +1306,10 @@
       arSystem = scene.systems["mindar-image-system"];
 
       if (scene.renderer && window.THREE) {
-        if (THREE.SRGBColorSpace) {
-          scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
-        }
-
-        applyRenderQuality();
+        if (THREE.SRGBColorSpace) scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        scene.renderer.toneMappingExposure = 1.0;
       }
 
-      updateRealGuides(CONFIG.pizzaDiameterCm);
       setStatus("AR SYSTEM READY", "READY");
     });
 
@@ -1259,7 +1345,7 @@
         scanTimer = setTimeout(() => {
           if (started && !visible) {
             setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
-            showDebug("Не намира визитката. Провери ./targets/soulflame-black.mind и сканирай същата визитка, от която е направен target-ът.");
+            showDebug("Не намира визитката. Провери дали ./targets/soulflame-black.mind съществува и дали сканираш същата визитка, от която е направен target-ът.");
           }
         }, CONFIG.scanTimeoutMs);
 
@@ -1277,7 +1363,7 @@
       clearTimeout(scanTimer);
       hideDebug();
 
-      setStatus("SOULFLAME LOCKED", "CHOOSE 20 / 30 / 40 CM");
+      setStatus("SOULFLAME LOCKED", "MOVE PHONE · KEEP CARD VISIBLE");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
@@ -1296,7 +1382,6 @@
     document.addEventListener("visibilitychange", async () => {
       if (document.hidden && arSystem && started) {
         try {
-          stopPizzaRotation();
           await arSystem.stop();
 
           started = false;
@@ -1315,24 +1400,62 @@
       }
     });
 
-    let fpsFrames = 0;
-    let fpsLast = performance.now();
+    const particles = [];
+    const PARTICLE_COUNT = 58;
 
-    function fpsLoop(now) {
-      fpsFrames += 1;
-
-      if (now - fpsLast >= 1000) {
-        const fps = Math.round((fpsFrames * 1000) / (now - fpsLast));
-        fpsBadge.textContent = `FPS ${fps}`;
-        fpsBadge.style.color = fps >= 45 ? "var(--green)" : fps >= 28 ? "var(--gold)" : "var(--red)";
-        fpsFrames = 0;
-        fpsLast = now;
-      }
-
-      requestAnimationFrame(fpsLoop);
+    function resizeFx() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      fxCanvas.width = Math.floor(window.innerWidth * dpr);
+      fxCanvas.height = Math.floor(window.innerHeight * dpr);
+      fxCanvas.style.width = window.innerWidth + "px";
+      fxCanvas.style.height = window.innerHeight + "px";
+      fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    requestAnimationFrame(fpsLoop);
+    function createParticles() {
+      particles.length = 0;
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 1.8 + .4,
+          vx: (Math.random() - .5) * .22,
+          vy: (Math.random() - .5) * .22,
+          a: Math.random() * .55 + .15
+        });
+      }
+    }
+
+    function drawParticles() {
+      fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = window.innerWidth;
+        if (p.x > window.innerWidth) p.x = 0;
+        if (p.y < 0) p.y = window.innerHeight;
+        if (p.y > window.innerHeight) p.y = 0;
+
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        fxCtx.fillStyle = `rgba(255,255,255,${p.a})`;
+        fxCtx.fill();
+      }
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener("resize", () => {
+      resizeFx();
+      createParticles();
+    });
+
+    resizeFx();
+    createParticles();
+    drawParticles();
   </script>
 </body>
 </html>
