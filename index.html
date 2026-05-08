@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza</title>
+  <title>SoulFlame AR Pizza · MetaXR Style</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -15,6 +15,7 @@
       --text: #ffffff;
       --glass: rgba(0,0,0,.62);
       --line: rgba(255,255,255,.18);
+      --gold: #ffb347;
       --radius-xl: 34px;
       --radius-pill: 999px;
     }
@@ -52,7 +53,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .7;
+      opacity: .62;
       mix-blend-mode: screen;
     }
 
@@ -68,7 +69,7 @@
     body::before {
       background:
         radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
-        radial-gradient(circle at 82% 72%, rgba(255,255,255,.08), transparent 26%),
+        radial-gradient(circle at 82% 72%, rgba(255,179,71,.12), transparent 26%),
         radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
         linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
@@ -76,7 +77,7 @@
     }
 
     body::after {
-      opacity: .13;
+      opacity: .12;
       background-image:
         linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
@@ -104,7 +105,7 @@
       padding: 22px;
       background:
         radial-gradient(circle at center, rgba(255,255,255,.14), rgba(0,0,0,.96) 62%),
-        linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,255,255,.04));
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,179,71,.08));
       overflow: hidden;
     }
 
@@ -129,7 +130,7 @@
     .start-card {
       position: relative;
       z-index: 3;
-      width: min(490px, 93vw);
+      width: min(500px, 93vw);
       padding: 34px 24px 24px;
       border-radius: var(--radius-xl);
       border: 1px solid rgba(255,255,255,.22);
@@ -181,7 +182,7 @@
 
     .start-card h1 {
       margin: 20px 0 8px;
-      letter-spacing: .24em;
+      letter-spacing: .22em;
       font-size: clamp(23px, 6vw, 33px);
       line-height: 1;
       text-shadow: 0 0 28px rgba(255,255,255,.40);
@@ -190,14 +191,14 @@
     .subtitle {
       margin-bottom: 18px;
       font-size: 11px;
-      letter-spacing: .28em;
+      letter-spacing: .24em;
       color: rgba(255,255,255,.60);
       text-transform: uppercase;
     }
 
     .start-card p {
       margin: 0 auto 22px;
-      max-width: 370px;
+      max-width: 390px;
       color: rgba(255,255,255,.82);
       line-height: 1.52;
       font-size: 15px;
@@ -241,7 +242,8 @@
     #startBtn:active,
     .ghost-btn:active,
     #fallbackBtn:active,
-    #actionDock button:active {
+    #actionDock button:active,
+    #menuSheet button:active {
       transform: scale(.95);
     }
 
@@ -287,10 +289,14 @@
       color: rgba(255,255,255,.92);
       font-size: 11px;
       font-weight: 900;
-      letter-spacing: .18em;
+      letter-spacing: .16em;
       text-align: center;
       pointer-events: none;
       box-shadow: 0 0 30px rgba(255,255,255,.10);
+      max-width: calc(100vw - 20px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #scanFrame {
@@ -375,9 +381,13 @@
       color: rgba(255,255,255,.82);
       font-size: 10px;
       font-weight: 900;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       backdrop-filter: blur(11px);
       pointer-events: none;
+      max-width: 55vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #fallbackBtn {
@@ -443,10 +453,91 @@
       border: 1px solid rgba(255,255,255,.38);
     }
 
-    #actionDock button.active-pizza {
-      background: #ffb347;
+    #actionDock button.gold {
+      background: var(--gold);
       color: #000;
       box-shadow: 0 0 30px rgba(255,179,71,.58);
+    }
+
+    #menuSheet {
+      position: fixed;
+      left: 50%;
+      bottom: max(88px, calc(env(safe-area-inset-bottom) + 86px));
+      transform: translateX(-50%) translateY(16px) scale(.96);
+      width: min(420px, calc(100vw - 24px));
+      z-index: 10001;
+      padding: 14px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.035)),
+        rgba(0,0,0,.76);
+      border: 1px solid rgba(255,255,255,.2);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      box-shadow:
+        0 0 70px rgba(255,255,255,.16),
+        inset 0 0 25px rgba(255,255,255,.05);
+    }
+
+    #menuSheet.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .sheet-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .sheet-title strong {
+      letter-spacing: .17em;
+      font-size: 12px;
+    }
+
+    .sheet-title span {
+      color: rgba(255,255,255,.58);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    #menuSheet button {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 20px;
+      padding: 13px 12px;
+      background: rgba(255,255,255,.075);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .11em;
+      cursor: pointer;
+      min-height: 48px;
+    }
+
+    #menuSheet button.primary {
+      background: var(--gold);
+      color: #000;
+      border: 0;
+      box-shadow: 0 0 26px rgba(255,179,71,.34);
+    }
+
+    #menuSheet button.light {
+      background: rgba(255,255,255,.94);
+      color: #000;
+      border: 0;
     }
 
     #digitalCard {
@@ -534,10 +625,6 @@
       }
 
       #topHud {
-        max-width: calc(100vw - 24px);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         font-size: 10px;
       }
 
@@ -565,6 +652,10 @@
       #scanFrame {
         width: min(72vw, 315px);
       }
+
+      .sheet-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -576,11 +667,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">PIZZA · OBJ · AR MENU</div>
+      <div class="subtitle">PIZZA · GLB · AR MENU</div>
 
       <p>
         Насочи камерата към <b>черната страна</b> на визитката.
-        Натисни <b>PIZZA</b> и Bacon_Pizza.obj ще се появи върху AR масата.
+        Постави визитката на маса. Натисни <b>MENU</b>, после <b>PIZZA</b>.
       </p>
 
       <div class="start-actions">
@@ -588,12 +679,12 @@
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">Файлът трябва да е: E:\iamyann\Bacon_Pizza.obj</span>
+      <span class="hint">GLB файл: ./uploads_files_6479452_187.glb</span>
 
       <div class="mini-grid">
         <span>AR MENU</span>
-        <span>OBJ PIZZA</span>
-        <span>NFC</span>
+        <span>GLB PIZZA</span>
+        <span>NFC CARD</span>
       </div>
     </div>
   </section>
@@ -608,10 +699,26 @@
   <button id="fallbackBtn">DIGITAL CARD</button>
 
   <div id="actionDock">
+    <button id="menuBtn" class="gold">MENU</button>
     <button id="openSite">WEBSITE</button>
-    <button id="pizzaBtn" class="active-pizza">PIZZA</button>
-    <button id="sizeBtn" class="dark">SIZE</button>
-    <button id="contactMail">EMAIL</button>
+    <button id="contactMail" class="dark">EMAIL</button>
+    <button id="openDigitalBtn">CARD</button>
+  </div>
+
+  <div id="menuSheet">
+    <div class="sheet-title">
+      <strong>SOULFLAME MENU</strong>
+      <span>AR OPTIONS</span>
+    </div>
+
+    <div class="sheet-grid">
+      <button id="pizzaBtn" class="primary">PIZZA</button>
+      <button id="sizeBtn">SIZE</button>
+      <button id="rotateBtn">ROTATE</button>
+      <button id="resetBtn">RESET</button>
+      <button id="hidePizzaBtn">HIDE / SHOW</button>
+      <button id="closeMenuBtn" class="light">CLOSE</button>
+    </div>
   </div>
 
   <section id="digitalCard" class="hidden">
@@ -639,191 +746,211 @@
       autoStart: false;
       uiScanning: yes;
       uiLoading: no;
-      filterMinCF: 0.001;
-      filterBeta: 0.01;
+      warmupTolerance: 5;
+      missTolerance: 22;
+      filterMinCF: 0.00008;
+      filterBeta: 0.001;
     "
     color-space="sRGB"
-    renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true; alpha: true;"
+    renderer="
+      colorManagement: true;
+      physicallyCorrectLights: true;
+      antialias: true;
+      alpha: true;
+      precision: high;
+      logarithmicDepthBuffer: true;
+    "
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
     embedded
   >
-    <a-assets>
-      <a-asset-item id="pizzaObj" src="./Bacon_Pizza.obj"></a-asset-item>
+    <a-assets timeout="30000">
+      <a-asset-item id="pizzaGLB" src="./uploads_files_6479452_187.glb"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
 
-      <a-light type="ambient" intensity="1.6" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="2.4" color="#ffffff" position="0 1 1"></a-light>
-      <a-light type="point" intensity="1.2" color="#ffcc88" position="0 0.6 0.7"></a-light>
+      <a-light type="ambient" intensity="1.95" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="2.8" color="#ffffff" position="0 1.4 1.1"></a-light>
+      <a-light type="point" intensity="1.15" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="point" intensity=".7" color="#ffffff" position="-0.4 0.3 0.45"></a-light>
 
-      <!-- AR glass table/card base -->
-      <a-circle
-        id="arTable"
-        position="0 -0.08 0.055"
-        radius="0.56"
-        color="#ffffff"
-        opacity="0.10"
-        material="transparent: true; depthWrite: false; side: double"
-        animation="property: opacity; from: 0.06; to: 0.16; dur: 1300; dir: alternate; loop: true; easing: easeInOutSine"
-      ></a-circle>
+      <a-entity id="stableWorld" position="0 0 0">
 
-      <a-ring
-        position="0 -0.08 0.065"
-        radius-inner="0.48"
-        radius-outer="0.50"
-        color="#ffffff"
-        opacity="0.62"
-        material="transparent: true; depthWrite: false"
-        animation="property: rotation; to: 0 0 360; dur: 10000; loop: true; easing: linear"
-      ></a-ring>
-
-      <a-text
-        value="AR TABLE"
-        position="-0.18 -0.67 0.08"
-        width="0.75"
-        align="center"
-        color="#ffffff"
-        opacity="0.78"
-        material="transparent: true; depthWrite: false"
-      ></a-text>
-
-      <!-- Pizza OBJ model -->
-      <a-entity
-        id="pizzaRig"
-        visible="true"
-        position="0 -0.08 0.22"
-        rotation="-90 0 0"
-        scale="0.018 0.018 0.018"
-        animation="property: rotation; from: -90 0 0; to: -90 360 0; dur: 12000; loop: true; easing: linear"
-      >
-        <a-entity
-          id="pizzaObjModel"
-          obj-model="obj: #pizzaObj"
-          position="0 0 0"
-          rotation="0 0 0"
-        ></a-entity>
-      </a-entity>
-
-      <!-- SoulFlame hologram -->
-      <a-ring
-        position="0 0.62 0.035"
-        radius-inner="0.17"
-        radius-outer="0.186"
-        color="#ffffff"
-        opacity="0.88"
-        material="transparent: true; depthWrite: false"
-        animation="property: rotation; to: 0 0 360; dur: 8800; loop: true; easing: linear"
-      ></a-ring>
-
-      <a-ring
-        position="0 0.62 0.04"
-        radius-inner="0.235"
-        radius-outer="0.244"
-        color="#ffffff"
-        opacity="0.42"
-        material="transparent: true; depthWrite: false"
-        animation="property: rotation; to: 0 0 -360; dur: 11800; loop: true; easing: linear"
-      ></a-ring>
-
-      <a-text
-        value="SOULFLAME"
-        position="-0.29 0.39 0.055"
-        width="1.2"
-        align="center"
-        color="#ffffff"
-        opacity="0.98"
-        material="transparent: true; depthWrite: false"
-        animation="property: position; from: -0.29 0.39 0.055; to: -0.29 0.43 0.055; dur: 1750; dir: alternate; loop: true; easing: easeInOutSine"
-      ></a-text>
-
-      <a-text
-        value="PIZZA OBJ AR MENU"
-        position="-0.33 0.28 0.055"
-        width="0.95"
-        align="center"
-        color="#ffffff"
-        opacity="0.78"
-        material="transparent: true; depthWrite: false"
-      ></a-text>
-
-      <a-entity position="0.72 0.10 0.075">
-        <a-plane
-          width="0.94"
-          height="0.58"
+        <a-circle
+          id="arTable"
+          position="0 -0.09 0.052"
+          radius="0.58"
           color="#ffffff"
-          opacity="0.15"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
+          opacity="0.10"
+          material="transparent: true; depthWrite: false; side: double"
+          animation="property: opacity; from: 0.055; to: 0.15; dur: 1600; dir: alternate; loop: true; easing: easeInOutSine"
+        ></a-circle>
 
-        <a-plane
-          position="0 0.20 0.025"
-          width="0.82"
-          height="0.13"
+        <a-ring
+          id="tableRing"
+          position="0 -0.09 0.064"
+          radius-inner="0.49"
+          radius-outer="0.505"
           color="#ffffff"
-          opacity="0.92"
+          opacity="0.58"
           material="transparent: true; depthWrite: false"
-        ></a-plane>
+          animation="property: rotation; to: 0 0 360; dur: 16000; loop: true; easing: linear"
+        ></a-ring>
 
         <a-text
-          value="AR MENU"
-          position="-0.31 0.16 0.05"
-          width="0.8"
-          color="#000000"
-          align="left"
+          value="ПОСТАВЕТЕ ВИЗИТКАТА НА МАСА"
+          position="-0.47 -0.68 0.083"
+          width="0.92"
+          align="center"
+          color="#ffffff"
+          opacity="0.88"
           material="transparent: true; depthWrite: false"
         ></a-text>
 
         <a-text
-          value="BACON PIZZA\nOBJ MODEL\nTAP PIZZA BUTTON"
-          position="-0.37 0.02 0.05"
+          value="PIZZA CENTER LOCK"
+          position="-0.30 -0.77 0.083"
           width="0.78"
-          color="#ffffff"
-          align="left"
-          opacity="0.96"
+          align="center"
+          color="#ffb347"
+          opacity="0.95"
           material="transparent: true; depthWrite: false"
         ></a-text>
-      </a-entity>
 
-      <a-entity position="0 0 0.095">
-        <a-sphere position="-0.38 0.62 0" radius="0.012" color="#ffffff" opacity="0.85"></a-sphere>
-        <a-sphere position="0.38 0.54 0" radius="0.009" color="#ffffff" opacity="0.60"></a-sphere>
-        <a-sphere position="-0.32 -0.12 0" radius="0.008" color="#ffffff" opacity="0.60"></a-sphere>
-        <a-sphere position="0.28 -0.58 0" radius="0.010" color="#ffffff" opacity="0.74"></a-sphere>
-        <a-sphere position="0.06 -0.74 0" radius="0.006" color="#ffffff" opacity="0.54"></a-sphere>
-      </a-entity>
+        <a-entity
+          id="pizzaRig"
+          visible="false"
+          position="0 -0.09 0.18"
+          rotation="-90 0 0"
+          scale="0.38 0.38 0.38"
+        >
+          <a-entity
+            id="pizzaModel"
+            gltf-model="#pizzaGLB"
+            position="0 0 0"
+            rotation="0 0 0"
+          ></a-entity>
+        </a-entity>
 
-      <a-entity position="0 0 0.085">
-        <a-cylinder
-          position="0.42 -0.55 0"
-          radius="0.003"
-          height="0.62"
-          rotation="0 0 -28"
+        <a-ring
+          position="0 0.62 0.035"
+          radius-inner="0.17"
+          radius-outer="0.186"
           color="#ffffff"
-          opacity="0.68"
+          opacity="0.88"
           material="transparent: true; depthWrite: false"
-        ></a-cylinder>
+          animation="property: rotation; to: 0 0 360; dur: 12000; loop: true; easing: linear"
+        ></a-ring>
 
-        <a-cylinder
-          position="-0.18 -0.58 0"
-          radius="0.002"
-          height="0.44"
-          rotation="0 0 17"
+        <a-ring
+          position="0 0.62 0.04"
+          radius-inner="0.235"
+          radius-outer="0.244"
           color="#ffffff"
-          opacity="0.46"
+          opacity="0.42"
           material="transparent: true; depthWrite: false"
-        ></a-cylinder>
-      </a-entity>
+          animation="property: rotation; to: 0 0 -360; dur: 16000; loop: true; easing: linear"
+        ></a-ring>
 
+        <a-text
+          value="SOULFLAME"
+          position="-0.29 0.39 0.055"
+          width="1.2"
+          align="center"
+          color="#ffffff"
+          opacity="0.98"
+          material="transparent: true; depthWrite: false"
+          animation="property: position; from: -0.29 0.39 0.055; to: -0.29 0.425 0.055; dur: 2100; dir: alternate; loop: true; easing: easeInOutSine"
+        ></a-text>
+
+        <a-text
+          value="AR BUSINESS CARD"
+          position="-0.34 0.28 0.055"
+          width="0.95"
+          align="center"
+          color="#ffffff"
+          opacity="0.78"
+          material="transparent: true; depthWrite: false"
+        ></a-text>
+
+        <a-entity position="0.72 0.10 0.075">
+          <a-plane
+            width="0.94"
+            height="0.65"
+            color="#ffffff"
+            opacity="0.14"
+            material="transparent: true; depthWrite: false"
+          ></a-plane>
+
+          <a-plane
+            position="0 0.23 0.025"
+            width="0.82"
+            height="0.13"
+            color="#ffffff"
+            opacity="0.94"
+            material="transparent: true; depthWrite: false"
+          ></a-plane>
+
+          <a-text
+            value="AR MENU"
+            position="-0.31 0.19 0.05"
+            width="0.8"
+            color="#000000"
+            align="left"
+            material="transparent: true; depthWrite: false"
+          ></a-text>
+
+          <a-text
+            value="MENU BUTTON\nPIZZA GLB\nWEBSITE\nEMAIL\nDIGITAL CARD"
+            position="-0.37 0.025 0.05"
+            width="0.78"
+            color="#ffffff"
+            align="left"
+            opacity="0.96"
+            material="transparent: true; depthWrite: false"
+          ></a-text>
+        </a-entity>
+
+        <a-entity position="0 0 0.095">
+          <a-sphere position="-0.38 0.62 0" radius="0.012" color="#ffffff" opacity="0.85"></a-sphere>
+          <a-sphere position="0.38 0.54 0" radius="0.009" color="#ffffff" opacity="0.60"></a-sphere>
+          <a-sphere position="-0.32 -0.12 0" radius="0.008" color="#ffffff" opacity="0.60"></a-sphere>
+          <a-sphere position="0.28 -0.58 0" radius="0.010" color="#ffffff" opacity="0.74"></a-sphere>
+          <a-sphere position="0.06 -0.74 0" radius="0.006" color="#ffffff" opacity="0.54"></a-sphere>
+        </a-entity>
+
+        <a-entity position="0 0 0.085">
+          <a-cylinder
+            position="0.42 -0.55 0"
+            radius="0.003"
+            height="0.62"
+            rotation="0 0 -28"
+            color="#ffffff"
+            opacity="0.58"
+            material="transparent: true; depthWrite: false"
+          ></a-cylinder>
+
+          <a-cylinder
+            position="-0.18 -0.58 0"
+            radius="0.002"
+            height="0.44"
+            rotation="0 0 17"
+            color="#ffffff"
+            opacity="0.42"
+            material="transparent: true; depthWrite: false"
+          ></a-cylinder>
+        </a-entity>
+
+      </a-entity>
     </a-entity>
   </a-scene>
 
   <script>
     const CONFIG = {
-      siteUrl: "https://soulflameAR.vercel.app",
+      siteUrl: "https://soulflame-ar-card.vercel.app",
       email: "soulflame.mitko@gmail.com",
       phone: "+359xxxxxxxxx",
       mailSubject: "SoulFlame AR Pizza",
@@ -833,24 +960,37 @@
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
+
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
+
     const actionDock = document.getElementById("actionDock");
+    const menuBtn = document.getElementById("menuBtn");
     const openSite = document.getElementById("openSite");
+    const contactMail = document.getElementById("contactMail");
+    const openDigitalBtn = document.getElementById("openDigitalBtn");
+
+    const menuSheet = document.getElementById("menuSheet");
+    const closeMenuBtn = document.getElementById("closeMenuBtn");
     const pizzaBtn = document.getElementById("pizzaBtn");
     const sizeBtn = document.getElementById("sizeBtn");
-    const contactMail = document.getElementById("contactMail");
+    const rotateBtn = document.getElementById("rotateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const hidePizzaBtn = document.getElementById("hidePizzaBtn");
+
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
     const scanFrame = document.getElementById("scanFrame");
     const fallbackBtn = document.getElementById("fallbackBtn");
+
     const digitalCard = document.getElementById("digitalCard");
     const closeDigital = document.getElementById("closeDigital");
     const digitalWebsite = document.getElementById("digitalWebsite");
     const digitalCall = document.getElementById("digitalCall");
     const digitalEmail = document.getElementById("digitalEmail");
+
     const pizzaRig = document.getElementById("pizzaRig");
-    const pizzaObjModel = document.getElementById("pizzaObjModel");
+    const pizzaModel = document.getElementById("pizzaModel");
 
     const fxCanvas = document.getElementById("fxCanvas");
     const fxCtx = fxCanvas.getContext("2d");
@@ -859,36 +999,68 @@
     let started = false;
     let visible = false;
     let scanTimer = null;
-    let pizzaVisible = true;
+
+    let pizzaVisible = false;
     let sizeIndex = 1;
+    let rotateOn = false;
+    let rotationRAF = null;
+    let currentPizzaY = 0;
 
     const pizzaScales = [
-      "0.010 0.010 0.010",
-      "0.018 0.018 0.018",
-      "0.030 0.030 0.030",
-      "0.045 0.045 0.045"
+      "0.25 0.25 0.25",
+      "0.38 0.38 0.38",
+      "0.52 0.52 0.52",
+      "0.68 0.68 0.68"
     ];
 
     digitalWebsite.href = CONFIG.siteUrl;
     digitalCall.href = `tel:${CONFIG.phone}`;
     digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
 
-    openSite.addEventListener("click", () => window.open(CONFIG.siteUrl, "_blank"));
+    openSite.addEventListener("click", () => {
+      window.open(CONFIG.siteUrl, "_blank");
+      haptic(25);
+    });
 
     contactMail.addEventListener("click", () => {
       window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
+      haptic(25);
     });
 
     fallbackBtn.addEventListener("click", openDigitalCard);
     openDigitalFromStart.addEventListener("click", openDigitalCard);
-    closeDigital.addEventListener("click", () => digitalCard.classList.add("hidden"));
+    openDigitalBtn.addEventListener("click", openDigitalCard);
+
+    closeDigital.addEventListener("click", () => {
+      digitalCard.classList.add("hidden");
+      haptic(20);
+    });
+
+    menuBtn.addEventListener("click", () => {
+      menuSheet.classList.toggle("active");
+      setStatus("SOULFLAME MENU", "CHOOSE AR OPTION");
+      haptic(30);
+    });
+
+    closeMenuBtn.addEventListener("click", () => {
+      menuSheet.classList.remove("active");
+      setStatus("SOULFLAME LOCKED", "CARD CENTER ACTIVE");
+      haptic(20);
+    });
 
     pizzaBtn.addEventListener("click", () => {
+      pizzaVisible = true;
+      pizzaRig.setAttribute("visible", "true");
+      menuSheet.classList.remove("active");
+      setStatus("ПОСТАВЕТЕ ВИЗИТКАТА НА МАСА", "PIZZA GLB CENTERED");
+      haptic(45);
+    });
+
+    hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
-      pizzaBtn.classList.toggle("active-pizza", pizzaVisible);
-      setStatus(pizzaVisible ? "PIZZA LOADED" : "PIZZA HIDDEN", pizzaVisible ? "OBJ ACTIVE" : "OBJ OFF");
-      haptic(35);
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "GLB ON" : "GLB OFF");
+      haptic(25);
     });
 
     sizeBtn.addEventListener("click", () => {
@@ -898,37 +1070,81 @@
       haptic(25);
     });
 
-    pizzaObjModel.addEventListener("model-loaded", (event) => {
+    rotateBtn.addEventListener("click", () => {
+      rotateOn = !rotateOn;
+      rotateBtn.textContent = rotateOn ? "STOP ROTATE" : "ROTATE";
+      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "PIZZA GLB");
+      haptic(25);
+
+      if (rotateOn) startPizzaRotation();
+      else stopPizzaRotation();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      pizzaVisible = true;
+      sizeIndex = 1;
+      currentPizzaY = 0;
+      rotateOn = false;
+
+      pizzaRig.setAttribute("visible", "true");
+      pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
+      pizzaRig.setAttribute("rotation", "-90 0 0");
+      rotateBtn.textContent = "ROTATE";
+
+      stopPizzaRotation();
+      setStatus("PIZZA RESET", "CENTER LOCKED");
+      haptic(35);
+    });
+
+    function startPizzaRotation() {
+      stopPizzaRotation();
+
+      const tick = () => {
+        if (!rotateOn) return;
+
+        currentPizzaY = (currentPizzaY + 0.35) % 360;
+        pizzaRig.setAttribute("rotation", `-90 ${currentPizzaY} 0`);
+        rotationRAF = requestAnimationFrame(tick);
+      };
+
+      rotationRAF = requestAnimationFrame(tick);
+    }
+
+    function stopPizzaRotation() {
+      if (rotationRAF) {
+        cancelAnimationFrame(rotationRAF);
+        rotationRAF = null;
+      }
+    }
+
+    pizzaModel.addEventListener("model-loaded", (event) => {
       const model = event.detail.model;
 
       model.traverse((node) => {
         if (node.isMesh) {
           node.frustumCulled = false;
-
-          if (!node.material || !node.material.map) {
-            node.material = new THREE.MeshStandardMaterial({
-              color: 0xffb347,
-              roughness: 0.68,
-              metalness: 0.02
-            });
-          }
+          node.castShadow = false;
+          node.receiveShadow = false;
 
           if (node.material) {
+            node.material.roughness = Math.min(node.material.roughness ?? 0.7, 0.82);
+            node.material.metalness = node.material.metalness ?? 0.02;
             node.material.needsUpdate = true;
           }
         }
       });
 
-      setStatus("PIZZA OBJ READY", "MODEL LOADED");
+      setStatus("PIZZA GLB READY", "MODEL LOADED");
     });
 
-    pizzaObjModel.addEventListener("model-error", () => {
-      setStatus("OBJ ERROR", "CHECK Bacon_Pizza.obj");
-      alert("Bacon_Pizza.obj не се зареди. Провери дали файлът е в E:\\iamyann\\Bacon_Pizza.obj");
+    pizzaModel.addEventListener("model-error", () => {
+      setStatus("GLB ERROR", "CHECK FILE PATH");
+      alert("GLB файлът не се зареди. Провери дали uploads_files_6479452_187.glb е до index.html или промени src пътя.");
     });
 
     function openDigitalCard() {
       digitalCard.classList.remove("hidden");
+      haptic(25);
     }
 
     function setStatus(top, bottom) {
@@ -996,6 +1212,7 @@
       visible = false;
       setStatus("SCAN SOULFLAME CARD", "TARGET LOST");
       actionDock.classList.remove("active");
+      menuSheet.classList.remove("active");
       scanFrame.classList.remove("locked");
     });
 
@@ -1007,6 +1224,7 @@
           visible = false;
           clearTimeout(scanTimer);
           actionDock.classList.remove("active");
+          menuSheet.classList.remove("active");
           scanFrame.classList.remove("locked");
           startScreen.classList.remove("hidden");
           startBtn.textContent = "START AR";
@@ -1031,6 +1249,7 @@
 
     function createParticles() {
       particles.length = 0;
+
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
           x: Math.random() * window.innerWidth,
