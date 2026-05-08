@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · 90CM Pro Anchor</title>
+  <title>SoulFlame AR Pizza · Pro Size Menu</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -14,8 +14,6 @@
       --bg: #030303;
       --text: #ffffff;
       --gold: #ffb347;
-      --green: #85ffd1;
-      --red: #ff5b5b;
       --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
@@ -56,22 +54,47 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .24;
+      opacity: .36;
       mix-blend-mode: screen;
     }
 
-    body::before {
+    body::before,
+    body::after {
       content: "";
       position: fixed;
-      inset: -22%;
+      inset: -28%;
       pointer-events: none;
       z-index: 1;
+    }
+
+    body::before {
       background:
-        radial-gradient(circle at 18% 22%, rgba(255,255,255,.12), transparent 24%),
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
         radial-gradient(circle at 82% 72%, rgba(255,179,71,.16), transparent 26%),
         radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
-        #030303;
+        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
+      animation: universeMove 13s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      opacity: .10;
+      background-image:
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+      animation: gridDrift 18s linear infinite;
+    }
+
+    @keyframes universeMove {
+      from { transform: translate3d(-2%, -1%, 0) scale(1); }
+      to { transform: translate3d(2%, 1.5%, 0) scale(1.08); }
+    }
+
+    @keyframes gridDrift {
+      from { transform: translate3d(0,0,0); }
+      to { transform: translate3d(44px,44px,0); }
     }
 
     #startScreen {
@@ -97,7 +120,7 @@
       box-shadow:
         0 0 120px rgba(255,255,255,.12),
         inset 0 0 90px rgba(255,255,255,.055);
-      animation: portalRotate 24s linear infinite;
+      animation: portalRotate 20s linear infinite;
     }
 
     @keyframes portalRotate {
@@ -108,7 +131,7 @@
     .start-card {
       position: relative;
       z-index: 3;
-      width: min(510px, 93vw);
+      width: min(500px, 93vw);
       padding: 34px 24px 24px;
       border-radius: var(--radius-xl);
       border: 1px solid rgba(255,255,255,.22);
@@ -130,6 +153,7 @@
       margin: 0 auto;
       position: relative;
       filter: drop-shadow(0 0 18px rgba(255,255,255,.48));
+      animation: logoFloat 2.9s ease-in-out infinite alternate;
     }
 
     .logo-mark::before,
@@ -152,6 +176,11 @@
       transform: rotate(-28deg) skew(10deg);
     }
 
+    @keyframes logoFloat {
+      from { transform: translateY(0) rotate(-2deg); }
+      to { transform: translateY(-8px) rotate(2deg); }
+    }
+
     .start-card h1 {
       margin: 20px 0 8px;
       letter-spacing: .20em;
@@ -163,14 +192,14 @@
     .subtitle {
       margin-bottom: 18px;
       font-size: 11px;
-      letter-spacing: .22em;
+      letter-spacing: .24em;
       color: rgba(255,255,255,.60);
       text-transform: uppercase;
     }
 
     .start-card p {
       margin: 0 auto 22px;
-      max-width: 400px;
+      max-width: 390px;
       color: rgba(255,255,255,.82);
       line-height: 1.52;
       font-size: 15px;
@@ -182,22 +211,15 @@
       justify-items: center;
     }
 
-    button,
-    a {
-      font: inherit;
-    }
-
     #startBtn,
     .ghost-btn,
     #fallbackBtn,
     #actionDock button,
-    #menuSheet button,
-    .digital-actions button,
-    .digital-actions a {
+    #menuSheet button {
       cursor: pointer;
       font-weight: 950;
       letter-spacing: .12em;
-      transition: transform .16s ease, opacity .16s ease, background .16s ease;
+      transition: transform .18s ease, opacity .18s ease;
     }
 
     #startBtn {
@@ -226,9 +248,7 @@
     .ghost-btn:active,
     #fallbackBtn:active,
     #actionDock button:active,
-    #menuSheet button:active,
-    .digital-actions button:active,
-    .digital-actions a:active {
+    #menuSheet button:active {
       transform: scale(.95);
     }
 
@@ -274,31 +294,14 @@
       color: rgba(255,255,255,.92);
       font-size: 11px;
       font-weight: 900;
-      letter-spacing: .14em;
+      letter-spacing: .15em;
       text-align: center;
       pointer-events: none;
       box-shadow: 0 0 30px rgba(255,255,255,.10);
-      max-width: calc(100vw - 94px);
+      max-width: calc(100vw - 20px);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    #fpsBadge {
-      position: fixed;
-      right: max(12px, env(safe-area-inset-right));
-      top: max(14px, env(safe-area-inset-top));
-      z-index: 9998;
-      padding: 9px 10px;
-      border-radius: var(--radius-pill);
-      background: rgba(0,0,0,.58);
-      border: 1px solid rgba(255,255,255,.16);
-      color: var(--green);
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: .12em;
-      backdrop-filter: blur(11px);
-      pointer-events: none;
     }
 
     #scanFrame {
@@ -409,16 +412,14 @@
     #debugBox {
       position: fixed;
       left: 12px;
-      top: 58px;
+      top: 54px;
       z-index: 10002;
-      width: min(470px, calc(100vw - 24px));
-      max-height: 48vh;
-      overflow: hidden;
+      width: min(460px, calc(100vw - 24px));
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.35);
       border-radius: 16px;
-      background: rgba(0,0,0,.82);
-      color: rgba(255,255,255,.90);
+      background: rgba(0,0,0,.78);
+      color: rgba(255,255,255,.86);
       font-size: 11px;
       line-height: 1.38;
       display: none;
@@ -484,7 +485,7 @@
       left: 50%;
       bottom: max(88px, calc(env(safe-area-inset-bottom) + 86px));
       transform: translateX(-50%) translateY(16px) scale(.96);
-      width: min(470px, calc(100vw - 24px));
+      width: min(460px, calc(100vw - 24px));
       z-index: 10001;
       padding: 14px;
       border-radius: 28px;
@@ -523,24 +524,24 @@
     }
 
     .sheet-title span {
-      color: rgba(255,255,255,.70);
+      color: rgba(255,255,255,.58);
       font-size: 11px;
-      font-weight: 900;
+      font-weight: 800;
     }
 
     .sheet-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 9px;
     }
 
     #menuSheet button {
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 20px;
-      padding: 13px 8px;
+      padding: 13px 12px;
       background: rgba(255,255,255,.075);
       color: #fff;
-      font-size: 10px;
+      font-size: 11px;
       min-height: 48px;
     }
 
@@ -671,7 +672,7 @@
       }
 
       .sheet-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -685,11 +686,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">90CM MINIMUM · PRO ANCHOR · SMOOTH</div>
+      <div class="subtitle">PIZZA SIZE MENU · CARD ANCHOR</div>
 
       <p>
-        Постави визитката на маса. Сканирай черната страна.
-        Пицата започва от <b>90 см</b> и може да става още по-голяма.
+        Постави визитката на маса. Насочи камерата към <b>черната страна</b>.
+        Отвори <b>MENU</b> и избирай много размери чрез <b>SIZE +</b>.
       </p>
 
       <div class="start-actions">
@@ -700,15 +701,14 @@
       <span class="hint">Файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
 
       <div class="mini-grid">
-        <span>90CM START</span>
-        <span>900CM MAX</span>
-        <span>FAST MODE</span>
+        <span>20CM</span>
+        <span>90CM</span>
+        <span>MAX</span>
       </div>
     </div>
   </section>
 
   <div id="topHud">SCAN SOULFLAME CARD</div>
-  <div id="fpsBadge">FPS --</div>
 
   <div id="scanFrame">
     <div id="scanLine"></div>
@@ -727,20 +727,18 @@
   <div id="menuSheet">
     <div class="sheet-title">
       <strong>SOULFLAME MENU</strong>
-      <span id="sizeLabel">90 CM</span>
+      <span id="sizeLabel">30 CM</span>
     </div>
 
     <div class="sheet-grid">
       <button id="pizzaBtn" class="primary">PIZZA</button>
-      <button id="sizeMinusBtn">SIZE -</button>
-      <button id="sizeBtn">90 CM</button>
+      <button id="sizeBtn">30 CM</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
       <button id="resetBtn">RESET</button>
-      <button id="qualityBtn">QUALITY</button>
-      <button id="hidePizzaBtn">HIDE</button>
-      <button id="debugBtn" class="light">DEBUG</button>
+      <button id="hidePizzaBtn">HIDE / SHOW</button>
       <button id="closeMenuBtn" class="light">CLOSE</button>
+      <button id="debugBtn" class="light">DEBUG</button>
     </div>
   </div>
 
@@ -770,9 +768,9 @@
       uiScanning: yes;
       uiLoading: no;
       warmupTolerance: 5;
-      missTolerance: 120;
-      filterMinCF: 0.00003;
-      filterBeta: 0.00045;
+      missTolerance: 80;
+      filterMinCF: 0.00004;
+      filterBeta: 0.0006;
     "
     color-space="sRGB"
     renderer="
@@ -780,10 +778,9 @@
       physicallyCorrectLights: false;
       antialias: true;
       alpha: true;
-      precision: mediump;
+      precision: high;
       logarithmicDepthBuffer: true;
       powerPreference: high-performance;
-      sortObjects: true;
     "
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
@@ -800,9 +797,9 @@
     ></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <a-light type="ambient" intensity="1.05" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="1.25" color="#ffffff" position="0 1.3 1"></a-light>
-      <a-light type="point" intensity="0.35" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="ambient" intensity="0.95" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="1.35" color="#ffffff" position="0 1.3 1"></a-light>
+      <a-light type="point" intensity="0.45" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity id="stableWorld" position="0 0 0">
         <a-circle
@@ -810,8 +807,9 @@
           position="0 -0.09 0.052"
           radius="0.58"
           color="#ffffff"
-          opacity="0.075"
+          opacity="0.10"
           material="transparent: true; depthWrite: false; side: double"
+          animation="property: opacity; from: 0.055; to: 0.15; dur: 1600; dir: alternate; loop: true; easing: easeInOutSine"
         ></a-circle>
 
         <a-ring
@@ -820,13 +818,14 @@
           radius-inner="0.49"
           radius-outer="0.505"
           color="#ffffff"
-          opacity="0.44"
+          opacity="0.58"
           material="transparent: true; depthWrite: false"
+          animation="property: rotation; to: 0 0 360; dur: 16000; loop: true; easing: linear"
         ></a-ring>
 
         <a-text
           id="arSizeText"
-          value="PIZZA 90 CM"
+          value="PIZZA 30 CM"
           position="-0.28 -0.73 0.083"
           width="0.95"
           align="center"
@@ -850,7 +849,7 @@
           visible="false"
           position="0 -0.09 0.17"
           rotation="90 0 0"
-          scale="3 3 3"
+          scale="1 1 1"
         >
           <a-entity
             id="pizzaModel"
@@ -866,8 +865,9 @@
           radius-inner="0.17"
           radius-outer="0.186"
           color="#ffffff"
-          opacity="0.72"
+          opacity="0.88"
           material="transparent: true; depthWrite: false"
+          animation="property: rotation; to: 0 0 360; dur: 12000; loop: true; easing: linear"
         ></a-ring>
 
         <a-ring
@@ -875,8 +875,9 @@
           radius-inner="0.235"
           radius-outer="0.244"
           color="#ffffff"
-          opacity="0.32"
+          opacity="0.42"
           material="transparent: true; depthWrite: false"
+          animation="property: rotation; to: 0 0 -360; dur: 16000; loop: true; easing: linear"
         ></a-ring>
 
         <a-text
@@ -887,6 +888,7 @@
           color="#ffffff"
           opacity="0.98"
           material="transparent: true; depthWrite: false"
+          animation="property: position; from: -0.29 0.39 0.055; to: -0.29 0.425 0.055; dur: 2100; dir: alternate; loop: true; easing: easeInOutSine"
         ></a-text>
 
         <a-text
@@ -895,7 +897,7 @@
           width="0.95"
           align="center"
           color="#ffffff"
-          opacity="0.74"
+          opacity="0.78"
           material="transparent: true; depthWrite: false"
         ></a-text>
 
@@ -904,7 +906,7 @@
             width="0.94"
             height="0.65"
             color="#ffffff"
-            opacity="0.12"
+            opacity="0.14"
             material="transparent: true; depthWrite: false"
           ></a-plane>
 
@@ -913,7 +915,7 @@
             width="0.82"
             height="0.13"
             color="#ffffff"
-            opacity="0.92"
+            opacity="0.94"
             material="transparent: true; depthWrite: false"
           ></a-plane>
 
@@ -928,12 +930,12 @@
 
           <a-text
             id="menuInfoText"
-            value="PIZZA 90 CM\nSIZE +\nSIZE -\nROTATE"
+            value="PIZZA 30 CM\nSIZE +\nROTATE\nFLIP"
             position="-0.37 0.025 0.05"
             width="0.78"
             color="#ffffff"
             align="left"
-            opacity="0.94"
+            opacity="0.96"
             material="transparent: true; depthWrite: false"
           ></a-text>
         </a-entity>
@@ -951,12 +953,12 @@
       glbFile: "./uploads_files_6479452_187.glb",
       targetFile: "./targets/soulflame-black.mind",
 
-      // 3.33 ≈ 30 см база, ако визитката е около 9 см.
-      // Стартът е scale 3 => 3.33 * 3 = около 90 см.
-      giantPizzaWidth: 3.33,
-
-      maxPixelRatioFast: 1.15,
-      maxPixelRatioQuality: 1.55
+      /*
+        ОСНОВЕН РАЗМЕР:
+        3.33 ≈ реална 30 см пица, ако визитката е около 9 см.
+        Всички SIZE + степени умножават тази база.
+      */
+      giantPizzaWidth: 3.33
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -964,7 +966,6 @@
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
-    const fpsBadge = document.getElementById("fpsBadge");
     const debugBox = document.getElementById("debugBox");
 
     const actionDock = document.getElementById("actionDock");
@@ -977,11 +978,9 @@
     const closeMenuBtn = document.getElementById("closeMenuBtn");
     const pizzaBtn = document.getElementById("pizzaBtn");
     const sizeBtn = document.getElementById("sizeBtn");
-    const sizeMinusBtn = document.getElementById("sizeMinusBtn");
     const rotateBtn = document.getElementById("rotateBtn");
     const flipBtn = document.getElementById("flipBtn");
     const resetBtn = document.getElementById("resetBtn");
-    const qualityBtn = document.getElementById("qualityBtn");
     const hidePizzaBtn = document.getElementById("hidePizzaBtn");
     const debugBtn = document.getElementById("debugBtn");
 
@@ -1004,7 +1003,7 @@
     const pizzaModel = document.getElementById("pizzaModel");
 
     const fxCanvas = document.getElementById("fxCanvas");
-    const fxCtx = fxCanvas.getContext("2d", { alpha: true });
+    const fxCtx = fxCanvas.getContext("2d");
 
     let arSystem = null;
     let started = false;
@@ -1012,47 +1011,48 @@
     let scanTimer = null;
 
     let pizzaVisible = false;
-
-    // Стартът е 90 CM.
-    let sizeIndex = 0;
-
+    let sizeIndex = 2;
     let rotateOn = false;
     let flipped = false;
-    let qualityMode = "FAST";
     let rotationRAF = null;
     let currentPizzaY = 0;
     let modelAutoFitted = false;
     let modelDebugInfo = "MODEL NOT LOADED";
 
-    // Минимум 90 CM. Няма по-малки размери.
     const pizzaScales = [
+      "0.55 0.55 0.55",
+      "0.75 0.75 0.75",
+      "1 1 1",
+      "1.25 1.25 1.25",
+      "1.45 1.45 1.45",
+      "1.65 1.65 1.65",
+      "1.9 1.9 1.9",
+      "2.2 2.2 2.2",
+      "2.6 2.6 2.6",
       "3 3 3",
       "3.6 3.6 3.6",
-      "4.5 4.5 4.5",
-      "5.5 5.5 5.5",
-      "6.6 6.6 6.6",
-      "8 8 8",
-      "10 10 10",
-      "13 13 13",
-      "16 16 16",
-      "20 20 20",
-      "25 25 25",
-      "30 30 30"
+      "4.3 4.3 4.3",
+      "5.2 5.2 5.2",
+      "6.3 6.3 6.3",
+      "7.5 7.5 7.5"
     ];
 
     const pizzaSizeLabels = [
+      "SMALL",
+      "20 CM",
+      "30 CM",
+      "37 CM",
+      "43 CM",
+      "50 CM",
+      "57 CM",
+      "66 CM",
+      "78 CM",
       "90 CM",
-      "108 CM",
-      "135 CM",
-      "165 CM",
-      "198 CM",
-      "240 CM",
-      "300 CM",
-      "390 CM",
-      "480 CM",
-      "600 CM",
-      "750 CM",
-      "900 CM"
+      "XL",
+      "XXL",
+      "GIANT",
+      "SHOWCASE",
+      "MAX"
     ];
 
     digitalWebsite.href = CONFIG.siteUrl;
@@ -1088,7 +1088,7 @@
 
     menuBtn.addEventListener("click", () => {
       menuSheet.classList.toggle("active");
-      setStatus("SOULFLAME MENU", "90 CM MINIMUM");
+      setStatus("SOULFLAME MENU", "CHOOSE AR OPTION");
       haptic(30);
     });
 
@@ -1105,51 +1105,31 @@
       menuSheet.classList.remove("active");
       setPizzaRotation();
 
-      const label = getSizeLabel();
-      setStatus(`PIZZA ${label}`, modelAutoFitted ? "CARD ANCHOR ACTIVE" : "PIZZA LOADING");
+      const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
+      setStatus(`PIZZA ${label}`, modelAutoFitted ? "MOVE PHONE AROUND CARD" : "PIZZA LOADING");
       haptic(45);
     });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
-      hidePizzaBtn.textContent = pizzaVisible ? "HIDE" : "SHOW";
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", getSizeLabel());
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ANCHOR ON" : "ANCHOR OFF");
       haptic(25);
     });
 
     sizeBtn.addEventListener("click", () => {
-      if (sizeIndex < pizzaScales.length - 1) {
-        sizeIndex += 1;
-      } else {
-        sizeIndex = pizzaScales.length - 1;
-      }
-
-      pizzaVisible = true;
-      pizzaRig.setAttribute("visible", "true");
+      sizeIndex = (sizeIndex + 1) % pizzaScales.length;
       applyPizzaSize();
-      setStatus("PIZZA SIZE +", getSizeLabel());
-      haptic(25);
-    });
 
-    sizeMinusBtn.addEventListener("click", () => {
-      if (sizeIndex > 0) {
-        sizeIndex -= 1;
-      } else {
-        sizeIndex = 0;
-      }
-
-      pizzaVisible = true;
-      pizzaRig.setAttribute("visible", "true");
-      applyPizzaSize();
-      setStatus("PIZZA SIZE -", getSizeLabel());
+      const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
+      setStatus("PIZZA SIZE", label);
       haptic(25);
     });
 
     rotateBtn.addEventListener("click", () => {
       rotateOn = !rotateOn;
-      rotateBtn.textContent = rotateOn ? "STOP" : "ROTATE";
-      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", getSizeLabel());
+      rotateBtn.textContent = rotateOn ? "STOP ROTATE" : "ROTATE";
+      setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "PIZZA");
       haptic(25);
 
       if (rotateOn) startPizzaRotation();
@@ -1159,13 +1139,13 @@
     flipBtn.addEventListener("click", () => {
       flipped = !flipped;
       setPizzaRotation();
-      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA TOP SIDE", getSizeLabel());
+      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA TOP SIDE", flipped ? "OTHER SIDE" : "NORMAL SIDE");
       haptic(35);
     });
 
     resetBtn.addEventListener("click", () => {
       pizzaVisible = true;
-      sizeIndex = 0;
+      sizeIndex = 2;
       currentPizzaY = 0;
       rotateOn = false;
       flipped = false;
@@ -1175,19 +1155,10 @@
       setPizzaRotation();
 
       rotateBtn.textContent = "ROTATE";
-      hidePizzaBtn.textContent = "HIDE";
       stopPizzaRotation();
 
-      setStatus("PIZZA RESET", "90 CM");
+      setStatus("PIZZA RESET", "30 CM");
       haptic(35);
-    });
-
-    qualityBtn.addEventListener("click", () => {
-      qualityMode = qualityMode === "FAST" ? "QUALITY" : "FAST";
-      qualityBtn.textContent = qualityMode;
-      applyRenderQuality();
-      setStatus("RENDER MODE", qualityMode);
-      haptic(25);
     });
 
     debugBtn.addEventListener("click", () => {
@@ -1195,13 +1166,9 @@
       haptic(20);
     });
 
-    function getSizeLabel() {
-      return pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
-    }
-
     function applyPizzaSize() {
-      const scale = pizzaScales[sizeIndex] || pizzaScales[0];
-      const label = getSizeLabel();
+      const scale = pizzaScales[sizeIndex] || "1 1 1";
+      const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
 
       pizzaRig.setAttribute("scale", scale);
       sizeBtn.textContent = label;
@@ -1212,7 +1179,7 @@
       }
 
       if (menuInfoText) {
-        menuInfoText.setAttribute("value", `PIZZA ${label}\\nSIZE +\\nSIZE -\\nROTATE`);
+        menuInfoText.setAttribute("value", `PIZZA ${label}\\nSIZE +\\nROTATE\\nFLIP`);
       }
 
       modelDebugInfo += `\nSIZE SELECTED: ${label}`;
@@ -1230,7 +1197,7 @@
       const tick = () => {
         if (!rotateOn) return;
 
-        currentPizzaY = (currentPizzaY + 0.12) % 360;
+        currentPizzaY = (currentPizzaY + 0.18) % 360;
         setPizzaRotation();
         rotationRAF = requestAnimationFrame(tick);
       };
@@ -1245,8 +1212,8 @@
       }
     }
 
-    pizzaModel.addEventListener("model-loaded", (event) => {
-      const model = event.detail.model || pizzaModel.getObject3D("mesh");
+    pizzaModel.addEventListener("model-loaded", () => {
+      const model = pizzaModel.getObject3D("mesh");
 
       if (!model || !window.THREE) {
         showDebug("GLB loaded, but THREE object not ready.");
@@ -1260,7 +1227,7 @@
           autoFitPizza(model);
           applyPizzaSize();
           modelAutoFitted = true;
-          setStatus("PIZZA GLB READY", "START 90 CM");
+          setStatus("PIZZA GLB READY", "MENU → PIZZA");
         } catch (error) {
           showDebug("AUTO-FIT ERROR: " + error.message);
           setStatus("PIZZA GLB READY", "MANUAL SCALE");
@@ -1301,20 +1268,14 @@
 
             if (THREE.SRGBColorSpace) {
               mat.map.colorSpace = THREE.SRGBColorSpace;
-            } else if (THREE.sRGBEncoding) {
-              mat.map.encoding = THREE.sRGBEncoding;
             }
 
-            mat.map.anisotropy = Math.min(4, scene.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
             mat.map.needsUpdate = true;
           }
 
           if (mat.emissive) {
             mat.emissive.setRGB(0, 0, 0);
           }
-
-          if (mat.roughness !== undefined) mat.roughness = Math.min(mat.roughness, 0.82);
-          if (mat.metalness !== undefined) mat.metalness = Math.max(mat.metalness, 0.0);
 
           mat.needsUpdate = true;
         });
@@ -1326,9 +1287,6 @@
         "MATERIALS: " + materialCount + "\n" +
         "TEXTURES FOUND: " + textureCount + "\n" +
         "BASE WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
-        "START SIZE: 90 CM\n" +
-        "MAX SIZE: 900 CM\n" +
-        "RENDER MODE: " + qualityMode + "\n" +
         "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
       console.log(modelDebugInfo);
@@ -1366,24 +1324,7 @@
       });
 
       modelDebugInfo += "\nAUTO SCALE: " + Number(scale.toFixed(4));
-      modelDebugInfo += "\nRESULT: 90CM MINIMUM MULTI SIZE MODE";
-    }
-
-    function applyRenderQuality() {
-      if (!scene.renderer) return;
-
-      const maxPR = qualityMode === "QUALITY"
-        ? CONFIG.maxPixelRatioQuality
-        : CONFIG.maxPixelRatioFast;
-
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, maxPR);
-      scene.renderer.setPixelRatio(pixelRatio);
-
-      if (scene.renderer.shadowMap) {
-        scene.renderer.shadowMap.enabled = false;
-      }
-
-      scene.renderer.toneMappingExposure = qualityMode === "QUALITY" ? 1.08 : 1.0;
+      modelDebugInfo += "\nRESULT: MULTI SIZE MODE";
     }
 
     function openDigitalCard() {
@@ -1414,15 +1355,13 @@
       arSystem = scene.systems["mindar-image-system"];
 
       if (scene.renderer && window.THREE) {
-        if (THREE.SRGBColorSpace) {
-          scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
-        }
-
-        applyRenderQuality();
+        if (THREE.SRGBColorSpace) scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        scene.renderer.toneMappingExposure = 1.0;
+        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
 
       applyPizzaSize();
-      setStatus("AR SYSTEM READY", "90 CM START");
+      setStatus("AR SYSTEM READY", "READY");
     });
 
     startBtn.addEventListener("click", async () => {
@@ -1442,7 +1381,6 @@
           await new Promise((resolve) => {
             scene.addEventListener("loaded", resolve, { once: true });
           });
-
           arSystem = scene.systems["mindar-image-system"];
         }
 
@@ -1458,7 +1396,7 @@
         scanTimer = setTimeout(() => {
           if (started && !visible) {
             setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
-            showDebug("Не намира визитката. Провери ./targets/soulflame-black.mind и сканирай същата визитка, от която е направен target-ът.");
+            showDebug("Не намира визитката. Провери дали ./targets/soulflame-black.mind съществува и дали сканираш същата визитка, от която е направен target-ът.");
           }
         }, CONFIG.scanTimeoutMs);
 
@@ -1476,7 +1414,7 @@
       clearTimeout(scanTimer);
       hideDebug();
 
-      setStatus("SOULFLAME LOCKED", "PIZZA STARTS AT 90 CM");
+      setStatus("SOULFLAME LOCKED", "MENU → PIZZA → SIZE +");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
@@ -1495,7 +1433,6 @@
     document.addEventListener("visibilitychange", async () => {
       if (document.hidden && arSystem && started) {
         try {
-          stopPizzaRotation();
           await arSystem.stop();
 
           started = false;
@@ -1515,11 +1452,10 @@
     });
 
     const particles = [];
-    const PARTICLE_COUNT = 24;
-    let fxRunning = true;
+    const PARTICLE_COUNT = 38;
 
     function resizeFx() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.15);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.4);
       fxCanvas.width = Math.floor(window.innerWidth * dpr);
       fxCanvas.height = Math.floor(window.innerHeight * dpr);
       fxCanvas.style.width = window.innerWidth + "px";
@@ -1534,17 +1470,15 @@
         particles.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 1.45 + .35,
-          vx: (Math.random() - .5) * .14,
-          vy: (Math.random() - .5) * .14,
-          a: Math.random() * .42 + .10
+          r: Math.random() * 1.6 + .35,
+          vx: (Math.random() - .5) * .18,
+          vy: (Math.random() - .5) * .18,
+          a: Math.random() * .48 + .12
         });
       }
     }
 
     function drawParticles() {
-      if (!fxRunning) return;
-
       fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
       for (const p of particles) {
@@ -1568,35 +1502,15 @@
     window.addEventListener("resize", () => {
       resizeFx();
       createParticles();
-      applyRenderQuality();
-    });
 
-    document.addEventListener("visibilitychange", () => {
-      fxRunning = !document.hidden;
-      if (fxRunning) drawParticles();
-    });
-
-    let fpsFrames = 0;
-    let fpsLast = performance.now();
-
-    function fpsLoop(now) {
-      fpsFrames += 1;
-
-      if (now - fpsLast >= 1000) {
-        const fps = Math.round((fpsFrames * 1000) / (now - fpsLast));
-        fpsBadge.textContent = `FPS ${fps}`;
-        fpsBadge.style.color = fps >= 45 ? "var(--green)" : fps >= 28 ? "var(--gold)" : "var(--red)";
-        fpsFrames = 0;
-        fpsLast = now;
+      if (scene.renderer) {
+        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
-
-      requestAnimationFrame(fpsLoop);
-    }
+    });
 
     resizeFx();
     createParticles();
     drawParticles();
-    requestAnimationFrame(fpsLoop);
   </script>
 </body>
 </html>
