@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · MetaXR Style</title>
+  <title>SoulFlame AR Pizza · Fixed GLB</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -42,9 +42,7 @@
       touch-action: manipulation;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     #fxCanvas {
       position: fixed;
@@ -53,7 +51,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .62;
+      opacity: .52;
       mix-blend-mode: screen;
     }
 
@@ -69,7 +67,7 @@
     body::before {
       background:
         radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
-        radial-gradient(circle at 82% 72%, rgba(255,179,71,.12), transparent 26%),
+        radial-gradient(circle at 82% 72%, rgba(255,179,71,.13), transparent 26%),
         radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
         linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
@@ -77,7 +75,7 @@
     }
 
     body::after {
-      opacity: .12;
+      opacity: .10;
       background-image:
         linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
@@ -182,7 +180,7 @@
 
     .start-card h1 {
       margin: 20px 0 8px;
-      letter-spacing: .22em;
+      letter-spacing: .20em;
       font-size: clamp(23px, 6vw, 33px);
       line-height: 1;
       text-shadow: 0 0 28px rgba(255,255,255,.40);
@@ -289,7 +287,7 @@
       color: rgba(255,255,255,.92);
       font-size: 11px;
       font-weight: 900;
-      letter-spacing: .16em;
+      letter-spacing: .15em;
       text-align: center;
       pointer-events: none;
       box-shadow: 0 0 30px rgba(255,255,255,.10);
@@ -406,6 +404,26 @@
       backdrop-filter: blur(11px);
       cursor: pointer;
     }
+
+    #debugBox {
+      position: fixed;
+      left: 12px;
+      top: 54px;
+      z-index: 10002;
+      width: min(430px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border: 1px solid rgba(255,80,80,.35);
+      border-radius: 16px;
+      background: rgba(0,0,0,.78);
+      color: rgba(255,255,255,.86);
+      font-size: 11px;
+      line-height: 1.38;
+      display: none;
+      white-space: pre-wrap;
+      pointer-events: none;
+    }
+
+    #debugBox.active { display: block; }
 
     #actionDock {
       position: fixed;
@@ -611,57 +629,34 @@
       color: rgba(255,255,255,.78);
     }
 
-    .a-loader-title {
-      display: none !important;
-    }
+    .a-loader-title { display: none !important; }
 
     @media (max-width: 560px) {
-      .start-card {
-        padding: 30px 19px 23px;
-      }
-
-      .mini-grid {
-        grid-template-columns: 1fr;
-      }
-
-      #topHud {
-        font-size: 10px;
-      }
-
+      .start-card { padding: 30px 19px 23px; }
+      .mini-grid { grid-template-columns: 1fr; }
+      #topHud { font-size: 10px; }
       #actionDock {
         width: calc(100vw - 20px);
         justify-content: center;
         border-radius: 26px;
         gap: 7px;
       }
-
       #actionDock button {
         flex: 1;
         padding: 13px 7px;
         font-size: 8.5px;
       }
-
-      #fallbackBtn {
-        display: none;
-      }
-
-      #bottomStatus {
-        font-size: 9px;
-      }
-
-      #scanFrame {
-        width: min(72vw, 315px);
-      }
-
-      .sheet-grid {
-        grid-template-columns: 1fr;
-      }
+      #fallbackBtn { display: none; }
+      #bottomStatus { font-size: 9px; }
+      #scanFrame { width: min(72vw, 315px); }
+      .sheet-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
   <canvas id="fxCanvas"></canvas>
+  <div id="debugBox"></div>
 
   <section id="startScreen">
     <div class="start-card">
@@ -670,8 +665,8 @@
       <div class="subtitle">PIZZA · GLB · AR MENU</div>
 
       <p>
-        Насочи камерата към <b>черната страна</b> на визитката.
-        Постави визитката на маса. Натисни <b>MENU</b>, после <b>PIZZA</b>.
+        Постави визитката на маса. Насочи камерата към <b>черната страна</b>.
+        След като заключи, натисни <b>MENU</b> → <b>PIZZA</b>.
       </p>
 
       <div class="start-actions">
@@ -679,11 +674,11 @@
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">GLB файл: ./uploads_files_6479452_187.glb</span>
+      <span class="hint">Нужни файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
 
       <div class="mini-grid">
         <span>AR MENU</span>
-        <span>GLB PIZZA</span>
+        <span>AUTO-FIT GLB</span>
         <span>NFC CARD</span>
       </div>
     </div>
@@ -748,37 +743,32 @@
       uiLoading: no;
       warmupTolerance: 5;
       missTolerance: 22;
-      filterMinCF: 0.00008;
+      filterMinCF: 0.0001;
       filterBeta: 0.001;
     "
     color-space="sRGB"
     renderer="
       colorManagement: true;
-      physicallyCorrectLights: true;
       antialias: true;
       alpha: true;
       precision: high;
-      logarithmicDepthBuffer: true;
     "
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
     embedded
   >
-    <a-assets timeout="30000">
+    <a-assets timeout="60000">
       <a-asset-item id="pizzaGLB" src="./uploads_files_6479452_187.glb"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-
-      <a-light type="ambient" intensity="1.95" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="2.8" color="#ffffff" position="0 1.4 1.1"></a-light>
-      <a-light type="point" intensity="1.15" color="#ffcc88" position="0 0.7 0.65"></a-light>
-      <a-light type="point" intensity=".7" color="#ffffff" position="-0.4 0.3 0.45"></a-light>
+      <a-light type="ambient" intensity="2.2" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="2.7" color="#ffffff" position="0 1.4 1.1"></a-light>
+      <a-light type="point" intensity="1.2" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity id="stableWorld" position="0 0 0">
-
         <a-circle
           id="arTable"
           position="0 -0.09 0.052"
@@ -823,15 +813,16 @@
         <a-entity
           id="pizzaRig"
           visible="false"
-          position="0 -0.09 0.18"
+          position="0 -0.09 0.16"
           rotation="-90 0 0"
-          scale="0.38 0.38 0.38"
+          scale="1 1 1"
         >
           <a-entity
             id="pizzaModel"
             gltf-model="#pizzaGLB"
             position="0 0 0"
             rotation="0 0 0"
+            scale="1 1 1"
           ></a-entity>
         </a-entity>
 
@@ -921,29 +912,6 @@
           <a-sphere position="0.28 -0.58 0" radius="0.010" color="#ffffff" opacity="0.74"></a-sphere>
           <a-sphere position="0.06 -0.74 0" radius="0.006" color="#ffffff" opacity="0.54"></a-sphere>
         </a-entity>
-
-        <a-entity position="0 0 0.085">
-          <a-cylinder
-            position="0.42 -0.55 0"
-            radius="0.003"
-            height="0.62"
-            rotation="0 0 -28"
-            color="#ffffff"
-            opacity="0.58"
-            material="transparent: true; depthWrite: false"
-          ></a-cylinder>
-
-          <a-cylinder
-            position="-0.18 -0.58 0"
-            radius="0.002"
-            height="0.44"
-            rotation="0 0 17"
-            color="#ffffff"
-            opacity="0.42"
-            material="transparent: true; depthWrite: false"
-          ></a-cylinder>
-        </a-entity>
-
       </a-entity>
     </a-entity>
   </a-scene>
@@ -954,15 +922,17 @@
       email: "soulflame.mitko@gmail.com",
       phone: "+359xxxxxxxxx",
       mailSubject: "SoulFlame AR Pizza",
-      scanTimeoutMs: 14000
+      scanTimeoutMs: 14000,
+      targetFile: "./targets/soulflame-black.mind",
+      glbFile: "./uploads_files_6479452_187.glb"
     };
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
-
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
+    const debugBox = document.getElementById("debugBox");
 
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
@@ -1005,17 +975,26 @@
     let rotateOn = false;
     let rotationRAF = null;
     let currentPizzaY = 0;
+    let modelAutoFitted = false;
 
     const pizzaScales = [
-      "0.25 0.25 0.25",
-      "0.38 0.38 0.38",
-      "0.52 0.52 0.52",
-      "0.68 0.68 0.68"
+      "0.78 0.78 0.78",
+      "1 1 1",
+      "1.22 1.22 1.22",
+      "1.48 1.48 1.48"
     ];
 
     digitalWebsite.href = CONFIG.siteUrl;
     digitalCall.href = `tel:${CONFIG.phone}`;
     digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
+
+    window.addEventListener("error", (event) => {
+      showDebug("JS ERROR: " + event.message);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
+    });
 
     openSite.addEventListener("click", () => {
       window.open(CONFIG.siteUrl, "_blank");
@@ -1052,7 +1031,7 @@
       pizzaVisible = true;
       pizzaRig.setAttribute("visible", "true");
       menuSheet.classList.remove("active");
-      setStatus("ПОСТАВЕТЕ ВИЗИТКАТА НА МАСА", "PIZZA GLB CENTERED");
+      setStatus("ПОСТАВЕТЕ ВИЗИТКАТА НА МАСА", modelAutoFitted ? "PIZZA GLB CENTERED" : "PIZZA LOADING");
       haptic(45);
     });
 
@@ -1075,7 +1054,6 @@
       rotateBtn.textContent = rotateOn ? "STOP ROTATE" : "ROTATE";
       setStatus(rotateOn ? "ROTATION ON" : "ROTATION OFF", "PIZZA GLB");
       haptic(25);
-
       if (rotateOn) startPizzaRotation();
       else stopPizzaRotation();
     });
@@ -1085,12 +1063,10 @@
       sizeIndex = 1;
       currentPizzaY = 0;
       rotateOn = false;
-
       pizzaRig.setAttribute("visible", "true");
       pizzaRig.setAttribute("scale", pizzaScales[sizeIndex]);
       pizzaRig.setAttribute("rotation", "-90 0 0");
       rotateBtn.textContent = "ROTATE";
-
       stopPizzaRotation();
       setStatus("PIZZA RESET", "CENTER LOCKED");
       haptic(35);
@@ -1098,15 +1074,12 @@
 
     function startPizzaRotation() {
       stopPizzaRotation();
-
       const tick = () => {
         if (!rotateOn) return;
-
-        currentPizzaY = (currentPizzaY + 0.35) % 360;
+        currentPizzaY = (currentPizzaY + 0.28) % 360;
         pizzaRig.setAttribute("rotation", `-90 ${currentPizzaY} 0`);
         rotationRAF = requestAnimationFrame(tick);
       };
-
       rotationRAF = requestAnimationFrame(tick);
     }
 
@@ -1117,30 +1090,74 @@
       }
     }
 
-    pizzaModel.addEventListener("model-loaded", (event) => {
-      const model = event.detail.model;
+    pizzaModel.addEventListener("model-loaded", () => {
+      const model = pizzaModel.getObject3D("mesh");
+      if (!model || !window.THREE) {
+        showDebug("GLB loaded, but THREE object not ready.");
+        setStatus("PIZZA GLB LOADED", "OBJECT WAITING");
+        return;
+      }
 
+      requestAnimationFrame(() => {
+        try {
+          autoFitPizza(model);
+          modelAutoFitted = true;
+          setStatus("PIZZA GLB READY", "AUTO-FIT CENTERED");
+        } catch (error) {
+          showDebug("AUTO-FIT ERROR: " + error.message);
+          setStatus("PIZZA GLB READY", "MANUAL SCALE");
+        }
+      });
+    });
+
+    pizzaModel.addEventListener("model-error", () => {
+      setStatus("GLB ERROR", "CHECK FILE PATH");
+      showDebug("GLB не се зареди. Файлът трябва да е до index.html: uploads_files_6479452_187.glb");
+      alert("GLB файлът не се зареди. Провери дали uploads_files_6479452_187.glb е до index.html.");
+    });
+
+    function autoFitPizza(model) {
       model.traverse((node) => {
         if (node.isMesh) {
           node.frustumCulled = false;
           node.castShadow = false;
           node.receiveShadow = false;
-
           if (node.material) {
-            node.material.roughness = Math.min(node.material.roughness ?? 0.7, 0.82);
-            node.material.metalness = node.material.metalness ?? 0.02;
+            node.material.side = THREE.DoubleSide;
+            if (node.material.roughness !== undefined) node.material.roughness = Math.min(node.material.roughness, 0.82);
+            if (node.material.metalness !== undefined) node.material.metalness = Math.max(node.material.metalness, 0.02);
             node.material.needsUpdate = true;
           }
         }
       });
 
-      setStatus("PIZZA GLB READY", "MODEL LOADED");
-    });
+      model.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(model);
+      const size = new THREE.Vector3();
+      const center = new THREE.Vector3();
+      box.getSize(size);
+      box.getCenter(center);
 
-    pizzaModel.addEventListener("model-error", () => {
-      setStatus("GLB ERROR", "CHECK FILE PATH");
-      alert("GLB файлът не се зареди. Провери дали uploads_files_6479452_187.glb е до index.html или промени src пътя.");
-    });
+      const maxHorizontal = Math.max(size.x, size.z, size.y);
+      if (!Number.isFinite(maxHorizontal) || maxHorizontal <= 0) {
+        throw new Error("Invalid GLB bounds");
+      }
+
+      model.position.x -= center.x;
+      model.position.y -= center.y;
+      model.position.z -= center.z;
+
+      const wantedWidth = 0.86;
+      const scale = wantedWidth / maxHorizontal;
+      model.scale.setScalar(scale);
+      model.updateMatrixWorld(true);
+
+      console.log("SoulFlame GLB auto-fit", {
+        size: { x: size.x, y: size.y, z: size.z },
+        center: { x: center.x, y: center.y, z: center.z },
+        scale
+      });
+    }
 
     function openDigitalCard() {
       digitalCard.classList.remove("hidden");
@@ -1150,6 +1167,12 @@
     function setStatus(top, bottom) {
       topHud.textContent = top;
       bottomStatus.textContent = bottom;
+    }
+
+    function showDebug(message) {
+      debugBox.classList.add("active");
+      debugBox.textContent = message;
+      console.warn(message);
     }
 
     function haptic(ms = 35) {
@@ -1164,6 +1187,12 @@
     startBtn.addEventListener("click", async () => {
       if (started) return;
 
+      if (location.protocol === "file:") {
+        showDebug("Не стартирай с двоен клик върху index.html. Камерата и MindAR искат HTTPS или localhost.");
+        alert("Отвори през Vercel/HTTPS или localhost. Не през file://");
+        return;
+      }
+
       try {
         started = true;
         startBtn.textContent = "STARTING...";
@@ -1175,6 +1204,8 @@
           arSystem = scene.systems["mindar-image-system"];
         }
 
+        if (!arSystem) throw new Error("MindAR system not found");
+
         await arSystem.start();
 
         startScreen.classList.add("hidden");
@@ -1184,25 +1215,24 @@
         clearTimeout(scanTimer);
         scanTimer = setTimeout(() => {
           if (started && !visible) {
-            setStatus("TARGET NOT FOUND", "TRY MORE LIGHT");
-            openDigitalCard();
+            setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
+            showDebug("Не намира визитката. Провери дали ./targets/soulflame-black.mind съществува и дали сканираш същата визитка, от която е направен target-ът.");
           }
         }, CONFIG.scanTimeoutMs);
 
       } catch (error) {
         started = false;
         startBtn.textContent = "START AR";
-        setStatus("CAMERA ERROR", "OPEN DIGITAL CARD");
+        setStatus("CAMERA / MINDAR ERROR", "CHECK CONSOLE");
+        showDebug(error.message || String(error));
         openDigitalCard();
-        alert("Камерата не тръгна. Отвори през HTTPS/Vercel и разреши достъп до камерата.");
-        console.error(error);
       }
     });
 
     target.addEventListener("targetFound", () => {
       visible = true;
       clearTimeout(scanTimer);
-      setStatus("SOULFLAME LOCKED", "TARGET FOUND");
+      setStatus("SOULFLAME LOCKED", "OPEN MENU → PIZZA");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
       haptic(38);
@@ -1236,7 +1266,7 @@
     });
 
     const particles = [];
-    const PARTICLE_COUNT = 70;
+    const PARTICLE_COUNT = 58;
 
     function resizeFx() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1249,7 +1279,6 @@
 
     function createParticles() {
       particles.length = 0;
-
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
           x: Math.random() * window.innerWidth,
@@ -1264,41 +1293,18 @@
 
     function drawParticles() {
       fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
-
         if (p.x < 0) p.x = window.innerWidth;
         if (p.x > window.innerWidth) p.x = 0;
         if (p.y < 0) p.y = window.innerHeight;
         if (p.y > window.innerHeight) p.y = 0;
-
         fxCtx.beginPath();
         fxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         fxCtx.fillStyle = `rgba(255,255,255,${p.a})`;
         fxCtx.fill();
       }
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i];
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 105) {
-            fxCtx.beginPath();
-            fxCtx.moveTo(a.x, a.y);
-            fxCtx.lineTo(b.x, b.y);
-            fxCtx.strokeStyle = `rgba(255,255,255,${(1 - dist / 105) * .10})`;
-            fxCtx.lineWidth = 1;
-            fxCtx.stroke();
-          }
-        }
-      }
-
       requestAnimationFrame(drawParticles);
     }
 
