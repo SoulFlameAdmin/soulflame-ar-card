@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Freeze Lock Test</title>
+  <title>SoulFlame AR Pizza · Freeze Lock + Table AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -14,6 +14,7 @@
       --bg: #030303;
       --text: #ffffff;
       --gold: #ffb347;
+      --green: #48ff9b;
       --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
@@ -242,6 +243,15 @@
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
       backdrop-filter: blur(10px);
+    }
+
+    .ghost-btn.table-start {
+      background: linear-gradient(135deg, rgba(72,255,155,.18), rgba(255,179,71,.13));
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(72,255,155,.30);
+      box-shadow:
+        0 0 22px rgba(72,255,155,.12),
+        inset 0 0 18px rgba(255,179,71,.05);
     }
 
     #startBtn:active,
@@ -480,6 +490,14 @@
       box-shadow: 0 0 30px rgba(255,179,71,.58);
     }
 
+    #actionDock button.table {
+      background: linear-gradient(135deg, var(--green), var(--gold));
+      color: #000;
+      box-shadow:
+        0 0 28px rgba(72,255,155,.30),
+        0 0 34px rgba(255,179,71,.25);
+    }
+
     #menuSheet {
       position: fixed;
       left: 50%;
@@ -650,13 +668,13 @@
         width: calc(100vw - 20px);
         justify-content: center;
         border-radius: 26px;
-        gap: 7px;
+        gap: 6px;
       }
 
       #actionDock button {
         flex: 1;
-        padding: 13px 7px;
-        font-size: 8.5px;
+        padding: 13px 5px;
+        font-size: 7.6px;
       }
 
       #fallbackBtn {
@@ -686,24 +704,25 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">PIZZA FREEZE LOCK TEST</div>
+      <div class="subtitle">CARD AR + TABLE AR PORTAL</div>
 
       <p>
-        Сканирай визитката веднъж. Пицата ще се появи и ще се заключи.
-        После можеш да махнеш картата — пицата остава на последната позиция.
+        Сканирай визитката за <b>Card AR</b> или отвори <b>TABLE AR</b>,
+        за да поставиш пицата върху истинска маса чрез WebXR.
       </p>
 
       <div class="start-actions">
-        <button id="startBtn">START AR</button>
+        <button id="startBtn">START CARD AR</button>
+        <button id="openTableFromStart" class="ghost-btn table-start">TABLE AR</button>
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">Файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
+      <span class="hint">Файлове: ./targets/soulflame-black.mind · ./uploads_files_6479452_187.glb · ./table-ar.html</span>
 
       <div class="mini-grid">
         <span>SCAN</span>
+        <span>TABLE</span>
         <span>LOCK</span>
-        <span>FREEZE</span>
       </div>
     </div>
   </section>
@@ -719,6 +738,7 @@
 
   <div id="actionDock">
     <button id="menuBtn" class="gold">MENU</button>
+    <button id="openTableAR" class="table">TABLE AR</button>
     <button id="openSite">WEBSITE</button>
     <button id="contactMail" class="dark">EMAIL</button>
     <button id="openDigitalBtn">CARD</button>
@@ -954,6 +974,7 @@
   <script>
     const CONFIG = {
       siteUrl: "https://soulflame-ar-card.vercel.app",
+      tableARUrl: "./table-ar.html",
       email: "soulflame.mitko@gmail.com",
       phone: "+359xxxxxxxxx",
       mailSubject: "SoulFlame AR Pizza",
@@ -961,30 +982,18 @@
       glbFile: "./uploads_files_6479452_187.glb",
       targetFile: "./targets/soulflame-black.mind",
 
-      /*
-        ОСНОВЕН РАЗМЕР:
-        3.33 ≈ реална 30 см пица, ако визитката е около 9 см.
-      */
       giantPizzaWidth: 3.33,
 
-      /*
-        TEST LOCK MODE:
-        След първо сканиране пицата се заключва.
-        Когато картата изчезне, клониран AR свят остава в последната позиция.
-      */
       lockAfterFirstScan: true,
       autoShowPizzaOnFirstScan: true,
 
-      /*
-        Best-effort autofocus.
-        Работи само ако телефонът/браузърът позволяват camera constraints.
-      */
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200
     };
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
+    const openTableFromStart = document.getElementById("openTableFromStart");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
@@ -992,6 +1001,7 @@
 
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
+    const openTableAR = document.getElementById("openTableAR");
     const openSite = document.getElementById("openSite");
     const contactMail = document.getElementById("contactMail");
     const openDigitalBtn = document.getElementById("openDigitalBtn");
@@ -1023,7 +1033,6 @@
     const digitalCall = document.getElementById("digitalCall");
     const digitalEmail = document.getElementById("digitalEmail");
 
-    const pizzaRig = document.getElementById("pizzaRig");
     const pizzaModel = document.getElementById("pizzaModel");
 
     const fxCanvas = document.getElementById("fxCanvas");
@@ -1099,6 +1108,14 @@
     window.addEventListener("unhandledrejection", (event) => {
       showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
     });
+
+    function openTableARPage() {
+      haptic(35);
+      window.location.href = CONFIG.tableARUrl;
+    }
+
+    openTableFromStart.addEventListener("click", openTableARPage);
+    openTableAR.addEventListener("click", openTableARPage);
 
     openSite.addEventListener("click", () => {
       window.open(CONFIG.siteUrl, "_blank");
@@ -1205,7 +1222,8 @@
         "\n\nLOCKED ONCE: " + lockedOnce +
         "\nLAST POSE READY: " + lastPoseReady +
         "\nFROZEN WORLD: " + Boolean(frozenWorld) +
-        "\nAUTOFOCUS MODE: " + autoFocusMode
+        "\nAUTOFOCUS MODE: " + autoFocusMode +
+        "\nTABLE AR URL: " + CONFIG.tableARUrl
       );
       haptic(20);
     });
@@ -1400,12 +1418,6 @@
       modelDebugInfo += "\n" + label + " RESULT: MULTI SIZE MODE";
     }
 
-    /*
-      ==========================================================
-      FREEZE LOCK ENGINE
-      ==========================================================
-    */
-
     function removeIdsFromClone(root) {
       root.removeAttribute("id");
 
@@ -1531,12 +1543,6 @@
         setStatus("LOCK RESET", "CARD ACTIVE");
       }
     }
-
-    /*
-      ==========================================================
-      AUTOFOCUS ENGINE
-      ==========================================================
-    */
 
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -1749,7 +1755,7 @@
 
       } catch (error) {
         started = false;
-        startBtn.textContent = "START AR";
+        startBtn.textContent = "START CARD AR";
         setStatus("CAMERA / MINDAR ERROR", "CHECK CONSOLE");
         showDebug(error.message || String(error));
         openDigitalCard();
@@ -1833,7 +1839,7 @@
           menuSheet.classList.remove("active");
           scanFrame.classList.remove("locked");
           startScreen.classList.remove("hidden");
-          startBtn.textContent = "START AR";
+          startBtn.textContent = "START CARD AR";
           setStatus("AR PAUSED", "PAUSED");
         } catch (error) {
           console.warn(error);
