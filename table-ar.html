@@ -160,6 +160,11 @@
       line-height: 1.4;
     }
 
+    .productMini b {
+      color: #fff;
+      letter-spacing: .06em;
+    }
+
     .actions {
       display: grid;
       gap: 10px;
@@ -215,6 +220,7 @@
       border: 1px solid var(--line);
       background: rgba(0,0,0,.62);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: rgba(255,255,255,.94);
       font-size: 11px;
       font-weight: 950;
@@ -238,6 +244,7 @@
       border: 1px solid var(--line);
       background: rgba(0,0,0,.58);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: rgba(255,255,255,.80);
       font-size: 12px;
       font-weight: 800;
@@ -259,6 +266,7 @@
       border: 1px solid var(--line);
       background: rgba(0,0,0,.64);
       backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       box-shadow: 0 0 40px rgba(255,255,255,.12);
     }
 
@@ -357,7 +365,7 @@
       <h1>TABLE AR</h1>
       <div class="sub">PIZZA HIT · REAL SURFACE LOCK</div>
 
-      <div id="productMini" class="productMini">Loading product...</div>
+      <div id="productMini" class="productMini">Зареждане на продукт...</div>
 
       <p>
         Насочи телефона към маса. Когато се появи бял кръг върху плоскостта,
@@ -392,14 +400,49 @@
     import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
     import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
-    const selectedProduct = window.getPizzaHitProductFromUrl();
+    const FALLBACK_PRODUCT = {
+      id: "classic",
+      name: "Pizza Hit Classic",
+      shortName: "Classic",
+      price: "12.90 лв.",
+      sizeLabel: "30 CM",
+      description: "Класическа Pizza Hit пица за реално AR поставяне върху маса.",
+      glb: "./uploads_files_6479452_187.glb",
+      usdz: "",
+      realWidth: 0.30
+    };
+
+    function safeGetSelectedProduct() {
+      try {
+        if (window.getPizzaHitProductFromUrl) {
+          const product = window.getPizzaHitProductFromUrl();
+          if (product && product.glb) return product;
+        }
+
+        if (window.PIZZA_HIT_PRODUCTS && Array.isArray(window.PIZZA_HIT_PRODUCTS)) {
+          const params = new URLSearchParams(window.location.search);
+          const id = params.get("product");
+          const found = window.PIZZA_HIT_PRODUCTS.find((p) => p.id === id);
+          if (found && found.glb) return found;
+
+          const first = window.PIZZA_HIT_PRODUCTS[0];
+          if (first && first.glb) return first;
+        }
+      } catch (error) {
+        console.warn("Product fallback used:", error);
+      }
+
+      return FALLBACK_PRODUCT;
+    }
+
+    const selectedProduct = safeGetSelectedProduct();
 
     const CONFIG = {
-      glbFile: selectedProduct.glb,
-      productName: selectedProduct.name,
-      productPrice: selectedProduct.price,
-      productDescription: selectedProduct.description,
-      defaultWidth: selectedProduct.realWidth || 0.30,
+      glbFile: selectedProduct.glb || FALLBACK_PRODUCT.glb,
+      productName: selectedProduct.name || FALLBACK_PRODUCT.name,
+      productPrice: selectedProduct.price || FALLBACK_PRODUCT.price,
+      productDescription: selectedProduct.description || FALLBACK_PRODUCT.description,
+      defaultWidth: Number(selectedProduct.realWidth || FALLBACK_PRODUCT.realWidth || 0.30),
       modelRotationFix: { x: 0, y: 0, z: 0 },
       reticleOuterRadius: 0.13,
       reticleInnerRadius: 0.09,
@@ -424,12 +467,12 @@
     const productMini = document.getElementById("productMini");
 
     productMini.innerHTML = `
-      <b>${selectedProduct.name}</b><br>
-      ${selectedProduct.sizeLabel} · ${selectedProduct.price}<br>
-      <span style="opacity:.72">${selectedProduct.description}</span>
+      <b>${selectedProduct.name || FALLBACK_PRODUCT.name}</b><br>
+      ${(selectedProduct.sizeLabel || FALLBACK_PRODUCT.sizeLabel)} · ${(selectedProduct.price || FALLBACK_PRODUCT.price)}<br>
+      <span style="opacity:.72">${selectedProduct.description || FALLBACK_PRODUCT.description}</span>
     `;
 
-    mv.setAttribute("src", selectedProduct.glb);
+    mv.setAttribute("src", CONFIG.glbFile);
 
     if (selectedProduct.usdz) {
       mv.setAttribute("ios-src", selectedProduct.usdz);
@@ -466,7 +509,8 @@
       "-------------------------\n" +
       "Product: " + CONFIG.productName + "\n" +
       "GLB: " + CONFIG.glbFile + "\n" +
-      "Width: " + CONFIG.defaultWidth + "m\n";
+      "Width: " + CONFIG.defaultWidth + "m\n" +
+      "products.js loaded: " + Boolean(window.PIZZA_HIT_PRODUCTS || window.getPizzaHitProductFromUrl) + "\n";
 
     const sizeSteps = [
       { label: "20 CM", width: 0.20 },
@@ -633,6 +677,27 @@
       center.rotation.x = -Math.PI / 2;
       center.position.y = 0.002;
       group.add(center);
+
+      const lineMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.72,
+        depthWrite: false
+      });
+
+      const lineA = new THREE.Mesh(
+        new THREE.BoxGeometry(CONFIG.reticleOuterRadius * 2.3, 0.003, 0.003),
+        lineMat
+      );
+      lineA.position.y = 0.004;
+      group.add(lineA);
+
+      const lineB = new THREE.Mesh(
+        new THREE.BoxGeometry(0.003, 0.003, CONFIG.reticleOuterRadius * 2.3),
+        lineMat
+      );
+      lineB.position.y = 0.004;
+      group.add(lineB);
 
       reticle = group;
       scene.add(reticle);
@@ -990,7 +1055,7 @@
       if (reticle) reticle.visible = false;
 
       hud.textContent = "LOCKED ON TABLE";
-      bottomHelp.textContent = selectedProduct.name + " е заключена върху реалната плоскост. Можеш да сменяш размер, да въртиш или да поставиш наново.";
+      bottomHelp.textContent = CONFIG.productName + " е заключена върху реалната плоскост. Можеш да сменяш размер, да въртиш или да поставиш наново.";
       haptic(70);
 
       debugInfo += "\n\nPRODUCT PLACED";
