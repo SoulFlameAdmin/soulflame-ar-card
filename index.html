@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Pro Size Menu</title>
+  <title>SoulFlame AR Pizza · Card + Table AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -211,6 +211,11 @@
       justify-items: center;
     }
 
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     #startBtn,
     .ghost-btn,
     #fallbackBtn,
@@ -219,7 +224,7 @@
       cursor: pointer;
       font-weight: 950;
       letter-spacing: .12em;
-      transition: transform .18s ease, opacity .18s ease;
+      transition: transform .18s ease, opacity .18s ease, background .18s ease;
     }
 
     #startBtn {
@@ -242,6 +247,11 @@
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
       backdrop-filter: blur(10px);
+    }
+
+    #startBtn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
     }
 
     #startBtn:active,
@@ -371,7 +381,7 @@
 
     @keyframes scanLineMove {
       from { transform: translateY(0); opacity: .25; }
-      to { transform: translateY(342px); opacity: .9; }
+      to { transform: translateY(72vw); opacity: .9; }
     }
 
     #bottomStatus {
@@ -415,6 +425,8 @@
       top: 54px;
       z-index: 10002;
       width: min(460px, calc(100vw - 24px));
+      max-height: 52vh;
+      overflow: auto;
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.35);
       border-radius: 16px;
@@ -629,7 +641,9 @@
       color: rgba(255,255,255,.78);
     }
 
-    .a-loader-title {
+    .a-loader-title,
+    .a-enter-vr,
+    .a-enter-ar {
       display: none !important;
     }
 
@@ -686,19 +700,22 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">DUAL ANCHOR · CARD + TABLE</div>
+      <div class="subtitle">CARD ANCHOR · TABLE AR · PIZZA</div>
 
       <p>
-        Първо сканирай визитката. След това можеш да използваш
-        <b>MENU</b> за AR върху картата или <b>TABLE</b>, за да поставиш пицата върху реалната маса.
+        Сканирай визитката. След lock можеш да покажеш пицата върху картата
+        или да натиснеш <b>TABLE</b> за реално поставяне върху маса.
       </p>
 
       <div class="start-actions">
         <button id="startBtn">START AR</button>
+        <button id="openTableFromStart" class="ghost-btn">PLACE ON TABLE</button>
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">Файлове: ./targets/soulflame-black.mind, ./uploads_files_6479452_187.glb и ./table-ar.html</span>
+      <span class="hint">
+        Нужно: ./targets/soulflame-black.mind · ./uploads_files_6479452_187.glb · ./table-ar.html
+      </span>
 
       <div class="mini-grid">
         <span>CARD</span>
@@ -708,7 +725,7 @@
     </div>
   </section>
 
-  <div id="topHud">SCAN SOULFLAME CARD</div>
+  <div id="topHud">AR SYSTEM READY</div>
 
   <div id="scanFrame">
     <div id="scanLine"></div>
@@ -754,7 +771,7 @@
       </p>
 
       <div class="digital-actions">
-        <a id="digitalWebsite" href="#" target="_blank">OPEN WEBSITE</a>
+        <a id="digitalWebsite" href="#" target="_blank" rel="noopener">OPEN WEBSITE</a>
         <a id="digitalCall" href="#" class="dark">CALL NOW</a>
         <a id="digitalEmail" href="#" class="dark">EMAIL</a>
         <button id="closeDigital" class="ghost">BACK TO AR</button>
@@ -932,7 +949,7 @@
 
           <a-text
             id="menuInfoText"
-            value="PIZZA CARD\nTABLE MODE\nSIZE +\nROTATE"
+            value="PIZZA CARD&#10;TABLE MODE&#10;SIZE +&#10;ROTATE"
             position="-0.37 0.025 0.05"
             width="0.78"
             color="#ffffff"
@@ -957,16 +974,17 @@
       tableArFile: "./table-ar.html",
 
       /*
-        ОСНОВЕН РАЗМЕР:
         3.33 ≈ реална 30 см пица, ако визитката е около 9 см.
-        Всички SIZE + степени умножават тази база.
+        Ако пицата е много голяма или малка върху картата, коригирай само това число.
       */
-      giantPizzaWidth: 3.33
+      basePizzaWidthOnCard: 3.33
     };
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
+    const openTableFromStart = document.getElementById("openTableFromStart");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
+
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
     const debugBox = document.getElementById("debugBox");
@@ -993,7 +1011,7 @@
     const arSizeText = document.getElementById("arSizeText");
     const menuInfoText = document.getElementById("menuInfoText");
 
-    const scene = document.querySelector("a-scene");
+    const scene = document.getElementById("scene");
     const target = document.getElementById("target");
     const scanFrame = document.getElementById("scanFrame");
     const fallbackBtn = document.getElementById("fallbackBtn");
@@ -1021,6 +1039,7 @@
     let flipped = false;
     let rotationRAF = null;
     let currentPizzaY = 0;
+
     let modelAutoFitted = false;
     let modelDebugInfo = "MODEL NOT LOADED";
 
@@ -1069,11 +1088,11 @@
     });
 
     window.addEventListener("unhandledrejection", (event) => {
-      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
+      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason || "Unknown promise error"));
     });
 
     openSite.addEventListener("click", () => {
-      window.open(CONFIG.siteUrl, "_blank");
+      window.open(CONFIG.siteUrl, "_blank", "noopener");
       haptic(25);
     });
 
@@ -1082,6 +1101,7 @@
       haptic(25);
     });
 
+    openTableFromStart.addEventListener("click", openTableMode);
     tableModeBtn.addEventListener("click", openTableMode);
     tableSheetBtn.addEventListener("click", openTableMode);
 
@@ -1141,7 +1161,10 @@
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "CARD ANCHOR ON" : "CARD ANCHOR OFF");
+      setStatus(
+        pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN",
+        pizzaVisible ? "CARD ANCHOR ON" : "CARD ANCHOR OFF"
+      );
       haptic(25);
     });
 
@@ -1207,7 +1230,7 @@
       }
 
       if (menuInfoText) {
-        menuInfoText.setAttribute("value", `PIZZA CARD\\nTABLE MODE\\n${label}\\nROTATE`);
+        menuInfoText.setAttribute("value", `PIZZA CARD\nTABLE MODE\n${label}\nROTATE`);
       }
 
       modelDebugInfo += `\nSIZE SELECTED: ${label}`;
@@ -1224,7 +1247,6 @@
 
       const tick = () => {
         if (!rotateOn) return;
-
         currentPizzaY = (currentPizzaY + 0.18) % 360;
         setPizzaRotation();
         rotationRAF = requestAnimationFrame(tick);
@@ -1244,7 +1266,7 @@
       const model = pizzaModel.getObject3D("mesh");
 
       if (!model || !window.THREE) {
-        showDebug("GLB loaded, but THREE object not ready.");
+        showDebug("GLB loaded, but THREE object is not ready yet.");
         setStatus("PIZZA GLB LOADED", "OBJECT WAITING");
         return;
       }
@@ -1310,12 +1332,15 @@
       });
 
       modelDebugInfo =
+        "SOULFLAME AR DEBUG\n" +
+        "------------------\n" +
         "GLB FILE: " + CONFIG.glbFile + "\n" +
+        "TARGET FILE: " + CONFIG.targetFile + "\n" +
+        "TABLE AR FILE: " + CONFIG.tableArFile + "\n" +
         "MESHES: " + meshCount + "\n" +
         "MATERIALS: " + materialCount + "\n" +
         "TEXTURES FOUND: " + textureCount + "\n" +
-        "BASE WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
-        "TABLE AR FILE: " + CONFIG.tableArFile + "\n" +
+        "BASE WIDTH ON CARD: " + CONFIG.basePizzaWidthOnCard + "\n" +
         "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
       console.log(modelDebugInfo);
@@ -1341,8 +1366,7 @@
       model.position.y -= center.y;
       model.position.z -= center.z;
 
-      const scale = CONFIG.giantPizzaWidth / maxSize;
-
+      const scale = CONFIG.basePizzaWidthOnCard / maxSize;
       model.scale.setScalar(scale);
       model.updateMatrixWorld(true);
 
@@ -1384,7 +1408,10 @@
       arSystem = scene.systems["mindar-image-system"];
 
       if (scene.renderer && window.THREE) {
-        if (THREE.SRGBColorSpace) scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        if (THREE.SRGBColorSpace) {
+          scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        }
+
         scene.renderer.toneMappingExposure = 1.0;
         scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
@@ -1397,13 +1424,15 @@
       if (started) return;
 
       if (location.protocol === "file:") {
-        showDebug("Не стартирай с двоен клик върху index.html. Камерата и MindAR искат HTTPS или localhost.");
+        const msg = "Не стартирай с двоен клик върху index.html. Камерата и MindAR искат HTTPS или localhost.";
+        showDebug(msg);
         alert("Отвори през Vercel/HTTPS или localhost. Не през file://");
         return;
       }
 
       try {
         started = true;
+        startBtn.disabled = true;
         startBtn.textContent = "STARTING...";
 
         if (!arSystem) {
@@ -1413,7 +1442,9 @@
           arSystem = scene.systems["mindar-image-system"];
         }
 
-        if (!arSystem) throw new Error("MindAR system not found");
+        if (!arSystem) {
+          throw new Error("MindAR system not found");
+        }
 
         await arSystem.start();
 
@@ -1425,14 +1456,22 @@
         scanTimer = setTimeout(() => {
           if (started && !visible) {
             setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
-            showDebug("Не намира визитката. Провери дали ./targets/soulflame-black.mind съществува и дали сканираш същата визитка, от която е направен target-ът.");
+            showDebug(
+              "Не намира визитката.\n\n" +
+              "Провери:\n" +
+              "1. ./targets/soulflame-black.mind съществува.\n" +
+              "2. Сканираш същата визитка, от която е направен target-ът.\n" +
+              "3. Има добра светлина.\n" +
+              "4. Не си отворил през file://."
+            );
           }
         }, CONFIG.scanTimeoutMs);
 
       } catch (error) {
         started = false;
+        startBtn.disabled = false;
         startBtn.textContent = "START AR";
-        setStatus("CAMERA / MINDAR ERROR", "CHECK CONSOLE");
+        setStatus("CAMERA / MINDAR ERROR", "CHECK DEBUG");
         showDebug(error.message || String(error));
         openDigitalCard();
       }
@@ -1472,7 +1511,10 @@
           menuSheet.classList.remove("active");
           scanFrame.classList.remove("locked");
           startScreen.classList.remove("hidden");
+
+          startBtn.disabled = false;
           startBtn.textContent = "START AR";
+
           setStatus("AR PAUSED", "PAUSED");
         } catch (error) {
           console.warn(error);
@@ -1484,6 +1526,8 @@
     const PARTICLE_COUNT = 38;
 
     function resizeFx() {
+      if (!fxCtx) return;
+
       const dpr = Math.min(window.devicePixelRatio || 1, 1.4);
       fxCanvas.width = Math.floor(window.innerWidth * dpr);
       fxCanvas.height = Math.floor(window.innerHeight * dpr);
@@ -1508,6 +1552,8 @@
     }
 
     function drawParticles() {
+      if (!fxCtx) return;
+
       fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
       for (const p of particles) {
