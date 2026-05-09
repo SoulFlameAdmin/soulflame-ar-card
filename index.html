@@ -209,6 +209,7 @@
       border: 1px solid var(--line);
       background: rgba(0,0,0,.62);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: rgba(255,255,255,.94);
       font-size: 11px;
       font-weight: 950;
@@ -335,6 +336,7 @@
       border: 1px solid var(--line);
       background: rgba(0,0,0,.66);
       backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       opacity: 0;
       pointer-events: none;
       transition: .24s ease;
@@ -368,6 +370,7 @@
         rgba(0,0,0,.78);
       border: 1px solid var(--line);
       backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
       opacity: 0;
       pointer-events: none;
       transition: .22s ease;
@@ -467,6 +470,7 @@
       border-radius: 34px;
       background: rgba(0,0,0,.82);
       backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
       padding: 27px;
       text-align: center;
       box-shadow: 0 0 85px rgba(255,255,255,.13);
@@ -750,8 +754,44 @@
       cardBaseWidth: 3.33
     };
 
-    const products = window.PIZZA_HIT_PRODUCTS || [];
-    let selectedProduct = window.getPizzaHitProductById(window.PIZZA_HIT_DEFAULT_PRODUCT_ID);
+    const FALLBACK_PRODUCT = {
+      id: "classic",
+      name: "Pizza Hit Classic",
+      shortName: "Classic",
+      price: "12.90 лв.",
+      sizeLabel: "30 CM",
+      description: "Класическа Pizza Hit пица с реалистичен 3D preview и AR поставяне върху маса.",
+      glb: "./uploads_files_6479452_187.glb",
+      usdz: "",
+      realWidth: 0.30
+    };
+
+    function safeGetProducts() {
+      if (
+        window.PIZZA_HIT_PRODUCTS &&
+        Array.isArray(window.PIZZA_HIT_PRODUCTS) &&
+        window.PIZZA_HIT_PRODUCTS.length
+      ) {
+        return window.PIZZA_HIT_PRODUCTS;
+      }
+
+      return [FALLBACK_PRODUCT];
+    }
+
+    function safeGetProductById(id) {
+      const list = safeGetProducts();
+      const safeId = String(id || "classic").trim();
+
+      return (
+        list.find((product) => product.id === safeId) ||
+        list.find((product) => product.id === "classic") ||
+        list[0] ||
+        FALLBACK_PRODUCT
+      );
+    }
+
+    const products = safeGetProducts();
+    let selectedProduct = safeGetProductById(window.PIZZA_HIT_DEFAULT_PRODUCT_ID || "classic");
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
@@ -795,11 +835,8 @@
     let scanTimer = null;
     let pizzaVisible = false;
     let modelReady = false;
-    let modelDebugInfo = "Pizza Hit AR Debug\n";
     let currentScale = 1;
-
-    buildProductList();
-    applySelectedProduct(selectedProduct, false);
+    let modelDebugInfo = "Pizza Hit AR Debug\n";
 
     window.addEventListener("error", (event) => {
       showDebug("JS ERROR: " + event.message);
@@ -816,6 +853,7 @@
         if (THREE.SRGBColorSpace) {
           scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
         }
+
         scene.renderer.toneMappingExposure = 1.0;
         scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
@@ -825,6 +863,7 @@
 
     pizzaModel.addEventListener("model-loaded", () => {
       const model = pizzaModel.getObject3D("mesh");
+
       if (!model || !window.THREE) {
         setStatus("MODEL LOADED", "WAITING OBJECT");
         return;
@@ -834,16 +873,19 @@
         prepareModel(model);
         autoFitModel(model);
         modelReady = true;
-        setStatus("PRODUCT READY", selectedProduct.shortName.toUpperCase());
+        setStatus("PRODUCT READY", String(selectedProduct.shortName || "Classic").toUpperCase());
       } catch (error) {
         showDebug("MODEL FIT ERROR: " + error.message);
       }
     });
 
     pizzaModel.addEventListener("model-error", () => {
-      showDebug("GLB ERROR: Не може да се зареди " + selectedProduct.glb);
+      showDebug("GLB ERROR: Не може да се зареди " + (selectedProduct.glb || FALLBACK_PRODUCT.glb));
       setStatus("GLB ERROR", "CHECK FILE");
     });
+
+    buildProductList();
+    applySelectedProduct(selectedProduct, false);
 
     startBtn.addEventListener("click", startCardAR);
     openMenuFromStart.addEventListener("click", openProductSheet);
@@ -854,25 +896,37 @@
     showCardPizzaBtn.addEventListener("click", showProductOnCard);
     tableModeBtn.addEventListener("click", openTableAR);
     digitalBtn.addEventListener("click", openDigitalCard);
-    closeDigitalBtn.addEventListener("click", () => digitalCard.classList.add("hidden"));
+
+    closeDigitalBtn.addEventListener("click", () => {
+      digitalCard.classList.add("hidden");
+      haptic(20);
+    });
 
     placeOnCardBtn.addEventListener("click", showProductOnCard);
     placeOnTableBtn.addEventListener("click", openTableAR);
-    closeSheetBtn.addEventListener("click", () => productSheet.classList.remove("active"));
+
+    closeSheetBtn.addEventListener("click", () => {
+      productSheet.classList.remove("active");
+      haptic(20);
+    });
 
     resetCardBtn.addEventListener("click", () => {
       pizzaVisible = true;
       pizzaRig.setAttribute("visible", "true");
       pizzaRig.setAttribute("rotation", "90 0 0");
       pizzaRig.setAttribute("scale", `${currentScale} ${currentScale} ${currentScale}`);
-      setStatus("CARD AR RESET", selectedProduct.shortName.toUpperCase());
+      setStatus("CARD AR RESET", String(selectedProduct.shortName || "Classic").toUpperCase());
+      haptic(25);
     });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
       hidePizzaBtn.textContent = pizzaVisible ? "HIDE" : "SHOW";
-      setStatus(pizzaVisible ? "PRODUCT VISIBLE" : "PRODUCT HIDDEN", selectedProduct.shortName.toUpperCase());
+      setStatus(
+        pizzaVisible ? "PRODUCT VISIBLE" : "PRODUCT HIDDEN",
+        String(selectedProduct.shortName || "Classic").toUpperCase()
+      );
       haptic(25);
     });
 
@@ -890,11 +944,13 @@
       setStatus("PIZZA HIT LOCKED", "MENU / CARD AR / TABLE");
       dock.classList.add("active");
       scanFrame.classList.add("locked");
+
       haptic(38);
     });
 
     target.addEventListener("targetLost", () => {
       visible = false;
+
       setStatus("TARGET LOST", "SHOW CARD TO CAMERA");
       dock.classList.remove("active");
       productSheet.classList.remove("active");
@@ -911,6 +967,7 @@
 
         started = false;
         visible = false;
+
         clearTimeout(scanTimer);
         dock.classList.remove("active");
         productSheet.classList.remove("active");
@@ -937,11 +994,16 @@
         startBtn.textContent = "STARTING...";
 
         if (!arSystem) {
-          await new Promise((resolve) => scene.addEventListener("loaded", resolve, { once: true }));
+          await new Promise((resolve) => {
+            scene.addEventListener("loaded", resolve, { once: true });
+          });
+
           arSystem = scene.systems["mindar-image-system"];
         }
 
-        if (!arSystem) throw new Error("MindAR system not found");
+        if (!arSystem) {
+          throw new Error("MindAR system not found");
+        }
 
         await arSystem.start();
 
@@ -963,6 +1025,7 @@
         started = false;
         startBtn.disabled = false;
         startBtn.textContent = "START AR";
+
         setStatus("CAMERA / MINDAR ERROR", "CHECK DEBUG");
         showDebug(error.message || String(error));
         openDigitalCard();
@@ -972,18 +1035,22 @@
     function buildProductList() {
       productList.innerHTML = "";
 
-      products.forEach((product) => {
+      const list = products && products.length ? products : [FALLBACK_PRODUCT];
+
+      list.forEach((product) => {
+        const safeProduct = product || FALLBACK_PRODUCT;
+
         const btn = document.createElement("button");
         btn.className = "productBtn";
-        btn.dataset.id = product.id;
+        btn.dataset.id = safeProduct.id || "classic";
         btn.innerHTML = `
-          <b>${product.name} · ${product.price}</b>
-          <small>${product.sizeLabel} · ${product.description}</small>
+          <b>${safeProduct.name || "Pizza Hit Classic"} · ${safeProduct.price || ""}</b>
+          <small>${safeProduct.sizeLabel || "30 CM"} · ${safeProduct.description || ""}</small>
         `;
 
         btn.addEventListener("click", () => {
-          selectedProduct = product;
-          applySelectedProduct(product, true);
+          selectedProduct = safeProduct;
+          applySelectedProduct(safeProduct, true);
           updateProductButtons();
           haptic(25);
         });
@@ -996,33 +1063,54 @@
 
     function updateProductButtons() {
       document.querySelectorAll(".productBtn").forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.id === selectedProduct.id);
+        btn.classList.toggle("active", btn.dataset.id === String(selectedProduct.id || "classic"));
       });
     }
 
     function applySelectedProduct(product, announce) {
-      if (!product) return;
+      const safeProduct = product || FALLBACK_PRODUCT;
 
-      selectedLabel.textContent = product.sizeLabel;
-      arProductText.setAttribute("value", product.name.toUpperCase());
+      selectedProduct = safeProduct;
+      selectedLabel.textContent = safeProduct.sizeLabel || "30 CM";
+
+      arProductText.setAttribute(
+        "value",
+        String(safeProduct.name || "Pizza Hit Classic").toUpperCase()
+      );
+
       modelReady = false;
+      pizzaVisible = false;
+
+      pizzaRig.setAttribute("visible", "false");
+
+      const glbPath = safeProduct.glb || FALLBACK_PRODUCT.glb;
 
       pizzaModel.removeAttribute("gltf-model");
-      pizzaModel.setAttribute("gltf-model", product.glb);
+
+      requestAnimationFrame(() => {
+        pizzaModel.setAttribute("gltf-model", glbPath);
+      });
 
       if (announce) {
-        setStatus("PRODUCT SELECTED", product.shortName.toUpperCase());
+        setStatus("PRODUCT SELECTED", String(safeProduct.shortName || "Classic").toUpperCase());
       }
 
-      modelDebugInfo += "\nSelected product: " + product.name;
-      modelDebugInfo += "\nGLB: " + product.glb;
+      modelDebugInfo += "\nSelected product: " + (safeProduct.name || "Pizza Hit Classic");
+      modelDebugInfo += "\nGLB: " + glbPath;
     }
 
     function showProductOnCard() {
+      if (!modelReady) {
+        setStatus("PRODUCT LOADING", String(selectedProduct.shortName || "Classic").toUpperCase());
+        haptic(20);
+        return;
+      }
+
       pizzaVisible = true;
       pizzaRig.setAttribute("visible", "true");
       productSheet.classList.remove("active");
-      setStatus("CARD AR ACTIVE", selectedProduct.shortName.toUpperCase());
+
+      setStatus("CARD AR ACTIVE", String(selectedProduct.shortName || "Classic").toUpperCase());
       haptic(45);
     }
 
@@ -1042,13 +1130,15 @@
       visible = false;
       clearTimeout(scanTimer);
 
-      const url = `${CONFIG.tableArFile}?product=${encodeURIComponent(selectedProduct.id)}`;
+      const productId = selectedProduct?.id || "classic";
+      const url = `${CONFIG.tableArFile}?product=${encodeURIComponent(productId)}`;
+
       window.location.href = url;
     }
 
     function openProductSheet() {
       productSheet.classList.add("active");
-      setStatus("PIZZA HIT MENU", selectedProduct.shortName.toUpperCase());
+      setStatus("PIZZA HIT MENU", String(selectedProduct.shortName || "Classic").toUpperCase());
       haptic(25);
     }
 
@@ -1080,19 +1170,26 @@
 
           if (mat.map) {
             textureCount++;
-            if (THREE.SRGBColorSpace) mat.map.colorSpace = THREE.SRGBColorSpace;
+
+            if (THREE.SRGBColorSpace) {
+              mat.map.colorSpace = THREE.SRGBColorSpace;
+            }
+
             mat.map.needsUpdate = true;
           }
 
-          if (mat.emissive) mat.emissive.setRGB(0, 0, 0);
+          if (mat.emissive) {
+            mat.emissive.setRGB(0, 0, 0);
+          }
+
           mat.needsUpdate = true;
         });
       });
 
       modelDebugInfo =
         "PIZZA HIT CARD AR DEBUG\n" +
-        "Product: " + selectedProduct.name + "\n" +
-        "GLB: " + selectedProduct.glb + "\n" +
+        "Product: " + (selectedProduct.name || "Pizza Hit Classic") + "\n" +
+        "GLB: " + (selectedProduct.glb || FALLBACK_PRODUCT.glb) + "\n" +
         "Meshes: " + meshCount + "\n" +
         "Materials: " + materialCount + "\n" +
         "Textures: " + textureCount + "\n";
@@ -1109,6 +1206,7 @@
       box.getCenter(center);
 
       const maxSize = Math.max(size.x, size.y, size.z);
+
       if (!Number.isFinite(maxSize) || maxSize <= 0) {
         throw new Error("Invalid GLB bounds");
       }
@@ -1118,6 +1216,7 @@
       model.position.z -= center.z;
 
       const scale = CONFIG.cardBaseWidth / maxSize;
+
       model.scale.setScalar(scale);
       model.updateMatrixWorld(true);
 
@@ -1150,7 +1249,9 @@
     }
 
     function haptic(ms = 35) {
-      if (navigator.vibrate) navigator.vibrate(ms);
+      if (navigator.vibrate) {
+        navigator.vibrate(ms);
+      }
     }
   </script>
 </body>
