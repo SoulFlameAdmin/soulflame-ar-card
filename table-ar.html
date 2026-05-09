@@ -4,19 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#050505" />
-  <title>SoulFlame Table AR · Real Surface Placement</title>
+  <title>Pizza Hit Table AR · Real Surface Placement</title>
 
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script src="./products.js"></script>
 
   <style>
     :root {
       --bg: #050505;
-      --text: #ffffff;
+      --text: #fff;
       --muted: rgba(255,255,255,.68);
       --gold: #ffb347;
-      --glass: rgba(0,0,0,.68);
+      --red: #ff3d3d;
       --line: rgba(255,255,255,.18);
-      --radius: 28px;
       --pill: 999px;
     }
 
@@ -53,7 +53,7 @@
       z-index: 1;
       background:
         radial-gradient(circle at 50% 25%, rgba(255,179,71,.16), transparent 30%),
-        radial-gradient(circle at 20% 80%, rgba(255,255,255,.08), transparent 24%),
+        radial-gradient(circle at 20% 80%, rgba(255,61,61,.12), transparent 24%),
         #050505;
     }
 
@@ -83,61 +83,51 @@
       padding: 22px;
       background:
         radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.97) 62%),
-        linear-gradient(135deg, rgba(255,179,71,.12), transparent 45%, rgba(255,255,255,.07));
-      overflow: hidden;
-    }
-
-    #startScreen::before {
-      content: "";
-      position: absolute;
-      width: min(640px, 118vw);
-      height: min(640px, 118vw);
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.13);
-      box-shadow:
-        0 0 120px rgba(255,255,255,.12),
-        inset 0 0 80px rgba(255,255,255,.05);
-      animation: portalSpin 22s linear infinite;
-    }
-
-    @keyframes portalSpin {
-      from { transform: rotate(0deg) scale(.92); }
-      to { transform: rotate(360deg) scale(1.02); }
+        linear-gradient(135deg, rgba(255,61,61,.16), transparent 45%, rgba(255,179,71,.10));
     }
 
     .card {
-      position: relative;
-      z-index: 2;
-      width: min(520px, 94vw);
+      width: min(540px, 94vw);
       padding: 30px 22px 22px;
       border-radius: 34px;
-      border: 1px solid rgba(255,255,255,.22);
+      border: 1px solid var(--line);
       background:
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.025)),
-        rgba(0,0,0,.74);
+        rgba(0,0,0,.76);
       backdrop-filter: blur(24px) saturate(150%);
       -webkit-backdrop-filter: blur(24px) saturate(150%);
       text-align: center;
-      box-shadow:
-        0 0 90px rgba(255,255,255,.14),
-        inset 0 0 28px rgba(255,255,255,.045);
+      box-shadow: 0 0 90px rgba(255,255,255,.14);
     }
 
     .logo {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 18px;
-      border: 2px solid rgba(255,255,255,.95);
-      transform: rotate(34deg) skew(-8deg);
-      box-shadow:
-        0 0 24px rgba(255,255,255,.65),
-        inset 0 0 14px rgba(255,255,255,.18);
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 16px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), transparent 17%),
+        linear-gradient(135deg, #ff3d3d, #ffb347);
+      box-shadow: 0 0 35px rgba(255,61,61,.38), 0 0 45px rgba(255,179,71,.18);
+      transform: rotate(8deg);
+      position: relative;
+    }
+
+    .logo::after {
+      content: "PH";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #111;
+      font-weight: 1000;
+      font-size: 25px;
     }
 
     h1 {
       margin: 0 0 8px;
-      font-size: clamp(24px, 7vw, 36px);
-      letter-spacing: .15em;
+      font-size: clamp(24px, 7vw, 38px);
+      letter-spacing: .13em;
       line-height: 1;
     }
 
@@ -145,17 +135,29 @@
       margin: 0 0 18px;
       color: rgba(255,255,255,.58);
       font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .2em;
+      font-weight: 950;
+      letter-spacing: .18em;
       text-transform: uppercase;
     }
 
     p {
-      margin: 0 auto 20px;
+      margin: 0 auto 18px;
       max-width: 430px;
       color: rgba(255,255,255,.82);
       line-height: 1.55;
       font-size: 15px;
+    }
+
+    .productMini {
+      margin: 0 auto 18px;
+      padding: 12px 14px;
+      width: min(420px, 100%);
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      line-height: 1.4;
     }
 
     .actions {
@@ -176,7 +178,7 @@
       font-size: 12px;
       font-weight: 950;
       letter-spacing: .13em;
-      transition: transform .16s ease, opacity .16s ease, background .16s ease;
+      transition: transform .16s ease, opacity .16s ease;
     }
 
     button:active,
@@ -198,7 +200,7 @@
     #openFallback,
     #backToCard {
       background: rgba(255,255,255,.075);
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid var(--line);
       color: rgba(255,255,255,.84);
     }
 
@@ -210,10 +212,9 @@
       z-index: 9998;
       padding: 10px 15px;
       border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,.20);
+      border: 1px solid var(--line);
       background: rgba(0,0,0,.62);
-      backdrop-filter: blur(16px) saturate(150%);
-      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      backdrop-filter: blur(16px);
       color: rgba(255,255,255,.94);
       font-size: 11px;
       font-weight: 950;
@@ -223,7 +224,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       pointer-events: none;
-      box-shadow: 0 0 28px rgba(255,255,255,.10);
     }
 
     #bottomHelp {
@@ -235,10 +235,9 @@
       width: min(500px, calc(100vw - 24px));
       padding: 13px 15px;
       border-radius: 24px;
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid var(--line);
       background: rgba(0,0,0,.58);
-      backdrop-filter: blur(16px) saturate(150%);
-      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      backdrop-filter: blur(16px);
       color: rgba(255,255,255,.80);
       font-size: 12px;
       font-weight: 800;
@@ -257,10 +256,9 @@
       gap: 8px;
       padding: 8px;
       border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid var(--line);
       background: rgba(0,0,0,.64);
-      backdrop-filter: blur(18px) saturate(150%);
-      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      backdrop-filter: blur(18px);
       box-shadow: 0 0 40px rgba(255,255,255,.12);
     }
 
@@ -318,7 +316,7 @@
       #dock button {
         flex: 1;
         padding: 13px 6px;
-        font-size: 8.3px;
+        font-size: 8.2px;
       }
 
       #bottomHelp {
@@ -338,7 +336,7 @@
     <model-viewer
       id="mv"
       src="./uploads_files_6479452_187.glb"
-      alt="SoulFlame AR Pizza"
+      alt="Pizza Hit AR Product"
       camera-controls
       auto-rotate
       shadow-intensity="1"
@@ -357,18 +355,19 @@
     <div class="card">
       <div class="logo"></div>
       <h1>TABLE AR</h1>
-      <div class="sub">SOULFLAME · REAL SURFACE LOCK</div>
+      <div class="sub">PIZZA HIT · REAL SURFACE LOCK</div>
+
+      <div id="productMini" class="productMini">Loading product...</div>
 
       <p>
-        Това е истински WebXR AR режим. Телефонът търси реална плоскост
-        чрез hit-test. Когато се появи кръг върху масата — натисни и пицата
-        ще се заключи там.
+        Насочи телефона към маса. Когато се появи бял кръг върху плоскостта,
+        натисни екрана и продуктът ще се заключи върху реалната маса.
       </p>
 
       <div class="actions">
         <button id="startAR">ТЪРСИ ПЛОСКОСТ</button>
         <button id="openFallback">3D / AR FALLBACK</button>
-        <a id="backToCard" href="./index.html">ОБРАТНО КЪМ КАРТАТА</a>
+        <a id="backToCard" href="./index.html">ОБРАТНО КЪМ МЕНЮТО</a>
       </div>
     </div>
   </section>
@@ -381,7 +380,7 @@
 
   <div id="dock" class="hidden">
     <button id="placeAgain" class="gold">PLACE</button>
-    <button id="sizeBtn">30 CM</button>
+    <button id="sizeBtn">SIZE</button>
     <button id="rotateBtn">ROTATE</button>
     <button id="resetBtn" class="dark">RESET</button>
     <button id="debugBtn" class="dark">DEBUG</button>
@@ -393,24 +392,15 @@
     import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
     import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
+    const selectedProduct = window.getPizzaHitProductFromUrl();
+
     const CONFIG = {
-      glbFile: "./uploads_files_6479452_187.glb",
-      backToCard: "./index.html",
-
-      /*
-        Реален размер в метри.
-        0.30 = 30 см пица.
-      */
-      defaultPizzaWidthMeters: 0.30,
-
-      /*
-        Ако GLB пицата излезе изправена, смени това:
-        normal: { x: 0, y: 0, z: 0 }
-        flatX:  { x: -Math.PI / 2, y: 0, z: 0 }
-        flatZ:  { x: 0, y: 0, z: -Math.PI / 2 }
-      */
+      glbFile: selectedProduct.glb,
+      productName: selectedProduct.name,
+      productPrice: selectedProduct.price,
+      productDescription: selectedProduct.description,
+      defaultWidth: selectedProduct.realWidth || 0.30,
       modelRotationFix: { x: 0, y: 0, z: 0 },
-
       reticleOuterRadius: 0.13,
       reticleInnerRadius: 0.09,
       maxPixelRatio: 1.5
@@ -430,6 +420,20 @@
     const resetBtn = document.getElementById("resetBtn");
     const debugBtn = document.getElementById("debugBtn");
     const debugBox = document.getElementById("debugBox");
+    const mv = document.getElementById("mv");
+    const productMini = document.getElementById("productMini");
+
+    productMini.innerHTML = `
+      <b>${selectedProduct.name}</b><br>
+      ${selectedProduct.sizeLabel} · ${selectedProduct.price}<br>
+      <span style="opacity:.72">${selectedProduct.description}</span>
+    `;
+
+    mv.setAttribute("src", selectedProduct.glb);
+
+    if (selectedProduct.usdz) {
+      mv.setAttribute("ios-src", selectedProduct.usdz);
+    }
 
     let scene;
     let camera;
@@ -443,9 +447,9 @@
     let reticle;
     let reticlePulse = 0;
 
-    let pizzaGroup;
-    let pizzaModel;
-    let pizzaPlaced = false;
+    let productGroup;
+    let productModel;
+    let productPlaced = false;
     let modelReady = false;
 
     let latestHitMatrix = null;
@@ -457,7 +461,12 @@
     let currentRotationY = 0;
     let lastPlaceTime = 0;
 
-    let debugInfo = "SOULFLAME TABLE AR DEBUG\n-------------------------\n";
+    let debugInfo =
+      "PIZZA HIT TABLE AR DEBUG\n" +
+      "-------------------------\n" +
+      "Product: " + CONFIG.productName + "\n" +
+      "GLB: " + CONFIG.glbFile + "\n" +
+      "Width: " + CONFIG.defaultWidth + "m\n";
 
     const sizeSteps = [
       { label: "20 CM", width: 0.20 },
@@ -471,7 +480,7 @@
       { label: "MAX", width: 1.15 }
     ];
 
-    let sizeIndex = 1;
+    let sizeIndex = findClosestSizeIndex(CONFIG.defaultWidth);
 
     initThree();
 
@@ -482,17 +491,15 @@
       fallbackViewer.style.display = "block";
       xrCanvas.style.display = "none";
       hud.textContent = "3D / AR FALLBACK";
-      bottomHelp.textContent = "Fallback режим. За истинско търсене на плоскост използвай бутона ТЪРСИ ПЛОСКОСТ на Android Chrome.";
+      bottomHelp.textContent = "Fallback режим. За истинско търсене на плоскост използвай Android Chrome + HTTPS.";
       haptic(30);
     });
 
     placeAgain.addEventListener("click", () => {
-      pizzaPlaced = false;
+      productPlaced = false;
       latestHitMatrix = null;
 
-      if (pizzaGroup) {
-        pizzaGroup.visible = false;
-      }
+      if (productGroup) productGroup.visible = false;
 
       hud.textContent = "SEARCHING SURFACE";
       bottomHelp.textContent = "Движи телефона бавно към масата. Когато кръгът стане стабилен — натисни.";
@@ -501,7 +508,7 @@
 
     sizeBtn.addEventListener("click", () => {
       sizeIndex = (sizeIndex + 1) % sizeSteps.length;
-      applyPizzaSize();
+      applyProductSize();
       haptic(25);
     });
 
@@ -513,23 +520,21 @@
     });
 
     resetBtn.addEventListener("click", () => {
-      sizeIndex = 1;
+      sizeIndex = findClosestSizeIndex(CONFIG.defaultWidth);
       currentRotationY = 0;
       rotateOn = false;
-      pizzaPlaced = false;
+      productPlaced = false;
       latestHitMatrix = null;
 
       rotateBtn.textContent = "ROTATE";
-      applyPizzaSize();
+      applyProductSize();
 
-      if (pizzaGroup) {
-        pizzaGroup.rotation.set(0, 0, 0);
-        pizzaGroup.visible = false;
+      if (productGroup) {
+        productGroup.rotation.set(0, 0, 0);
+        productGroup.visible = false;
       }
 
-      if (reticle) {
-        reticle.visible = false;
-      }
+      if (reticle) reticle.visible = false;
 
       hud.textContent = "RESET · SEARCH SURFACE";
       bottomHelp.textContent = "Поставянето е занулено. Намери плоскост и натисни.";
@@ -547,7 +552,7 @@
     });
 
     window.addEventListener("unhandledrejection", (event) => {
-      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason || "Unknown promise error"));
+      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason || "Unknown"));
     });
 
     function initThree() {
@@ -584,11 +589,11 @@
       scene.add(warm);
 
       createReticle();
-      createPizzaGroup();
-      loadPizza();
+      createProductGroup();
+      loadProductModel();
 
       window.addEventListener("resize", onResize);
-      xrCanvas.addEventListener("pointerup", placePizzaFromHit);
+      xrCanvas.addEventListener("pointerup", placeProductFromHit);
 
       renderer.setAnimationLoop(render);
     }
@@ -596,7 +601,6 @@
     function createReticle() {
       const group = new THREE.Group();
       group.visible = false;
-      group.matrixAutoUpdate = true;
 
       const ringGeo = new THREE.RingGeometry(
         CONFIG.reticleInnerRadius,
@@ -613,7 +617,6 @@
       });
 
       const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.name = "reticleRing";
       ring.rotation.x = -Math.PI / 2;
       group.add(ring);
 
@@ -627,40 +630,18 @@
       });
 
       const center = new THREE.Mesh(centerGeo, centerMat);
-      center.name = "reticleCenter";
       center.rotation.x = -Math.PI / 2;
       center.position.y = 0.002;
       group.add(center);
-
-      const lineMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.72,
-        depthWrite: false
-      });
-
-      const lineA = new THREE.Mesh(
-        new THREE.BoxGeometry(CONFIG.reticleOuterRadius * 2.7, 0.003, 0.003),
-        lineMat
-      );
-      lineA.position.y = 0.004;
-      group.add(lineA);
-
-      const lineB = new THREE.Mesh(
-        new THREE.BoxGeometry(0.003, 0.003, CONFIG.reticleOuterRadius * 2.7),
-        lineMat
-      );
-      lineB.position.y = 0.004;
-      group.add(lineB);
 
       reticle = group;
       scene.add(reticle);
     }
 
-    function createPizzaGroup() {
-      pizzaGroup = new THREE.Group();
-      pizzaGroup.visible = false;
-      scene.add(pizzaGroup);
+    function createProductGroup() {
+      productGroup = new THREE.Group();
+      productGroup.visible = false;
+      scene.add(productGroup);
 
       const shadowGeo = new THREE.CircleGeometry(0.22, 96);
       const shadowMat = new THREE.MeshBasicMaterial({
@@ -675,22 +656,22 @@
       shadow.name = "softShadow";
       shadow.rotation.x = -Math.PI / 2;
       shadow.position.y = 0.003;
-      pizzaGroup.add(shadow);
+      productGroup.add(shadow);
     }
 
-    function loadPizza() {
+    function loadProductModel() {
       const loader = new GLTFLoader();
 
       loader.load(
         CONFIG.glbFile,
         (gltf) => {
-          pizzaModel = gltf.scene;
+          productModel = gltf.scene;
 
           let meshCount = 0;
           let textureCount = 0;
           let materialCount = 0;
 
-          pizzaModel.traverse((node) => {
+          productModel.traverse((node) => {
             if (!node.isMesh) return;
 
             meshCount++;
@@ -710,36 +691,31 @@
                 mat.map.needsUpdate = true;
               }
 
-              if (mat.emissive) {
-                mat.emissive.setRGB(0, 0, 0);
-              }
-
+              if (mat.emissive) mat.emissive.setRGB(0, 0, 0);
               mat.needsUpdate = true;
             });
           });
 
-          centerAndNormalizeModel(pizzaModel);
+          centerAndNormalizeModel(productModel);
 
-          pizzaModel.rotation.set(
+          productModel.rotation.set(
             CONFIG.modelRotationFix.x,
             CONFIG.modelRotationFix.y,
             CONFIG.modelRotationFix.z
           );
 
-          pizzaModel.position.y = 0.025;
-          pizzaGroup.add(pizzaModel);
+          productModel.position.y = 0.025;
+          productGroup.add(productModel);
 
           modelReady = true;
-          applyPizzaSize();
+          applyProductSize();
 
-          debugInfo += "\nGLB loaded: " + CONFIG.glbFile;
+          debugInfo += "\nGLB loaded: true";
           debugInfo += "\nMeshes: " + meshCount;
           debugInfo += "\nMaterials: " + materialCount;
           debugInfo += "\nTextures: " + textureCount;
-          debugInfo += "\nModel ready: true";
-          debugInfo += "\nDefault size: " + CONFIG.defaultPizzaWidthMeters + "m";
 
-          hud.textContent = "PIZZA READY";
+          hud.textContent = "PRODUCT READY";
         },
         undefined,
         (error) => {
@@ -783,22 +759,21 @@
       debugInfo += "\nNormalize scale: " + Number(modelNormalizeScale.toFixed(6));
     }
 
-    function applyPizzaSize() {
+    function applyProductSize() {
       const step = sizeSteps[sizeIndex] || sizeSteps[1];
-
       sizeBtn.textContent = step.label;
 
-      if (!pizzaModel || !pizzaGroup) return;
+      if (!productModel || !productGroup) return;
 
-      pizzaModel.scale.setScalar(modelNormalizeScale * step.width);
+      productModel.scale.setScalar(modelNormalizeScale * step.width);
 
-      const shadow = pizzaGroup.getObjectByName("softShadow");
+      const shadow = productGroup.getObjectByName("softShadow");
       if (shadow) {
         const shadowSize = Math.max(step.width * 1.28, 0.16);
         shadow.scale.set(shadowSize, shadowSize, shadowSize);
       }
 
-      hud.textContent = "PIZZA SIZE · " + step.label;
+      hud.textContent = "SIZE · " + step.label;
 
       debugInfo += "\nSize selected: " + step.label + " / " + step.width + "m";
       debugInfo += "\nApplied scale: " + Number((modelNormalizeScale * step.width).toFixed(6));
@@ -810,10 +785,7 @@
           "SECURE CONTEXT ERROR\n\n" +
           "WebXR и камерата искат HTTPS или localhost.\n" +
           "Не стартирай през file://.\n\n" +
-          "Решение:\n" +
-          "1. Качи във Vercel.\n" +
-          "2. Отвори HTTPS линка на Android Chrome.\n" +
-          "3. Или пусни localhost."
+          "Качи във Vercel и отвори HTTPS линка на Android Chrome."
         );
 
         hud.textContent = "HTTPS / LOCALHOST REQUIRED";
@@ -825,7 +797,6 @@
         showDebug(
           "WEBXR ERROR\n\n" +
           "navigator.xr липсва.\n" +
-          "Този браузър/телефон не поддържа WebXR immersive-ar.\n\n" +
           "Използвай Android Chrome + Google Play Services for AR."
         );
 
@@ -846,10 +817,7 @@
         showDebug(
           "AR NOT SUPPORTED\n\n" +
           "immersive-ar не се поддържа на това устройство/браузър.\n\n" +
-          "Нужно:\n" +
-          "1. Android Chrome.\n" +
-          "2. Google Play Services for AR / ARCore.\n" +
-          "3. HTTPS линк."
+          "Нужно: Android Chrome + ARCore + HTTPS."
         );
 
         hud.textContent = "AR NOT SUPPORTED";
@@ -863,12 +831,12 @@
 
         xrSession = await navigator.xr.requestSession("immersive-ar", {
           requiredFeatures: ["hit-test"],
-          optionalFeatures: ["dom-overlay", "local-floor", "anchors", "light-estimation"],
+          optionalFeatures: ["dom-overlay", "local-floor", "anchors"],
           domOverlay: { root: document.body }
         });
 
         xrSession.addEventListener("end", onSessionEnd);
-        xrSession.addEventListener("select", placePizzaFromHit);
+        xrSession.addEventListener("select", placeProductFromHit);
 
         renderer.xr.setReferenceSpaceType("local");
         await renderer.xr.setSession(xrSession);
@@ -877,7 +845,7 @@
         viewerSpace = await xrSession.requestReferenceSpace("viewer");
 
         if (!xrSession.requestHitTestSource) {
-          throw new Error("requestHitTestSource is not available on this device/browser.");
+          throw new Error("requestHitTestSource is not available.");
         }
 
         hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace });
@@ -888,12 +856,10 @@
         dock.classList.remove("hidden");
 
         hud.textContent = "SEARCHING SURFACE";
-        bottomHelp.textContent = "Движи телефона бавно наляво-надясно към масата. Когато видиш бял кръг — натисни.";
+        bottomHelp.textContent = "Движи телефона бавно към масата. Когато видиш бял кръг — натисни.";
 
         debugInfo += "\n\nXR SESSION STARTED";
         debugInfo += "\nHit-test source: active";
-        debugInfo += "\nReference space: local";
-        debugInfo += "\nViewer space: active";
 
         haptic(45);
       } catch (error) {
@@ -902,7 +868,7 @@
 
         showDebug("XR START ERROR:\n" + (error.message || error));
         hud.textContent = "XR START ERROR";
-        bottomHelp.textContent = "Ако си на iPhone или неподдържан браузър, използвай 3D / AR fallback.";
+        bottomHelp.textContent = "Ако телефонът не поддържа WebXR, използвай 3D / AR fallback.";
       }
     }
 
@@ -920,10 +886,10 @@
       viewerSpace = null;
       hitTestSource = null;
       latestHitMatrix = null;
-      pizzaPlaced = false;
+      productPlaced = false;
 
       if (reticle) reticle.visible = false;
-      if (pizzaGroup) pizzaGroup.visible = false;
+      if (productGroup) productGroup.visible = false;
 
       xrCanvas.style.display = "none";
       dock.classList.add("hidden");
@@ -953,7 +919,7 @@
             const matrix = new THREE.Matrix4().fromArray(latestHitMatrix);
             matrix.decompose(latestHitPosition, latestHitQuaternion, new THREE.Vector3());
 
-            if (!pizzaPlaced) {
+            if (!productPlaced) {
               reticle.visible = true;
               reticle.position.copy(latestHitPosition);
               reticle.quaternion.copy(latestHitQuaternion);
@@ -963,21 +929,21 @@
               reticle.scale.setScalar(pulseScale);
 
               hud.textContent = "SURFACE FOUND · TAP TO PLACE";
-              bottomHelp.textContent = "Плоскостта е засечена. Натисни върху екрана, за да заключиш пицата.";
+              bottomHelp.textContent = "Плоскостта е засечена. Натисни върху екрана, за да заключиш продукта.";
             }
           }
         } else {
           latestHitMatrix = null;
 
-          if (!pizzaPlaced) {
+          if (!productPlaced) {
             reticle.visible = false;
             hud.textContent = "SEARCHING SURFACE";
-            bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло, силен гланц и тъмни празни повърхности.";
+            bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло, силен гланц и тъмни повърхности.";
           }
         }
       }
 
-      if (rotateOn && pizzaPlaced && pizzaGroup) {
+      if (rotateOn && productPlaced && productGroup) {
         currentRotationY += 0.012;
 
         const extraRotation = new THREE.Quaternion().setFromAxisAngle(
@@ -985,25 +951,23 @@
           currentRotationY
         );
 
-        pizzaGroup.quaternion.copy(latestHitQuaternion).multiply(extraRotation);
+        productGroup.quaternion.copy(latestHitQuaternion).multiply(extraRotation);
       }
 
       renderer.render(scene, camera);
     }
 
-    function placePizzaFromHit(event) {
+    function placeProductFromHit(event) {
       if (!xrSession) return;
 
       const now = performance.now();
       if (now - lastPlaceTime < 450) return;
       lastPlaceTime = now;
 
-      if (event && event.preventDefault) {
-        event.preventDefault();
-      }
+      if (event && event.preventDefault) event.preventDefault();
 
       if (!modelReady) {
-        hud.textContent = "PIZZA LOADING";
+        hud.textContent = "MODEL LOADING";
         bottomHelp.textContent = "Изчакай GLB моделът да се зареди.";
         haptic(20);
         return;
@@ -1016,27 +980,40 @@
         return;
       }
 
-      pizzaGroup.position.copy(latestHitPosition);
-      pizzaGroup.quaternion.copy(latestHitQuaternion);
+      productGroup.position.copy(latestHitPosition);
+      productGroup.quaternion.copy(latestHitQuaternion);
 
       currentRotationY = 0;
-      pizzaGroup.visible = true;
-      pizzaPlaced = true;
+      productGroup.visible = true;
+      productPlaced = true;
 
-      if (reticle) {
-        reticle.visible = false;
-      }
+      if (reticle) reticle.visible = false;
 
-      hud.textContent = "PIZZA LOCKED ON TABLE";
-      bottomHelp.textContent = "Пицата е заключена върху реалната плоскост. Можеш да сменяш размер, да въртиш или да поставиш наново.";
+      hud.textContent = "LOCKED ON TABLE";
+      bottomHelp.textContent = selectedProduct.name + " е заключена върху реалната плоскост. Можеш да сменяш размер, да въртиш или да поставиш наново.";
       haptic(70);
 
-      debugInfo += "\n\nPIZZA PLACED";
+      debugInfo += "\n\nPRODUCT PLACED";
       debugInfo += "\nPosition: " + JSON.stringify({
         x: Number(latestHitPosition.x.toFixed(4)),
         y: Number(latestHitPosition.y.toFixed(4)),
         z: Number(latestHitPosition.z.toFixed(4))
       });
+    }
+
+    function findClosestSizeIndex(width) {
+      let bestIndex = 1;
+      let bestDiff = Infinity;
+
+      sizeSteps.forEach((step, index) => {
+        const diff = Math.abs(step.width - width);
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          bestIndex = index;
+        }
+      });
+
+      return bestIndex;
     }
 
     function onResize() {
@@ -1055,9 +1032,7 @@
     }
 
     function haptic(ms = 35) {
-      if (navigator.vibrate) {
-        navigator.vibrate(ms);
-      }
+      if (navigator.vibrate) navigator.vibrate(ms);
     }
   </script>
 </body>
