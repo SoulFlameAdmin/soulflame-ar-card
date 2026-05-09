@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050505" />
+  <title>SoulFlame TableLock AR · Pizza</title>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #050505;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,.68);
+      --gold: #ffb347;
+      --glass: rgba(0,0,0,.68);
+      --line: rgba(255,255,255,.18);
+      --radius: 28px;
+      --pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+      touch-action: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #fallbackViewer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(circle at 50% 25%, rgba(255,179,71,.16), transparent 30%),
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,.08), transparent 24%),
+        #050505;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+
+    #xrCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      background: transparent;
+    }
+
+    #startScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.97) 62%),
+        linear-gradient(135deg, rgba(255,179,71,.12), transparent 45%, rgba(255,255,255,.07));
+      overflow: hidden;
+    }
+
+    .card {
+      width: min(510px, 94vw);
+      padding: 30px 22px 22px;
+      border-radius: 34px;
+      border: 1px solid rgba(255,255,255,.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.025)),
+        rgba(0,0,0,.74);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      text-align: center;
+      box-shadow: 0 0 90px rgba(255,255,255,.14);
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      border: 2px solid rgba(255,255,255,.95);
+      transform: rotate(34deg) skew(-8deg);
+      box-shadow:
+        0 0 24px rgba(255,255,255,.65),
+        inset 0 0 14px rgba(255,255,255,.18);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 7vw, 36px);
+      letter-spacing: .15em;
+      line-height: 1;
+    }
+
+    .sub {
+      margin: 0 0 18px;
+      color: rgba(255,255,255,.58);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 auto 20px;
+      max-width: 410px;
+      color: rgba(255,255,255,.82);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    button,
+    a {
+      cursor: pointer;
+      border: 0;
+      border-radius: var(--pill);
+      padding: 14px 18px;
+      min-width: 230px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: .13em;
+      transition: transform .16s ease, opacity .16s ease;
+    }
+
+    button:active,
+    a:active {
+      transform: scale(.96);
+    }
+
+    #startAR {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 0 36px rgba(255,255,255,.35);
+    }
+
+    #openFallback,
+    #backToCard {
+      background: rgba(255,255,255,.075);
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.84);
+    }
+
+    #hud {
+      position: fixed;
+      left: 50%;
+      top: max(14px, env(safe-area-inset-top));
+      transform: translateX(-50%);
+      z-index: 9998;
+      padding: 10px 15px;
+      border-radius: var(--pill);
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      color: rgba(255,255,255,.94);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .13em;
+      max-width: calc(100vw - 22px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+      box-shadow: 0 0 28px rgba(255,255,255,.10);
+    }
+
+    #bottomHelp {
+      position: fixed;
+      left: 50%;
+      bottom: max(92px, calc(env(safe-area-inset-bottom) + 88px));
+      transform: translateX(-50%);
+      z-index: 9998;
+      width: min(480px, calc(100vw - 24px));
+      padding: 13px 15px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      color: rgba(255,255,255,.80);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.35;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    #dock {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, calc(env(safe-area-inset-bottom) + 14px));
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border-radius: var(--pill);
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.64);
+      backdrop-filter: blur(18px) saturate(150%);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      box-shadow: 0 0 40px rgba(255,255,255,.12);
+    }
+
+    #dock button {
+      min-width: auto;
+      padding: 12px 13px;
+      font-size: 10px;
+      background: rgba(255,255,255,.94);
+      color: #000;
+      white-space: nowrap;
+    }
+
+    #dock button.gold {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 28px rgba(255,179,71,.45);
+    }
+
+    #dock button.dark {
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.32);
+    }
+
+    #debugBox {
+      position: fixed;
+      left: 12px;
+      top: 58px;
+      z-index: 10002;
+      width: min(480px, calc(100vw - 24px));
+      max-height: 50vh;
+      overflow: auto;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,80,80,.36);
+      border-radius: 16px;
+      background: rgba(0,0,0,.80);
+      color: rgba(255,255,255,.88);
+      font-size: 11px;
+      line-height: 1.38;
+      white-space: pre-wrap;
+      display: none;
+    }
+
+    #debugBox.active {
+      display: block;
+    }
+
+    @media (max-width: 560px) {
+      #dock {
+        width: calc(100vw - 18px);
+        border-radius: 24px;
+        gap: 6px;
+      }
+
+      #dock button {
+        flex: 1;
+        padding: 13px 6px;
+        font-size: 8.5px;
+      }
+
+      #bottomHelp {
+        bottom: max(96px, calc(env(safe-area-inset-bottom) + 92px));
+        font-size: 11px;
+      }
+
+      .card {
+        padding: 28px 18px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="fallbackViewer">
+    <model-viewer
+      id="mv"
+      src="./uploads_files_6479452_187.glb"
+      alt="SoulFlame AR Pizza"
+      camera-controls
+      auto-rotate
+      shadow-intensity="1"
+      exposure="1"
+      ar
+      ar-modes="webxr scene-viewer quick-look"
+      scale="1 1 1"
+    ></model-viewer>
+  </div>
+
+  <canvas id="xrCanvas"></canvas>
+
+  <section id="startScreen">
+    <div class="card">
+      <div class="logo"></div>
+      <h1>TABLELOCK AR</h1>
+      <div class="sub">SOULFLAME · PLACE ON TABLE</div>
+
+      <p>
+        Насочи телефона към маса или равна повърхност. Когато се появи
+        светъл кръг, натисни върху екрана и пицата ще се заключи върху масата.
+      </p>
+
+      <div class="actions">
+        <button id="startAR">ТЪРСИ ПЛОСКОСТ</button>
+        <button id="openFallback">3D ПРЕГЛЕД</button>
+        <a id="backToCard" href="./index.html">ОБРАТНО КЪМ КАРТАТА</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="hud">TABLE AR READY</div>
+
+  <div id="bottomHelp">
+    Движи телефона бавно наляво-надясно, насочен към масата. Когато кръгът стане стабилен — натисни.
+  </div>
+
+  <div id="dock" class="hidden">
+    <button id="placeAgain" class="gold">PLACE</button>
+    <button id="sizeBtn">30 CM</button>
+    <button id="rotateBtn">ROTATE</button>
+    <button id="resetBtn" class="dark">RESET</button>
+    <button id="debugBtn" class="dark">DEBUG</button>
+  </div>
+
+  <div id="debugBox"></div>
+
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+    import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+
+    const CONFIG = {
+      glbFile: "./uploads_files_6479452_187.glb",
+      backToCard: "./index.html",
+      basePizzaWidth: 0.30,
+      reticleSize: 0.23
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const startAR = document.getElementById("startAR");
+    const openFallback = document.getElementById("openFallback");
+    const xrCanvas = document.getElementById("xrCanvas");
+    const fallbackViewer = document.getElementById("fallbackViewer");
+    const hud = document.getElementById("hud");
+    const bottomHelp = document.getElementById("bottomHelp");
+    const dock = document.getElementById("dock");
+    const placeAgain = document.getElementById("placeAgain");
+    const sizeBtn = document.getElementById("sizeBtn");
+    const rotateBtn = document.getElementById("rotateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const debugBtn = document.getElementById("debugBtn");
+    const debugBox = document.getElementById("debugBox");
+
+    let camera;
+    let scene;
+    let renderer;
+    let xrSession = null;
+    let xrRefSpace = null;
+    let viewerSpace = null;
+    let hitTestSource = null;
+    let hitTestSourceRequested = false;
+
+    let reticle;
+    let pizzaGroup;
+    let pizzaModel;
+    let pizzaPlaced = false;
+    let latestHitPose = null;
+
+    let rotateOn = false;
+    let currentRotationY = 0;
+
+    let modelReady = false;
+    let debugInfo = "SoulFlame TableLock AR\n";
+
+    const sizeSteps = [
+      { label: "20 CM", width: 0.20 },
+      { label: "30 CM", width: 0.30 },
+      { label: "37 CM", width: 0.37 },
+      { label: "43 CM", width: 0.43 },
+      { label: "50 CM", width: 0.50 },
+      { label: "60 CM", width: 0.60 },
+      { label: "75 CM", width: 0.75 },
+      { label: "90 CM", width: 0.90 },
+      { label: "MAX", width: 1.15 }
+    ];
+
+    let sizeIndex = 1;
+
+    initThree();
+
+    startAR.addEventListener("click", startWebXR);
+    openFallback.addEventListener("click", () => {
+      startScreen.classList.add("hidden");
+      fallbackViewer.style.display = "block";
+      hud.textContent = "3D PREVIEW MODE";
+      bottomHelp.textContent = "Това е 3D preview. За истинско поставяне върху маса използвай Android Chrome с WebXR.";
+      haptic(30);
+    });
+
+    placeAgain.addEventListener("click", () => {
+      pizzaPlaced = false;
+      if (pizzaGroup) pizzaGroup.visible = false;
+      hud.textContent = "SEARCHING TABLE";
+      bottomHelp.textContent = "Насочи към масата и натисни, когато кръгът е стабилен.";
+      haptic(30);
+    });
+
+    sizeBtn.addEventListener("click", () => {
+      sizeIndex = (sizeIndex + 1) % sizeSteps.length;
+      applyPizzaSize();
+      haptic(25);
+    });
+
+    rotateBtn.addEventListener("click", () => {
+      rotateOn = !rotateOn;
+      rotateBtn.textContent = rotateOn ? "STOP" : "ROTATE";
+      hud.textContent = rotateOn ? "ROTATION ON" : "ROTATION OFF";
+      haptic(25);
+    });
+
+    resetBtn.addEventListener("click", () => {
+      sizeIndex = 1;
+      currentRotationY = 0;
+      rotateOn = false;
+      rotateBtn.textContent = "ROTATE";
+      applyPizzaSize();
+
+      if (pizzaGroup) {
+        pizzaGroup.rotation.set(0, 0, 0);
+        pizzaGroup.visible = false;
+      }
+
+      pizzaPlaced = false;
+      hud.textContent = "RESET · SEARCH TABLE";
+      bottomHelp.textContent = "Поставянето е занулено. Намери плоскост и натисни.";
+      haptic(35);
+    });
+
+    debugBtn.addEventListener("click", () => {
+      debugBox.classList.toggle("active");
+      debugBox.textContent = debugInfo;
+      haptic(20);
+    });
+
+    window.addEventListener("error", (event) => {
+      showDebug("JS ERROR: " + event.message);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
+    });
+
+    function initThree() {
+      scene = new THREE.Scene();
+
+      camera = new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        40
+      );
+
+      renderer = new THREE.WebGLRenderer({
+        canvas: xrCanvas,
+        alpha: true,
+        antialias: true,
+        preserveDrawingBuffer: false
+      });
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.4));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      const ambient = new THREE.HemisphereLight(0xffffff, 0x333333, 1.2);
+      scene.add(ambient);
+
+      const directional = new THREE.DirectionalLight(0xffffff, 1.4);
+      directional.position.set(1, 3, 2);
+      scene.add(directional);
+
+      const warm = new THREE.PointLight(0xffc27a, 0.55, 4);
+      warm.position.set(0, 1.5, 1);
+      scene.add(warm);
+
+      createReticle();
+      createPizzaGroup();
+      loadPizza();
+
+      window.addEventListener("resize", onResize);
+      xrCanvas.addEventListener("click", placePizzaFromHit);
+      xrCanvas.addEventListener("touchend", placePizzaFromHit, { passive: true });
+
+      renderer.setAnimationLoop(render);
+    }
+
+    function createReticle() {
+      const group = new THREE.Group();
+      group.visible = false;
+
+      const ringGeo = new THREE.RingGeometry(CONFIG.reticleSize * 0.68, CONFIG.reticleSize, 64);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.92,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = -Math.PI / 2;
+      group.add(ring);
+
+      const innerGeo = new THREE.CircleGeometry(CONFIG.reticleSize * 0.08, 32);
+      const innerMat = new THREE.MeshBasicMaterial({
+        color: 0xffb347,
+        transparent: true,
+        opacity: 0.9,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+      const center = new THREE.Mesh(innerGeo, innerMat);
+      center.rotation.x = -Math.PI / 2;
+      center.position.y = 0.002;
+      group.add(center);
+
+      const crossMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.7,
+        depthWrite: false
+      });
+
+      const line1 = new THREE.Mesh(
+        new THREE.BoxGeometry(CONFIG.reticleSize * 1.9, 0.004, 0.004),
+        crossMat
+      );
+      line1.position.y = 0.004;
+      group.add(line1);
+
+      const line2 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.004, 0.004, CONFIG.reticleSize * 1.9),
+        crossMat
+      );
+      line2.position.y = 0.004;
+      group.add(line2);
+
+      reticle = group;
+      scene.add(reticle);
+    }
+
+    function createPizzaGroup() {
+      pizzaGroup = new THREE.Group();
+      pizzaGroup.visible = false;
+      scene.add(pizzaGroup);
+
+      const shadowGeo = new THREE.CircleGeometry(0.22, 64);
+      const shadowMat = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.28,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+      const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+      shadow.name = "softShadow";
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = 0.002;
+      pizzaGroup.add(shadow);
+    }
+
+    function loadPizza() {
+      const loader = new GLTFLoader();
+
+      loader.load(
+        CONFIG.glbFile,
+        (gltf) => {
+          pizzaModel = gltf.scene;
+
+          let meshCount = 0;
+          let textureCount = 0;
+
+          pizzaModel.traverse((node) => {
+            if (!node.isMesh) return;
+
+            meshCount++;
+            node.frustumCulled = false;
+
+            const materials = Array.isArray(node.material) ? node.material : [node.material];
+
+            materials.forEach((mat) => {
+              if (!mat) return;
+              mat.side = THREE.DoubleSide;
+
+              if (mat.map) {
+                textureCount++;
+                mat.map.colorSpace = THREE.SRGBColorSpace;
+                mat.map.needsUpdate = true;
+              }
+
+              mat.needsUpdate = true;
+            });
+          });
+
+          centerAndNormalizeModel(pizzaModel);
+          pizzaModel.rotation.x = 0;
+          pizzaModel.position.y = 0.025;
+
+          pizzaGroup.add(pizzaModel);
+
+          modelReady = true;
+          applyPizzaSize();
+
+          debugInfo += "\nGLB loaded: " + CONFIG.glbFile;
+          debugInfo += "\nMeshes: " + meshCount;
+          debugInfo += "\nTextures: " + textureCount;
+          debugInfo += "\nModel ready: true";
+
+          hud.textContent = "PIZZA READY";
+        },
+        undefined,
+        (error) => {
+          const msg = "GLB ERROR: Не може да зареди " + CONFIG.glbFile + "\n" + error.message;
+          showDebug(msg);
+          hud.textContent = "GLB ERROR";
+          bottomHelp.textContent = "Провери дали GLB файлът е до table-ar.html.";
+        }
+      );
+    }
+
+    function centerAndNormalizeModel(model) {
+      model.updateMatrixWorld(true);
+
+      const box = new THREE.Box3().setFromObject(model);
+      const size = new THREE.Vector3();
+      const center = new THREE.Vector3();
+
+      box.getSize(size);
+      box.getCenter(center);
+
+      const maxSize = Math.max(size.x, size.y, size.z);
+
+      if (!Number.isFinite(maxSize) || maxSize <= 0) {
+        throw new Error("Invalid GLB bounds");
+      }
+
+      model.position.x -= center.x;
+      model.position.y -= center.y;
+      model.position.z -= center.z;
+
+      const normalizeScale = 1 / maxSize;
+      model.scale.setScalar(normalizeScale);
+
+      debugInfo += "\nOriginal model size: " + JSON.stringify({
+        x: Number(size.x.toFixed(4)),
+        y: Number(size.y.toFixed(4)),
+        z: Number(size.z.toFixed(4))
+      });
+
+      debugInfo += "\nNormalize scale: " + Number(normalizeScale.toFixed(5));
+    }
+
+    function applyPizzaSize() {
+      const step = sizeSteps[sizeIndex] || sizeSteps[1];
+
+      sizeBtn.textContent = step.label;
+
+      if (!pizzaModel) return;
+
+      pizzaModel.scale.setScalar(step.width);
+
+      const shadow = pizzaGroup.getObjectByName("softShadow");
+      if (shadow) {
+        const shadowScale = Math.max(step.width * 1.25, 0.16);
+        shadow.scale.set(shadowScale, shadowScale, shadowScale);
+      }
+
+      hud.textContent = "PIZZA SIZE · " + step.label;
+      debugInfo += "\nSize selected: " + step.label + " / width: " + step.width;
+    }
+
+    async function startWebXR() {
+      if (!window.isSecureContext) {
+        showDebug("WebXR и камерата искат HTTPS или localhost. Не стартирай през file://.");
+        hud.textContent = "HTTPS / LOCALHOST REQUIRED";
+        bottomHelp.textContent = "Качи във Vercel или пусни localhost. През file:// няма да тръгне.";
+        return;
+      }
+
+      if (!navigator.xr) {
+        showDebug("navigator.xr липсва. Това устройство/браузър не поддържа WebXR.");
+        hud.textContent = "WEBXR NOT SUPPORTED";
+        bottomHelp.textContent = "Ползвай Android Chrome. За iPhone този WebXR режим няма да е стабилен.";
+        return;
+      }
+
+      const supported = await navigator.xr.isSessionSupported("immersive-ar");
+
+      if (!supported) {
+        showDebug("immersive-ar не се поддържа на това устройство.");
+        hud.textContent = "AR NOT SUPPORTED";
+        bottomHelp.textContent = "Използвай Android телефон с Chrome и Google Play Services for AR.";
+        return;
+      }
+
+      try {
+        xrSession = await navigator.xr.requestSession("immersive-ar", {
+          requiredFeatures: ["hit-test"],
+          optionalFeatures: ["dom-overlay", "anchors", "local-floor"],
+          domOverlay: { root: document.body }
+        });
+
+        renderer.xr.setReferenceSpaceType("local");
+        await renderer.xr.setSession(xrSession);
+
+        xrRefSpace = await xrSession.requestReferenceSpace("local");
+        viewerSpace = await xrSession.requestReferenceSpace("viewer");
+
+        hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace });
+
+        xrSession.addEventListener("end", onSessionEnd);
+
+        startScreen.classList.add("hidden");
+        fallbackViewer.style.display = "none";
+        xrCanvas.style.display = "block";
+        dock.classList.remove("hidden");
+
+        hud.textContent = "SEARCHING TABLE";
+        bottomHelp.textContent = "Движи телефона бавно към масата. Когато видиш кръг — натисни върху екрана.";
+
+        haptic(45);
+      } catch (error) {
+        showDebug("XR START ERROR:\n" + (error.message || error));
+        hud.textContent = "XR START ERROR";
+        bottomHelp.textContent = "Ако си на iPhone или неподдържан браузър, използвай 3D Preview.";
+      }
+    }
+
+    function onSessionEnd() {
+      xrSession = null;
+      hitTestSource = null;
+      hitTestSourceRequested = false;
+      latestHitPose = null;
+
+      reticle.visible = false;
+      xrCanvas.style.display = "none";
+      dock.classList.add("hidden");
+      startScreen.classList.remove("hidden");
+      fallbackViewer.style.display = "block";
+
+      hud.textContent = "AR SESSION ENDED";
+      bottomHelp.textContent = "AR сесията спря. Натисни ТЪРСИ ПЛОСКОСТ, за да започнеш пак.";
+    }
+
+    function render(timestamp, frame) {
+      if (frame && xrSession && hitTestSource && xrRefSpace) {
+        const hitTestResults = frame.getHitTestResults(hitTestSource);
+
+        if (hitTestResults.length > 0) {
+          const hit = hitTestResults[0];
+          const pose = hit.getPose(xrRefSpace);
+
+          if (pose) {
+            latestHitPose = pose;
+
+            if (!pizzaPlaced) {
+              reticle.visible = true;
+              reticle.matrix.fromArray(pose.transform.matrix);
+              reticle.matrix.decompose(reticle.position, reticle.quaternion, reticle.scale);
+              hud.textContent = "TABLE FOUND · TAP TO PLACE";
+              bottomHelp.textContent = "Плоскостта е засечена. Натисни върху екрана, за да заключиш пицата.";
+            }
+          }
+        } else {
+          latestHitPose = null;
+
+          if (!pizzaPlaced) {
+            reticle.visible = false;
+            hud.textContent = "SEARCHING TABLE";
+            bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло и лъскави повърхности.";
+          }
+        }
+      }
+
+      if (rotateOn && pizzaPlaced && pizzaGroup) {
+        currentRotationY += 0.012;
+        pizzaGroup.rotation.y = currentRotationY;
+      }
+
+      if (reticle && reticle.visible) {
+        reticle.rotation.y += 0.018;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function placePizzaFromHit(event) {
+      if (!xrSession) return;
+      if (event) event.preventDefault?.();
+
+      if (!modelReady) {
+        hud.textContent = "PIZZA LOADING";
+        bottomHelp.textContent = "Изчакай GLB моделът да се зареди.";
+        haptic(20);
+        return;
+      }
+
+      if (!latestHitPose) {
+        hud.textContent = "NO TABLE FOUND";
+        bottomHelp.textContent = "Още няма стабилна плоскост. Движи телефона бавно към масата.";
+        haptic(20);
+        return;
+      }
+
+      const matrix = new THREE.Matrix4().fromArray(latestHitPose.transform.matrix);
+      const position = new THREE.Vector3();
+      const quaternion = new THREE.Quaternion();
+      const scale = new THREE.Vector3();
+
+      matrix.decompose(position, quaternion, scale);
+
+      pizzaGroup.position.copy(position);
+      pizzaGroup.quaternion.copy(quaternion);
+
+      currentRotationY = 0;
+      pizzaGroup.rotation.y = currentRotationY;
+
+      pizzaGroup.visible = true;
+      pizzaPlaced = true;
+      reticle.visible = false;
+
+      hud.textContent = "PIZZA LOCKED ON TABLE";
+      bottomHelp.textContent = "Пицата е заключена върху плоскостта. Можеш да сменяш размер, да въртиш или да поставиш наново.";
+      haptic(60);
+
+      debugInfo += "\nPizza placed at: " + JSON.stringify({
+        x: Number(position.x.toFixed(4)),
+        y: Number(position.y.toFixed(4)),
+        z: Number(position.z.toFixed(4))
+      });
+    }
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.4));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function showDebug(message) {
+      debugInfo += "\n\n" + message;
+      debugBox.classList.add("active");
+      debugBox.textContent = debugInfo;
+      console.warn(message);
+    }
+
+    function haptic(ms = 35) {
+      if (navigator.vibrate) navigator.vibrate(ms);
+    }
+  </script>
+</body>
+</html>

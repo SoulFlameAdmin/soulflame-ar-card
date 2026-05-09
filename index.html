@@ -686,11 +686,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">PIZZA SIZE MENU · CARD ANCHOR</div>
+      <div class="subtitle">DUAL ANCHOR · CARD + TABLE</div>
 
       <p>
-        Постави визитката на маса. Насочи камерата към <b>черната страна</b>.
-        Отвори <b>MENU</b> и избирай много размери чрез <b>SIZE +</b>.
+        Първо сканирай визитката. След това можеш да използваш
+        <b>MENU</b> за AR върху картата или <b>TABLE</b>, за да поставиш пицата върху реалната маса.
       </p>
 
       <div class="start-actions">
@@ -698,12 +698,12 @@
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">Файлове: ./targets/soulflame-black.mind и ./uploads_files_6479452_187.glb</span>
+      <span class="hint">Файлове: ./targets/soulflame-black.mind, ./uploads_files_6479452_187.glb и ./table-ar.html</span>
 
       <div class="mini-grid">
-        <span>20CM</span>
-        <span>90CM</span>
-        <span>MAX</span>
+        <span>CARD</span>
+        <span>TABLE</span>
+        <span>DUAL AR</span>
       </div>
     </div>
   </section>
@@ -719,6 +719,7 @@
 
   <div id="actionDock">
     <button id="menuBtn" class="gold">MENU</button>
+    <button id="tableModeBtn" class="gold">TABLE</button>
     <button id="openSite">WEBSITE</button>
     <button id="contactMail" class="dark">EMAIL</button>
     <button id="openDigitalBtn">CARD</button>
@@ -731,7 +732,8 @@
     </div>
 
     <div class="sheet-grid">
-      <button id="pizzaBtn" class="primary">PIZZA</button>
+      <button id="pizzaBtn" class="primary">PIZZA ON CARD</button>
+      <button id="tableSheetBtn" class="primary">PIZZA ON TABLE</button>
       <button id="sizeBtn">30 CM</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
@@ -835,9 +837,9 @@
         ></a-text>
 
         <a-text
-          value="ДРЪЖТЕ ВИЗИТКАТА В КАДЪР"
-          position="-0.48 -0.88 0.083"
-          width="0.92"
+          value="CARD MODE · TABLE BUTTON MOVES TO REAL SURFACE"
+          position="-0.57 -0.88 0.083"
+          width="1.08"
           align="center"
           color="#ffffff"
           opacity="0.82"
@@ -930,7 +932,7 @@
 
           <a-text
             id="menuInfoText"
-            value="PIZZA 30 CM\nSIZE +\nROTATE\nFLIP"
+            value="PIZZA CARD\nTABLE MODE\nSIZE +\nROTATE"
             position="-0.37 0.025 0.05"
             width="0.78"
             color="#ffffff"
@@ -952,6 +954,7 @@
       scanTimeoutMs: 14000,
       glbFile: "./uploads_files_6479452_187.glb",
       targetFile: "./targets/soulflame-black.mind",
+      tableArFile: "./table-ar.html",
 
       /*
         ОСНОВЕН РАЗМЕР:
@@ -970,6 +973,7 @@
 
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
+    const tableModeBtn = document.getElementById("tableModeBtn");
     const openSite = document.getElementById("openSite");
     const contactMail = document.getElementById("contactMail");
     const openDigitalBtn = document.getElementById("openDigitalBtn");
@@ -977,6 +981,7 @@
     const menuSheet = document.getElementById("menuSheet");
     const closeMenuBtn = document.getElementById("closeMenuBtn");
     const pizzaBtn = document.getElementById("pizzaBtn");
+    const tableSheetBtn = document.getElementById("tableSheetBtn");
     const sizeBtn = document.getElementById("sizeBtn");
     const rotateBtn = document.getElementById("rotateBtn");
     const flipBtn = document.getElementById("flipBtn");
@@ -1077,6 +1082,29 @@
       haptic(25);
     });
 
+    tableModeBtn.addEventListener("click", openTableMode);
+    tableSheetBtn.addEventListener("click", openTableMode);
+
+    async function openTableMode() {
+      haptic(45);
+      setStatus("TABLE MODE", "OPENING TABLE AR");
+      menuSheet.classList.remove("active");
+
+      try {
+        if (arSystem && started) {
+          await arSystem.stop();
+        }
+      } catch (error) {
+        console.warn("MindAR stop before TABLE failed:", error);
+      }
+
+      started = false;
+      visible = false;
+      clearTimeout(scanTimer);
+
+      window.location.href = CONFIG.tableArFile;
+    }
+
     fallbackBtn.addEventListener("click", openDigitalCard);
     openDigitalFromStart.addEventListener("click", openDigitalCard);
     openDigitalBtn.addEventListener("click", openDigitalCard);
@@ -1088,13 +1116,13 @@
 
     menuBtn.addEventListener("click", () => {
       menuSheet.classList.toggle("active");
-      setStatus("SOULFLAME MENU", "CHOOSE AR OPTION");
+      setStatus("SOULFLAME MENU", "CARD OR TABLE");
       haptic(30);
     });
 
     closeMenuBtn.addEventListener("click", () => {
       menuSheet.classList.remove("active");
-      setStatus("SOULFLAME LOCKED", "MOVE PHONE SLOWLY");
+      setStatus("SOULFLAME LOCKED", "MENU / TABLE / PIZZA");
       haptic(20);
     });
 
@@ -1106,14 +1134,14 @@
       setPizzaRotation();
 
       const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
-      setStatus(`PIZZA ${label}`, modelAutoFitted ? "MOVE PHONE AROUND CARD" : "PIZZA LOADING");
+      setStatus(`PIZZA ${label}`, modelAutoFitted ? "CARD ANCHOR ACTIVE" : "PIZZA LOADING");
       haptic(45);
     });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       pizzaRig.setAttribute("visible", String(pizzaVisible));
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ANCHOR ON" : "ANCHOR OFF");
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "CARD ANCHOR ON" : "CARD ANCHOR OFF");
       haptic(25);
     });
 
@@ -1179,7 +1207,7 @@
       }
 
       if (menuInfoText) {
-        menuInfoText.setAttribute("value", `PIZZA ${label}\\nSIZE +\\nROTATE\\nFLIP`);
+        menuInfoText.setAttribute("value", `PIZZA CARD\\nTABLE MODE\\n${label}\\nROTATE`);
       }
 
       modelDebugInfo += `\nSIZE SELECTED: ${label}`;
@@ -1227,7 +1255,7 @@
           autoFitPizza(model);
           applyPizzaSize();
           modelAutoFitted = true;
-          setStatus("PIZZA GLB READY", "MENU → PIZZA");
+          setStatus("PIZZA GLB READY", "MENU / TABLE");
         } catch (error) {
           showDebug("AUTO-FIT ERROR: " + error.message);
           setStatus("PIZZA GLB READY", "MANUAL SCALE");
@@ -1287,6 +1315,7 @@
         "MATERIALS: " + materialCount + "\n" +
         "TEXTURES FOUND: " + textureCount + "\n" +
         "BASE WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
+        "TABLE AR FILE: " + CONFIG.tableArFile + "\n" +
         "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
       console.log(modelDebugInfo);
@@ -1324,7 +1353,7 @@
       });
 
       modelDebugInfo += "\nAUTO SCALE: " + Number(scale.toFixed(4));
-      modelDebugInfo += "\nRESULT: MULTI SIZE MODE";
+      modelDebugInfo += "\nRESULT: CARD MODE + TABLE MODE READY";
     }
 
     function openDigitalCard() {
@@ -1361,7 +1390,7 @@
       }
 
       applyPizzaSize();
-      setStatus("AR SYSTEM READY", "READY");
+      setStatus("AR SYSTEM READY", "CARD + TABLE");
     });
 
     startBtn.addEventListener("click", async () => {
@@ -1414,7 +1443,7 @@
       clearTimeout(scanTimer);
       hideDebug();
 
-      setStatus("SOULFLAME LOCKED", "MENU → PIZZA → SIZE +");
+      setStatus("SOULFLAME LOCKED", "MENU / TABLE / PIZZA");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
