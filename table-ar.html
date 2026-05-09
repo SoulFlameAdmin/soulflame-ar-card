@@ -4,10 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#050505" />
-  <title>Pizza Hit Table AR · Real Surface Placement</title>
+  <title>Pizza Hit Table AR · WebXR Plane Tracking</title>
 
+  <!-- model-viewer fallback: Android Scene Viewer / iPhone Quick Look / 3D viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <!-- optional product list -->
   <script src="./products.js"></script>
+
+  <!-- Three.js import map: нужно е, за да не гърми GLTFLoader с bare import "three" -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 
   <style>
     :root {
@@ -16,6 +29,7 @@
       --muted: rgba(255,255,255,.68);
       --gold: #ffb347;
       --red: #ff3d3d;
+      --green: #48ff9b;
       --line: rgba(255,255,255,.18);
       --pill: 999px;
     }
@@ -87,7 +101,7 @@
     }
 
     .card {
-      width: min(540px, 94vw);
+      width: min(560px, 94vw);
       padding: 30px 22px 22px;
       border-radius: 34px;
       border: 1px solid var(--line);
@@ -142,7 +156,7 @@
 
     p {
       margin: 0 auto 18px;
-      max-width: 430px;
+      max-width: 440px;
       color: rgba(255,255,255,.82);
       line-height: 1.55;
       font-size: 15px;
@@ -151,7 +165,7 @@
     .productMini {
       margin: 0 auto 18px;
       padding: 12px 14px;
-      width: min(420px, 100%);
+      width: min(430px, 100%);
       border-radius: 22px;
       border: 1px solid var(--line);
       background: rgba(255,255,255,.06);
@@ -232,13 +246,31 @@
       pointer-events: none;
     }
 
+    #statusChip {
+      position: fixed;
+      right: max(12px, env(safe-area-inset-right));
+      top: max(58px, calc(env(safe-area-inset-top) + 56px));
+      z-index: 9998;
+      padding: 9px 12px;
+      border-radius: var(--pill);
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: rgba(255,255,255,.82);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      pointer-events: none;
+    }
+
     #bottomHelp {
       position: fixed;
       left: 50%;
-      bottom: max(102px, calc(env(safe-area-inset-bottom) + 98px));
+      bottom: max(104px, calc(env(safe-area-inset-bottom) + 100px));
       transform: translateX(-50%);
       z-index: 9998;
-      width: min(500px, calc(100vw - 24px));
+      width: min(520px, calc(100vw - 24px));
       padding: 13px 15px;
       border-radius: 24px;
       border: 1px solid var(--line);
@@ -291,13 +323,19 @@
       border: 1px solid rgba(255,255,255,.32);
     }
 
+    #dock button.green {
+      background: var(--green);
+      color: #000;
+      box-shadow: 0 0 28px rgba(72,255,155,.36);
+    }
+
     #debugBox {
       position: fixed;
       left: 12px;
       top: 58px;
       z-index: 10002;
-      width: min(520px, calc(100vw - 24px));
-      max-height: 52vh;
+      width: min(560px, calc(100vw - 24px));
+      max-height: 56vh;
       overflow: auto;
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.36);
@@ -324,7 +362,7 @@
       #dock button {
         flex: 1;
         padding: 13px 4px;
-        font-size: 7.8px;
+        font-size: 7.6px;
       }
 
       #bottomHelp {
@@ -335,6 +373,10 @@
       .card {
         padding: 28px 18px 20px;
       }
+
+      #statusChip {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -344,13 +386,14 @@
     <model-viewer
       id="mv"
       src="./uploads_files_6479452_187.glb"
+      ios-src="./pizza.usdz"
       alt="Pizza Hit AR Product"
       camera-controls
       auto-rotate
       shadow-intensity="1"
       exposure="1"
       ar
-      ar-modes="scene-viewer webxr quick-look"
+      ar-modes="webxr scene-viewer quick-look"
       ar-placement="floor"
       ar-scale="auto"
       scale="1 1 1"
@@ -363,17 +406,17 @@
     <div class="card">
       <div class="logo"></div>
       <h1>TABLE AR</h1>
-      <div class="sub">PIZZA HIT · REAL SURFACE LOCK</div>
+      <div class="sub">WEBXR · HIT TEST · ANCHOR LOCK</div>
 
       <div id="productMini" class="productMini">Зареждане на продукт...</div>
 
       <p>
-        Натисни <b>ТЪРСИ ПЛОСКОСТ</b>. Камерата трябва да се отвори през WebXR.
+        Натисни <b>ТЪРСИ МАСА</b>. Камерата ще се отвори през WebXR.
         Движи телефона бавно към масата, изчакай бял кръг и натисни екрана.
       </p>
 
       <div class="actions">
-        <button id="startAR">ТЪРСИ ПЛОСКОСТ</button>
+        <button id="startAR">ТЪРСИ МАСА</button>
         <button id="openFallback">3D / AR FALLBACK</button>
         <a id="backToCard" href="./index.html">ОБРАТНО КЪМ МЕНЮТО</a>
       </div>
@@ -381,6 +424,7 @@
   </section>
 
   <div id="hud">CHECKING AR SUPPORT</div>
+  <div id="statusChip">NO SESSION</div>
 
   <div id="bottomHelp">
     Отвори през HTTPS/Vercel на Android Chrome. Не през Viber/Facebook/Messenger browser.
@@ -390,6 +434,7 @@
     <button id="placeAgain" class="gold">PLACE</button>
     <button id="sizeBtn">SIZE</button>
     <button id="rotateBtn">ROTATE</button>
+    <button id="snapBtn" class="green">SNAP</button>
     <button id="resetBtn" class="dark">RESET</button>
     <button id="exitBtn" class="dark">EXIT</button>
     <button id="debugBtn" class="dark">DEBUG</button>
@@ -398,8 +443,8 @@
   <div id="debugBox"></div>
 
   <script type="module">
-    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-    import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+    import * as THREE from "three";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
     const FALLBACK_PRODUCT = {
       id: "classic",
@@ -409,7 +454,7 @@
       sizeLabel: "30 CM",
       description: "Класическа Pizza Hit пица за реално AR поставяне върху маса.",
       glb: "./uploads_files_6479452_187.glb",
-      usdz: "",
+      usdz: "./pizza.usdz",
       realWidth: 0.30
     };
 
@@ -440,14 +485,25 @@
 
     const CONFIG = {
       glbFile: selectedProduct.glb || FALLBACK_PRODUCT.glb,
+      usdzFile: selectedProduct.usdz || FALLBACK_PRODUCT.usdz,
       productName: selectedProduct.name || FALLBACK_PRODUCT.name,
       productPrice: selectedProduct.price || FALLBACK_PRODUCT.price,
+      productSizeLabel: selectedProduct.sizeLabel || FALLBACK_PRODUCT.sizeLabel,
       productDescription: selectedProduct.description || FALLBACK_PRODUCT.description,
       defaultWidth: Number(selectedProduct.realWidth || FALLBACK_PRODUCT.realWidth || 0.30),
+
+      /*
+        Ако моделът ти е изправен вместо легнал:
+        пробвай modelRotationFix.x = -Math.PI / 2
+      */
       modelRotationFix: { x: 0, y: 0, z: 0 },
+
+      modelHeightOffset: 0.018,
       reticleOuterRadius: 0.13,
       reticleInnerRadius: 0.09,
-      maxPixelRatio: 1.5
+      maxPixelRatio: 1.5,
+      hitSmoothing: 0.28,
+      minHitStableFrames: 8
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -456,11 +512,13 @@
     const xrCanvas = document.getElementById("xrCanvas");
     const fallbackViewer = document.getElementById("fallbackViewer");
     const hud = document.getElementById("hud");
+    const statusChip = document.getElementById("statusChip");
     const bottomHelp = document.getElementById("bottomHelp");
     const dock = document.getElementById("dock");
     const placeAgain = document.getElementById("placeAgain");
     const sizeBtn = document.getElementById("sizeBtn");
     const rotateBtn = document.getElementById("rotateBtn");
+    const snapBtn = document.getElementById("snapBtn");
     const resetBtn = document.getElementById("resetBtn");
     const exitBtn = document.getElementById("exitBtn");
     const debugBtn = document.getElementById("debugBtn");
@@ -469,16 +527,13 @@
     const productMini = document.getElementById("productMini");
 
     productMini.innerHTML = `
-      <b>${selectedProduct.name || FALLBACK_PRODUCT.name}</b><br>
-      ${(selectedProduct.sizeLabel || FALLBACK_PRODUCT.sizeLabel)} · ${(selectedProduct.price || FALLBACK_PRODUCT.price)}<br>
-      <span style="opacity:.72">${selectedProduct.description || FALLBACK_PRODUCT.description}</span>
+      <b>${CONFIG.productName}</b><br>
+      ${CONFIG.productSizeLabel} · ${CONFIG.productPrice}<br>
+      <span style="opacity:.72">${CONFIG.productDescription}</span>
     `;
 
     mv.setAttribute("src", CONFIG.glbFile);
-
-    if (selectedProduct.usdz) {
-      mv.setAttribute("ios-src", selectedProduct.usdz);
-    }
+    if (CONFIG.usdzFile) mv.setAttribute("ios-src", CONFIG.usdzFile);
 
     let scene;
     let camera;
@@ -488,6 +543,7 @@
     let xrRefSpace = null;
     let viewerSpace = null;
     let hitTestSource = null;
+    let lightProbe = null;
 
     let webXRSupported = false;
     let supportChecked = false;
@@ -502,25 +558,32 @@
 
     const latestHitPosition = new THREE.Vector3();
     const latestHitQuaternion = new THREE.Quaternion();
+    const latestHitScale = new THREE.Vector3();
+
+    const smoothHitPosition = new THREE.Vector3();
+    const smoothHitQuaternion = new THREE.Quaternion();
+
     const placedPosition = new THREE.Vector3();
     const placedQuaternion = new THREE.Quaternion();
 
     let latestHitMatrix = null;
+    let latestHitResult = null;
+    let stableHitFrames = 0;
+
     let modelNormalizeScale = 1;
     let rotateOn = false;
     let currentRotationY = 0;
     let lastPlaceTime = 0;
 
-    let debugInfo =
-      "PIZZA HIT TABLE AR DEBUG\n" +
-      "-------------------------\n" +
-      "Product: " + CONFIG.productName + "\n" +
-      "GLB: " + CONFIG.glbFile + "\n" +
-      "Width: " + CONFIG.defaultWidth + "m\n" +
-      "Secure context: " + window.isSecureContext + "\n" +
-      "navigator.xr: " + Boolean(navigator.xr) + "\n" +
-      "products.js loaded: " + Boolean(window.PIZZA_HIT_PRODUCTS || window.getPizzaHitProductFromUrl) + "\n" +
-      "UserAgent: " + navigator.userAgent + "\n";
+    let productAnchor = null;
+    let anchorSpace = null;
+    let anchorSupported = false;
+    let anchorActive = false;
+
+    let planeDetectionSupported = false;
+    let detectedPlaneCount = 0;
+    let lightEstimationSupported = false;
+    let lastLightValue = "none";
 
     const sizeSteps = [
       { label: "20 CM", width: 0.20 },
@@ -536,23 +599,39 @@
 
     let sizeIndex = findClosestSizeIndex(CONFIG.defaultWidth);
 
+    let debugInfo =
+      "PIZZA HIT TABLE AR DEBUG\n" +
+      "-------------------------\n" +
+      "Product: " + CONFIG.productName + "\n" +
+      "GLB: " + CONFIG.glbFile + "\n" +
+      "USDZ: " + CONFIG.usdzFile + "\n" +
+      "Width: " + CONFIG.defaultWidth + "m\n" +
+      "Secure context: " + window.isSecureContext + "\n" +
+      "navigator.xr: " + Boolean(navigator.xr) + "\n" +
+      "products.js loaded: " + Boolean(window.PIZZA_HIT_PRODUCTS || window.getPizzaHitProductFromUrl) + "\n" +
+      "UserAgent: " + navigator.userAgent + "\n";
+
     initThree();
     checkWebXRSupport();
 
     startAR.addEventListener("click", startWebXR);
-
     openFallback.addEventListener("click", openModelViewerFallback);
 
     placeAgain.addEventListener("click", () => {
+      clearAnchor();
       productPlaced = false;
       latestHitMatrix = null;
+      latestHitResult = null;
+      stableHitFrames = 0;
       rotateOn = false;
+      currentRotationY = 0;
       rotateBtn.textContent = "ROTATE";
 
       if (productGroup) productGroup.visible = false;
       if (reticle) reticle.visible = false;
 
-      hud.textContent = "SEARCHING SURFACE";
+      hud.textContent = "SEARCHING TABLE";
+      statusChip.textContent = "HIT TEST";
       bottomHelp.textContent = "Движи телефона бавно към масата. Когато кръгът стане стабилен — натисни.";
       haptic(30);
     });
@@ -570,12 +649,21 @@
       haptic(25);
     });
 
+    snapBtn.addEventListener("click", () => {
+      snapRotationToCamera();
+      haptic(30);
+    });
+
     resetBtn.addEventListener("click", () => {
+      clearAnchor();
+
       sizeIndex = findClosestSizeIndex(CONFIG.defaultWidth);
       currentRotationY = 0;
       rotateOn = false;
       productPlaced = false;
       latestHitMatrix = null;
+      latestHitResult = null;
+      stableHitFrames = 0;
 
       rotateBtn.textContent = "ROTATE";
       applyProductSize();
@@ -587,8 +675,9 @@
 
       if (reticle) reticle.visible = false;
 
-      hud.textContent = "RESET · SEARCH SURFACE";
-      bottomHelp.textContent = "Поставянето е занулено. Намери плоскост и натисни.";
+      hud.textContent = "RESET · SEARCH TABLE";
+      statusChip.textContent = "RESET";
+      bottomHelp.textContent = "Поставянето е занулено. Намери маса и натисни.";
       haptic(35);
     });
 
@@ -604,6 +693,7 @@
     });
 
     debugBtn.addEventListener("click", () => {
+      updateDebugInfo();
       debugBox.classList.toggle("active");
       debugBox.textContent = debugInfo;
       haptic(20);
@@ -622,6 +712,7 @@
         supportChecked = true;
         webXRSupported = false;
         hud.textContent = "HTTPS REQUIRED";
+        statusChip.textContent = "NO HTTPS";
         bottomHelp.textContent = "Истинският Table AR тръгва само през HTTPS/Vercel или localhost.";
         debugInfo += "\nSupport check: failed secure context";
         return;
@@ -631,6 +722,7 @@
         supportChecked = true;
         webXRSupported = false;
         hud.textContent = "WEBXR NOT FOUND";
+        statusChip.textContent = "NO WEBXR";
         bottomHelp.textContent = "Този браузър няма navigator.xr. Отвори през Android Chrome.";
         debugInfo += "\nSupport check: navigator.xr missing";
         return;
@@ -644,9 +736,11 @@
 
         if (webXRSupported) {
           hud.textContent = "TABLE AR READY";
-          bottomHelp.textContent = "Натисни ТЪРСИ ПЛОСКОСТ. Камерата ще се отвори през WebXR.";
+          statusChip.textContent = "WEBXR READY";
+          bottomHelp.textContent = "Натисни ТЪРСИ МАСА. Камерата ще се отвори през WebXR.";
         } else {
           hud.textContent = "AR NOT SUPPORTED";
+          statusChip.textContent = "NO AR";
           bottomHelp.textContent = "Устройството/браузърът не поддържа immersive-ar. Пробвай Android Chrome + ARCore.";
         }
       } catch (error) {
@@ -678,14 +772,17 @@
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.xr.enabled = true;
 
-      const hemi = new THREE.HemisphereLight(0xffffff, 0x333333, 1.25);
+      const hemi = new THREE.HemisphereLight(0xffffff, 0x333333, 1.20);
+      hemi.name = "hemiLight";
       scene.add(hemi);
 
-      const dir = new THREE.DirectionalLight(0xffffff, 1.35);
+      const dir = new THREE.DirectionalLight(0xffffff, 1.30);
+      dir.name = "mainDirectionalLight";
       dir.position.set(1.4, 3, 2.2);
       scene.add(dir);
 
-      const warm = new THREE.PointLight(0xffc27a, 0.52, 5);
+      const warm = new THREE.PointLight(0xffc27a, 0.48, 5);
+      warm.name = "warmProductLight";
       warm.position.set(0, 1.6, 1);
       scene.add(warm);
 
@@ -826,7 +923,7 @@
             CONFIG.modelRotationFix.z
           );
 
-          productModel.position.y = 0.025;
+          productModel.position.y = CONFIG.modelHeightOffset;
           productGroup.add(productModel);
 
           modelReady = true;
@@ -844,6 +941,7 @@
           const msg = "GLB ERROR: Не може да зареди " + CONFIG.glbFile + "\n" + (error.message || error);
           showDebug(msg);
           hud.textContent = "GLB ERROR";
+          statusChip.textContent = "GLB ERROR";
           bottomHelp.textContent = "Провери дали GLB файлът е до table-ar.html и името е точно.";
         }
       );
@@ -901,6 +999,61 @@
       debugInfo += "\nApplied scale: " + Number((modelNormalizeScale * step.width).toFixed(6));
     }
 
+    async function requestBestARSession() {
+      const sessionConfigs = [
+        {
+          label: "hit-test + dom-overlay + local-floor + anchors + plane-detection + light-estimation",
+          init: {
+            requiredFeatures: ["hit-test"],
+            optionalFeatures: [
+              "dom-overlay",
+              "local-floor",
+              "anchors",
+              "plane-detection",
+              "light-estimation"
+            ],
+            domOverlay: { root: document.body }
+          }
+        },
+        {
+          label: "hit-test + dom-overlay + local-floor + anchors",
+          init: {
+            requiredFeatures: ["hit-test"],
+            optionalFeatures: ["dom-overlay", "local-floor", "anchors"],
+            domOverlay: { root: document.body }
+          }
+        },
+        {
+          label: "hit-test + local-floor",
+          init: {
+            requiredFeatures: ["hit-test"],
+            optionalFeatures: ["local-floor"]
+          }
+        },
+        {
+          label: "hit-test only",
+          init: {
+            requiredFeatures: ["hit-test"]
+          }
+        }
+      ];
+
+      let lastError = null;
+
+      for (const config of sessionConfigs) {
+        try {
+          const session = await navigator.xr.requestSession("immersive-ar", config.init);
+          debugInfo += "\nXR session config used: " + config.label;
+          return session;
+        } catch (error) {
+          lastError = error;
+          debugInfo += "\nXR session config failed: " + config.label + " · " + (error.message || error);
+        }
+      }
+
+      throw lastError || new Error("Could not start immersive-ar session.");
+    }
+
     async function startWebXR() {
       if (xrSession) return;
 
@@ -913,6 +1066,7 @@
         );
 
         hud.textContent = "HTTPS / LOCALHOST REQUIRED";
+        statusChip.textContent = "NO HTTPS";
         bottomHelp.textContent = "Качи във Vercel или пусни localhost. През file:// истинският AR няма да тръгне.";
         return;
       }
@@ -925,6 +1079,7 @@
         );
 
         hud.textContent = "WEBXR NOT SUPPORTED";
+        statusChip.textContent = "NO WEBXR";
         bottomHelp.textContent = "Ползвай Android Chrome на ARCore-съвместим телефон. За iPhone използвай fallback.";
         return;
       }
@@ -937,6 +1092,7 @@
         );
 
         hud.textContent = "AR NOT SUPPORTED";
+        statusChip.textContent = "NO AR";
         bottomHelp.textContent = "Този телефон/браузър не поддържа WebXR AR. Пробвай Android Chrome с ARCore.";
         return;
       }
@@ -945,21 +1101,30 @@
         startAR.disabled = true;
         startAR.textContent = "OPENING CAMERA...";
         hud.textContent = "REQUESTING AR CAMERA";
+        statusChip.textContent = "STARTING";
         bottomHelp.textContent = "Приеми разрешението за камера/AR, ако браузърът го поиска.";
 
-        xrSession = await navigator.xr.requestSession("immersive-ar", {
-          requiredFeatures: ["hit-test"],
-          optionalFeatures: ["dom-overlay", "local-floor", "anchors"],
-          domOverlay: { root: document.body }
-        });
+        xrSession = await requestBestARSession();
 
         xrSession.addEventListener("end", onSessionEnd);
         xrSession.addEventListener("select", placeProductFromHit);
 
-        renderer.xr.setReferenceSpaceType("local");
+        try {
+          renderer.xr.setReferenceSpaceType("local-floor");
+        } catch (error) {
+          renderer.xr.setReferenceSpaceType("local");
+        }
+
         await renderer.xr.setSession(xrSession);
 
-        xrRefSpace = await xrSession.requestReferenceSpace("local");
+        try {
+          xrRefSpace = await xrSession.requestReferenceSpace("local-floor");
+          debugInfo += "\nReference space: local-floor";
+        } catch (error) {
+          xrRefSpace = await xrSession.requestReferenceSpace("local");
+          debugInfo += "\nReference space fallback: local";
+        }
+
         viewerSpace = await xrSession.requestReferenceSpace("viewer");
 
         if (!xrSession.requestHitTestSource) {
@@ -968,6 +1133,18 @@
 
         hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace });
 
+        try {
+          if (typeof xrSession.requestLightProbe === "function") {
+            lightProbe = await xrSession.requestLightProbe();
+            lightEstimationSupported = true;
+            debugInfo += "\nLight estimation: requested";
+          }
+        } catch (error) {
+          lightProbe = null;
+          lightEstimationSupported = false;
+          debugInfo += "\nLight estimation failed: " + (error.message || error);
+        }
+
         startScreen.classList.add("hidden");
         fallbackViewer.style.display = "none";
         xrCanvas.style.display = "block";
@@ -975,8 +1152,11 @@
 
         productPlaced = false;
         latestHitMatrix = null;
+        latestHitResult = null;
+        stableHitFrames = 0;
 
-        hud.textContent = "SEARCHING SURFACE";
+        hud.textContent = "SEARCHING TABLE";
+        statusChip.textContent = "HIT TEST";
         bottomHelp.textContent = "Движи телефона бавно към масата. Когато видиш бял кръг — натисни.";
 
         debugInfo += "\n\nXR SESSION STARTED";
@@ -986,7 +1166,7 @@
       } catch (error) {
         xrSession = null;
         startAR.disabled = false;
-        startAR.textContent = "ТЪРСИ ПЛОСКОСТ";
+        startAR.textContent = "ТЪРСИ МАСА";
 
         const message = error?.message || String(error);
 
@@ -1001,11 +1181,14 @@
         );
 
         hud.textContent = "XR START ERROR";
+        statusChip.textContent = "XR ERROR";
         bottomHelp.textContent = "Ако камерата не се отвори, устройството/браузърът не дава WebXR AR. Пробвай fallback.";
       }
     }
 
     function onSessionEnd() {
+      clearAnchor();
+
       if (hitTestSource && hitTestSource.cancel) {
         try {
           hitTestSource.cancel();
@@ -1018,7 +1201,10 @@
       xrRefSpace = null;
       viewerSpace = null;
       hitTestSource = null;
+      lightProbe = null;
       latestHitMatrix = null;
+      latestHitResult = null;
+      stableHitFrames = 0;
       productPlaced = false;
       rotateOn = false;
       currentRotationY = 0;
@@ -1032,16 +1218,22 @@
       fallbackViewer.style.display = "block";
 
       startAR.disabled = false;
-      startAR.textContent = "ТЪРСИ ПЛОСКОСТ";
+      startAR.textContent = "ТЪРСИ МАСА";
       rotateBtn.textContent = "ROTATE";
 
       hud.textContent = "AR SESSION ENDED";
-      bottomHelp.textContent = "AR сесията спря. Натисни ТЪРСИ ПЛОСКОСТ, за да започнеш пак.";
+      statusChip.textContent = "ENDED";
+      bottomHelp.textContent = "AR сесията спря. Натисни ТЪРСИ МАСА, за да започнеш пак.";
 
       debugInfo += "\n\nXR SESSION ENDED";
     }
 
     function render(timestamp, frame) {
+      if (frame && xrSession) {
+        updatePlaneDetectionDebug(frame);
+        updateLightEstimation(frame);
+      }
+
       if (frame && xrSession && hitTestSource && xrRefSpace && !productPlaced) {
         const hitTestResults = frame.getHitTestResults(hitTestSource);
 
@@ -1049,28 +1241,72 @@
           const hit = hitTestResults[0];
           const pose = hit.getPose(xrRefSpace);
 
+          latestHitResult = hit;
+
           if (pose) {
             latestHitMatrix = pose.transform.matrix;
 
             const matrix = new THREE.Matrix4().fromArray(latestHitMatrix);
-            matrix.decompose(latestHitPosition, latestHitQuaternion, new THREE.Vector3());
+            matrix.decompose(latestHitPosition, latestHitQuaternion, latestHitScale);
+
+            if (stableHitFrames === 0) {
+              smoothHitPosition.copy(latestHitPosition);
+              smoothHitQuaternion.copy(latestHitQuaternion);
+            } else {
+              smoothHitPosition.lerp(latestHitPosition, CONFIG.hitSmoothing);
+              smoothHitQuaternion.slerp(latestHitQuaternion, CONFIG.hitSmoothing);
+            }
+
+            stableHitFrames++;
 
             reticle.visible = true;
-            reticle.position.copy(latestHitPosition);
-            reticle.quaternion.copy(latestHitQuaternion);
+            reticle.position.copy(smoothHitPosition);
+            reticle.quaternion.copy(smoothHitQuaternion);
 
             reticlePulse += 0.055;
             const pulseScale = 1 + Math.sin(reticlePulse) * 0.045;
             reticle.scale.setScalar(pulseScale);
 
-            hud.textContent = "SURFACE FOUND · TAP TO PLACE";
-            bottomHelp.textContent = "Плоскостта е засечена. Натисни върху екрана, за да заключиш продукта.";
+            if (stableHitFrames >= CONFIG.minHitStableFrames) {
+              hud.textContent = "TABLE FOUND · TAP TO PLACE";
+              statusChip.textContent = "STABLE";
+              bottomHelp.textContent = "Масата е засечена стабилно. Натисни върху екрана, за да заключиш пицата.";
+            } else {
+              hud.textContent = "STABILIZING TABLE";
+              statusChip.textContent = "LOCKING";
+              bottomHelp.textContent = "Задръж телефона спокойно още малко, докато кръгът се стабилизира.";
+            }
           }
         } else {
           latestHitMatrix = null;
+          latestHitResult = null;
+          stableHitFrames = 0;
           reticle.visible = false;
-          hud.textContent = "SEARCHING SURFACE";
-          bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло, силен гланц и тъмни повърхности.";
+          hud.textContent = "SEARCHING TABLE";
+          statusChip.textContent = "SEARCH";
+          bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло, силен гланц и много тъмни повърхности.";
+        }
+      }
+
+      if (frame && productPlaced && anchorActive && anchorSpace && xrRefSpace) {
+        const anchorPose = frame.getPose(anchorSpace, xrRefSpace);
+
+        if (anchorPose) {
+          const matrix = new THREE.Matrix4().fromArray(anchorPose.transform.matrix);
+          const anchorPos = new THREE.Vector3();
+          const anchorQuat = new THREE.Quaternion();
+          const anchorScale = new THREE.Vector3();
+
+          matrix.decompose(anchorPos, anchorQuat, anchorScale);
+
+          placedPosition.copy(anchorPos);
+          placedQuaternion.copy(anchorQuat);
+
+          productGroup.position.copy(placedPosition);
+
+          if (!rotateOn) {
+            productGroup.quaternion.copy(placedQuaternion);
+          }
         }
       }
 
@@ -1088,7 +1324,7 @@
       renderer.render(scene, camera);
     }
 
-    function placeProductFromHit(event) {
+    async function placeProductFromHit(event) {
       if (!xrSession) return;
 
       const now = performance.now();
@@ -1104,15 +1340,16 @@
         return;
       }
 
-      if (!latestHitMatrix) {
-        hud.textContent = "NO SURFACE FOUND";
-        bottomHelp.textContent = "Още няма стабилна плоскост. Движи телефона бавно към масата.";
+      if (!latestHitMatrix || stableHitFrames < CONFIG.minHitStableFrames) {
+        hud.textContent = "NO STABLE TABLE";
+        statusChip.textContent = "WAIT";
+        bottomHelp.textContent = "Още няма стабилна маса. Движи телефона бавно и изчакай кръгът да стане стабилен.";
         haptic(20);
         return;
       }
 
-      placedPosition.copy(latestHitPosition);
-      placedQuaternion.copy(latestHitQuaternion);
+      placedPosition.copy(smoothHitPosition);
+      placedQuaternion.copy(smoothHitQuaternion);
 
       productGroup.position.copy(placedPosition);
       productGroup.quaternion.copy(placedQuaternion);
@@ -1123,8 +1360,36 @@
 
       if (reticle) reticle.visible = false;
 
-      hud.textContent = "LOCKED ON TABLE";
-      bottomHelp.textContent = CONFIG.productName + " е заключена върху реалната плоскост. Обикаляй с телефона — моделът трябва да стои на място.";
+      try {
+        if (latestHitResult && typeof latestHitResult.createAnchor === "function") {
+          productAnchor = await latestHitResult.createAnchor();
+          anchorSpace = productAnchor.anchorSpace;
+          anchorSupported = true;
+          anchorActive = true;
+
+          hud.textContent = "ANCHORED ON TABLE";
+          statusChip.textContent = "ANCHOR";
+          bottomHelp.textContent = CONFIG.productName + " е заключена с XR Anchor. Обикаляй с телефона — трябва да стои стабилно.";
+          debugInfo += "\n\nXR ANCHOR CREATED FROM HIT RESULT";
+        } else {
+          anchorSupported = false;
+          anchorActive = false;
+
+          hud.textContent = "LOCKED ON TABLE";
+          statusChip.textContent = "LOCAL LOCK";
+          bottomHelp.textContent = CONFIG.productName + " е заключена върху плоскостта. Anchor API не е наличен, ползва local pose.";
+          debugInfo += "\n\nXR ANCHOR NOT AVAILABLE · USING LOCAL POSE";
+        }
+      } catch (error) {
+        anchorSupported = false;
+        anchorActive = false;
+
+        debugInfo += "\n\nANCHOR CREATE ERROR: " + (error.message || error);
+        hud.textContent = "LOCKED WITHOUT ANCHOR";
+        statusChip.textContent = "NO ANCHOR";
+        bottomHelp.textContent = "Пицата е поставена. Anchor не беше позволен от браузъра, но позицията остава в WebXR пространството.";
+      }
+
       haptic(70);
 
       debugInfo += "\n\nPRODUCT PLACED";
@@ -1135,13 +1400,95 @@
       });
     }
 
+    function clearAnchor() {
+      try {
+        if (productAnchor && typeof productAnchor.delete === "function") {
+          productAnchor.delete();
+        }
+      } catch (error) {
+        console.warn("Anchor delete error:", error);
+      }
+
+      productAnchor = null;
+      anchorSpace = null;
+      anchorActive = false;
+    }
+
+    function updatePlaneDetectionDebug(frame) {
+      try {
+        if (frame.detectedPlanes) {
+          planeDetectionSupported = true;
+
+          if (typeof frame.detectedPlanes.size === "number") {
+            detectedPlaneCount = frame.detectedPlanes.size;
+          } else if (typeof frame.detectedPlanes.length === "number") {
+            detectedPlaneCount = frame.detectedPlanes.length;
+          } else {
+            detectedPlaneCount = 0;
+          }
+        }
+      } catch (error) {
+        planeDetectionSupported = false;
+      }
+    }
+
+    function updateLightEstimation(frame) {
+      try {
+        if (!lightProbe || typeof frame.getLightEstimate !== "function") return;
+
+        const estimate = frame.getLightEstimate(lightProbe);
+        if (!estimate) return;
+
+        lightEstimationSupported = true;
+
+        if (estimate.primaryLightIntensity) {
+          const intensity = estimate.primaryLightIntensity;
+          const avg = (Math.abs(intensity.x) + Math.abs(intensity.y) + Math.abs(intensity.z)) / 3;
+          lastLightValue = Number(avg.toFixed(3));
+
+          const dir = scene.getObjectByName("mainDirectionalLight");
+          if (dir) dir.intensity = Math.max(0.7, Math.min(2.0, avg / 900));
+        }
+      } catch (error) {
+        lightEstimationSupported = false;
+      }
+    }
+
+    function snapRotationToCamera() {
+      if (!productGroup || !camera || !productPlaced) {
+        hud.textContent = "PLACE PIZZA FIRST";
+        return;
+      }
+
+      const cameraWorldPos = new THREE.Vector3();
+      camera.getWorldPosition(cameraWorldPos);
+
+      const direction = new THREE.Vector3().subVectors(cameraWorldPos, productGroup.position);
+      direction.y = 0;
+      direction.normalize();
+
+      const angle = Math.atan2(direction.x, direction.z);
+      currentRotationY = angle;
+
+      const extraRotation = new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        currentRotationY
+      );
+
+      productGroup.quaternion.copy(placedQuaternion).multiply(extraRotation);
+
+      hud.textContent = "SNAPPED TO CAMERA";
+      statusChip.textContent = "SNAP";
+    }
+
     async function openModelViewerFallback() {
       startScreen.classList.add("hidden");
       fallbackViewer.style.display = "block";
       xrCanvas.style.display = "none";
 
       hud.textContent = "3D / AR FALLBACK";
-      bottomHelp.textContent = "Fallback режим. Ако телефонът поддържа Scene Viewer, ще отвори AR през model-viewer.";
+      statusChip.textContent = "FALLBACK";
+      bottomHelp.textContent = "Fallback режим. Android може да отвори Scene Viewer. iPhone използва Quick Look, ако pizza.usdz съществува.";
       haptic(30);
 
       try {
@@ -1174,6 +1521,23 @@
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, CONFIG.maxPixelRatio));
       renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function updateDebugInfo() {
+      debugInfo +=
+        "\n\n--- LIVE DEBUG ---" +
+        "\nXR active: " + Boolean(xrSession) +
+        "\nModel ready: " + modelReady +
+        "\nProduct placed: " + productPlaced +
+        "\nHit stable frames: " + stableHitFrames +
+        "\nAnchor supported: " + anchorSupported +
+        "\nAnchor active: " + anchorActive +
+        "\nPlane detection supported: " + planeDetectionSupported +
+        "\nDetected planes: " + detectedPlaneCount +
+        "\nLight estimation supported: " + lightEstimationSupported +
+        "\nLight value: " + lastLightValue +
+        "\nReference space: " + Boolean(xrRefSpace) +
+        "\nHit source: " + Boolean(hitTestSource);
     }
 
     function showDebug(message) {
