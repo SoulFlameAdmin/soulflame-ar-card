@@ -1,3 +1,6 @@
+
+
+
 <!doctype html>
 <html lang="bg">
 <head>
@@ -956,17 +959,9 @@
       /*
         ОСНОВЕН РАЗМЕР:
         3.33 ≈ реална 30 см пица, ако визитката е около 9 см.
+        Всички SIZE + степени умножават тази база.
       */
-      giantPizzaWidth: 3.33,
-
-      /*
-        AUTOFOCUS:
-        Работи само ако браузърът и телефонът позволяват camera constraints.
-        Най-голям шанс: Android Chrome.
-        iPhone Safari често го игнорира, но кодът не се чупи.
-      */
-      autoFocusDelayMs: 650,
-      autoFocusRetryMs: 1200
+      giantPizzaWidth: 3.33
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -1017,10 +1012,6 @@
     let started = false;
     let visible = false;
     let scanTimer = null;
-
-    let cameraTrack = null;
-    let autoFocusReady = false;
-    let autoFocusMode = "unknown";
 
     let pizzaVisible = false;
     let sizeIndex = 2;
@@ -1174,7 +1165,7 @@
     });
 
     debugBtn.addEventListener("click", () => {
-      showDebug(modelDebugInfo + "\n\nAUTOFOCUS MODE: " + autoFocusMode);
+      showDebug(modelDebugInfo);
       haptic(20);
     });
 
@@ -1339,139 +1330,6 @@
       modelDebugInfo += "\nRESULT: MULTI SIZE MODE";
     }
 
-    /*
-      ==========================================================
-      AUTOFOCUS ENGINE
-      ==========================================================
-    */
-
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function getCameraTrackFromMindAR() {
-      const maxTries = 20;
-
-      for (let i = 0; i < maxTries; i++) {
-        const videos = Array.from(document.querySelectorAll("video"));
-
-        for (const video of videos) {
-          const stream = video.srcObject;
-
-          if (stream && typeof stream.getVideoTracks === "function") {
-            const track = stream.getVideoTracks()[0];
-
-            if (track && track.readyState === "live") {
-              cameraTrack = track;
-              return track;
-            }
-          }
-        }
-
-        await sleep(150);
-      }
-
-      return null;
-    }
-
-    async function enableCameraAutoFocus(reason = "manual") {
-      try {
-        const track = cameraTrack || await getCameraTrackFromMindAR();
-
-        if (!track) {
-          autoFocusMode = "no-video-track";
-          modelDebugInfo += "\nAUTOFOCUS: No live camera track found.";
-          return false;
-        }
-
-        if (!track.getCapabilities || !track.applyConstraints) {
-          autoFocusMode = "not-supported-api";
-          modelDebugInfo += "\nAUTOFOCUS: Browser does not expose camera capabilities.";
-          return false;
-        }
-
-        const capabilities = track.getCapabilities();
-        const settingsBefore = track.getSettings ? track.getSettings() : {};
-        const advanced = [];
-
-        if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
-          advanced.push({ focusMode: "continuous" });
-          autoFocusMode = "continuous";
-        } else if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
-          advanced.push({ focusMode: "single-shot" });
-          autoFocusMode = "single-shot";
-        } else if (capabilities.focusDistance) {
-          autoFocusMode = "focus-distance-only";
-        } else {
-          autoFocusMode = "focus-mode-not-exposed";
-          modelDebugInfo += "\nAUTOFOCUS: focusMode not exposed by this device/browser.";
-          return false;
-        }
-
-        if (advanced.length) {
-          await track.applyConstraints({ advanced });
-        }
-
-        const settingsAfter = track.getSettings ? track.getSettings() : {};
-
-        autoFocusReady = true;
-
-        modelDebugInfo +=
-          "\nAUTOFOCUS REASON: " + reason +
-          "\nAUTOFOCUS REQUEST: " + JSON.stringify(advanced) +
-          "\nFOCUS BEFORE: " + (settingsBefore.focusMode || "unknown") +
-          "\nFOCUS AFTER: " + (settingsAfter.focusMode || "unknown");
-
-        if (!visible) {
-          setStatus("AUTOFOCUS ON", "SCAN CARD SLOWLY");
-        }
-
-        return true;
-
-      } catch (error) {
-        autoFocusReady = false;
-        autoFocusMode = "error";
-        modelDebugInfo += "\nAUTOFOCUS ERROR: " + (error.message || error);
-        console.warn("AUTOFOCUS ERROR:", error);
-        return false;
-      }
-    }
-
-    async function pulseSingleShotFocus() {
-      try {
-        const track = cameraTrack || await getCameraTrackFromMindAR();
-
-        if (!track || !track.getCapabilities || !track.applyConstraints) return false;
-
-        const capabilities = track.getCapabilities();
-
-        if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
-          await track.applyConstraints({
-            advanced: [{ focusMode: "single-shot" }]
-          });
-
-          autoFocusMode = "single-shot-pulse";
-          modelDebugInfo += "\nAUTOFOCUS: single-shot pulse triggered.";
-          return true;
-        }
-
-        if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
-          await track.applyConstraints({
-            advanced: [{ focusMode: "continuous" }]
-          });
-
-          autoFocusMode = "continuous-refresh";
-          modelDebugInfo += "\nAUTOFOCUS: continuous focus refreshed.";
-          return true;
-        }
-
-        return false;
-      } catch (error) {
-        modelDebugInfo += "\nFOCUS PULSE ERROR: " + (error.message || error);
-        return false;
-      }
-    }
-
     function openDigitalCard() {
       digitalCard.classList.remove("hidden");
       haptic(25);
@@ -1533,37 +1391,15 @@
 
         await arSystem.start();
 
-        /*
-          ВАЖНО:
-          Изчакваме MindAR да създаде video stream.
-          После активираме continuous autofocus, ако телефонът го позволява.
-        */
-        await sleep(CONFIG.autoFocusDelayMs);
-        await enableCameraAutoFocus("after-ar-start");
-
-        /*
-          Втори опит след още малко време.
-          Някои телефони създават video track-а по-бавно.
-        */
-        setTimeout(() => {
-          enableCameraAutoFocus("retry-after-start");
-        }, CONFIG.autoFocusRetryMs);
-
         startScreen.classList.add("hidden");
         scanFrame.classList.remove("locked");
-        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "SCAN SOULFLAME CARD", "SCANNING");
+        setStatus("SCAN SOULFLAME CARD", "SCANNING");
 
         clearTimeout(scanTimer);
         scanTimer = setTimeout(() => {
           if (started && !visible) {
             setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
-            showDebug(
-              "Не намира визитката.\n" +
-              "1. Провери дали ./targets/soulflame-black.mind съществува.\n" +
-              "2. Сканирай същата визитка, от която е направен target-ът.\n" +
-              "3. Дръж телефона по-далече и приближавай бавно.\n" +
-              "4. AUTOFOCUS MODE: " + autoFocusMode
-            );
+            showDebug("Не намира визитката. Провери дали ./targets/soulflame-black.mind съществува и дали сканираш същата визитка, от която е направен target-ът.");
           }
         }, CONFIG.scanTimeoutMs);
 
@@ -1576,16 +1412,10 @@
       }
     });
 
-    target.addEventListener("targetFound", async () => {
+    target.addEventListener("targetFound", () => {
       visible = true;
       clearTimeout(scanTimer);
       hideDebug();
-
-      /*
-        Повторен фокус при заключване на картата.
-        Това помага, ако картата е близо до камерата и първият фокус е бил слаб.
-      */
-      await pulseSingleShotFocus();
 
       setStatus("SOULFLAME LOCKED", "MENU → PIZZA → SIZE +");
       actionDock.classList.add("active");
@@ -1601,30 +1431,6 @@
       actionDock.classList.remove("active");
       menuSheet.classList.remove("active");
       scanFrame.classList.remove("locked");
-
-      /*
-        Когато изгуби target-а, освежаваме continuous focus.
-      */
-      setTimeout(() => {
-        if (started && !visible) {
-          enableCameraAutoFocus("target-lost-refresh");
-        }
-      }, 400);
-    });
-
-    /*
-      При докосване по екрана правим focus pulse.
-      Не е истински tap-to-focus върху точка, но помага на телефони,
-      които позволяват single-shot focus.
-    */
-    document.addEventListener("click", async (event) => {
-      const clickable = event.target.closest("button, a");
-      if (clickable) return;
-
-      if (started) {
-        const ok = await pulseSingleShotFocus();
-        if (ok && !visible) setStatus("FOCUS PULSE", "SCAN CARD");
-      }
     });
 
     document.addEventListener("visibilitychange", async () => {
@@ -1634,9 +1440,6 @@
 
           started = false;
           visible = false;
-          cameraTrack = null;
-          autoFocusReady = false;
-          autoFocusMode = "paused";
 
           clearTimeout(scanTimer);
           actionDock.classList.remove("active");
