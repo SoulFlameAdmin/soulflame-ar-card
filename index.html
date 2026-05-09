@@ -790,6 +790,21 @@
       );
     }
 
+    async function ensureCameraPermission() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Този браузър няма camera API. Отвори през Chrome/Safari с HTTPS.");
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" }
+        },
+        audio: false
+      });
+
+      stream.getTracks().forEach((track) => track.stop());
+    }
+
     const products = safeGetProducts();
     let selectedProduct = safeGetProductById(window.PIZZA_HIT_DEFAULT_PRODUCT_ID || "classic");
 
@@ -989,8 +1004,13 @@
       }
 
       try {
-        started = true;
+        setStatus("CAMERA PERMISSION", "ALLOW CAMERA");
         startBtn.disabled = true;
+        startBtn.textContent = "CAMERA...";
+
+        await ensureCameraPermission();
+
+        started = true;
         startBtn.textContent = "STARTING...";
 
         if (!arSystem) {
@@ -1026,9 +1046,21 @@
         startBtn.disabled = false;
         startBtn.textContent = "START AR";
 
-        setStatus("CAMERA / MINDAR ERROR", "CHECK DEBUG");
-        showDebug(error.message || String(error));
-        openDigitalCard();
+        const message = error?.message || String(error);
+
+        setStatus("CAMERA ERROR", "ALLOW CAMERA / HTTPS");
+
+        showDebug(
+          "CAMERA / MINDAR ERROR:\n\n" +
+          message +
+          "\n\nПровери:\n" +
+          "1. Отворено ли е през HTTPS/Vercel?\n" +
+          "2. Разрешена ли е камерата в браузъра?\n" +
+          "3. Отваряш ли през Chrome/Safari, не през Messenger/Facebook/Viber browser?\n" +
+          "4. Дали targets/soulflame-black.mind съществува?"
+        );
+
+        alert("Камерата не тръгна. Разреши Camera permission и отвори през HTTPS Chrome.");
       }
     }
 
@@ -1131,7 +1163,7 @@
       clearTimeout(scanTimer);
 
       const productId = selectedProduct?.id || "classic";
-      const url = `${CONFIG.tableArFile}?product=${encodeURIComponent(productId)}`;
+      const url = `${CONFIG.tableArFile}?product=${encodeURIComponent(productId)}&v=${Date.now()}`;
 
       window.location.href = url;
     }
