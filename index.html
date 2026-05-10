@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Pro Size Menu</title>
+  <title>SoulFlame AR Pizza · Freeze Lock + Table AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -14,6 +14,7 @@
       --bg: #030303;
       --text: #ffffff;
       --gold: #ffb347;
+      --green: #48ff9b;
       --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
@@ -242,6 +243,15 @@
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
       backdrop-filter: blur(10px);
+    }
+
+    .ghost-btn.table-start {
+      background: linear-gradient(135deg, rgba(72,255,155,.18), rgba(255,179,71,.13));
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(72,255,155,.30);
+      box-shadow:
+        0 0 22px rgba(72,255,155,.12),
+        inset 0 0 18px rgba(255,179,71,.05);
     }
 
     #startBtn:active,
@@ -480,6 +490,14 @@
       box-shadow: 0 0 30px rgba(255,179,71,.58);
     }
 
+    #actionDock button.table {
+      background: linear-gradient(135deg, var(--green), var(--gold));
+      color: #000;
+      box-shadow:
+        0 0 28px rgba(72,255,155,.30),
+        0 0 34px rgba(255,179,71,.25);
+    }
+
     #menuSheet {
       position: fixed;
       left: 50%;
@@ -650,13 +668,13 @@
         width: calc(100vw - 20px);
         justify-content: center;
         border-radius: 26px;
-        gap: 7px;
+        gap: 6px;
       }
 
       #actionDock button {
         flex: 1;
-        padding: 13px 7px;
-        font-size: 8.5px;
+        padding: 13px 5px;
+        font-size: 7.6px;
       }
 
       #fallbackBtn {
@@ -686,24 +704,25 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">DUAL ANCHOR · CARD + TABLE</div>
+      <div class="subtitle">CARD AR + TABLE AR PORTAL</div>
 
       <p>
-        Първо сканирай визитката. След това можеш да използваш
-        <b>MENU</b> за AR върху картата или <b>TABLE</b>, за да поставиш пицата върху реалната маса.
+        Сканирай визитката за <b>Card AR</b> или отвори <b>TABLE AR</b>,
+        за да поставиш пицата върху истинска маса чрез WebXR.
       </p>
 
       <div class="start-actions">
-        <button id="startBtn">START AR</button>
+        <button id="startBtn">START CARD AR</button>
+        <button id="openTableFromStart" class="ghost-btn table-start">TABLE AR</button>
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">Файлове: ./targets/soulflame-black.mind, ./uploads_files_6479452_187.glb и ./table-ar.html</span>
+      <span class="hint">Файлове: ./targets/soulflame-black.mind · ./uploads_files_6479452_187.glb · ./table-ar.html</span>
 
       <div class="mini-grid">
-        <span>CARD</span>
+        <span>SCAN</span>
         <span>TABLE</span>
-        <span>DUAL AR</span>
+        <span>LOCK</span>
       </div>
     </div>
   </section>
@@ -719,7 +738,7 @@
 
   <div id="actionDock">
     <button id="menuBtn" class="gold">MENU</button>
-    <button id="tableModeBtn" class="gold">TABLE</button>
+    <button id="openTableAR" class="table">TABLE AR</button>
     <button id="openSite">WEBSITE</button>
     <button id="contactMail" class="dark">EMAIL</button>
     <button id="openDigitalBtn">CARD</button>
@@ -732,13 +751,13 @@
     </div>
 
     <div class="sheet-grid">
-      <button id="pizzaBtn" class="primary">PIZZA ON CARD</button>
-      <button id="tableSheetBtn" class="primary">PIZZA ON TABLE</button>
+      <button id="pizzaBtn" class="primary">PIZZA</button>
       <button id="sizeBtn">30 CM</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
-      <button id="resetBtn">RESET</button>
+      <button id="resetBtn">RESET PIZZA</button>
       <button id="hidePizzaBtn">HIDE / SHOW</button>
+      <button id="resetLockBtn">RESET LOCK</button>
       <button id="closeMenuBtn" class="light">CLOSE</button>
       <button id="debugBtn" class="light">DEBUG</button>
     </div>
@@ -798,6 +817,9 @@
       camera="near: 0.001; far: 100000"
     ></a-camera>
 
+    <a-light type="ambient" intensity="0.55" color="#ffffff"></a-light>
+    <a-light type="directional" intensity="0.75" color="#ffffff" position="0 2 1"></a-light>
+
     <a-entity id="target" mindar-image-target="targetIndex: 0">
       <a-light type="ambient" intensity="0.95" color="#ffffff"></a-light>
       <a-light type="directional" intensity="1.35" color="#ffffff" position="0 1.3 1"></a-light>
@@ -827,6 +849,7 @@
 
         <a-text
           id="arSizeText"
+          data-role="size-text"
           value="PIZZA 30 CM"
           position="-0.28 -0.73 0.083"
           width="0.95"
@@ -837,9 +860,9 @@
         ></a-text>
 
         <a-text
-          value="CARD MODE · TABLE BUTTON MOVES TO REAL SURFACE"
-          position="-0.57 -0.88 0.083"
-          width="1.08"
+          value="FREEZE LOCK TEST"
+          position="-0.42 -0.88 0.083"
+          width="0.92"
           align="center"
           color="#ffffff"
           opacity="0.82"
@@ -848,6 +871,7 @@
 
         <a-entity
           id="pizzaRig"
+          data-role="pizza-rig"
           visible="false"
           position="0 -0.09 0.17"
           rotation="90 0 0"
@@ -855,6 +879,7 @@
         >
           <a-entity
             id="pizzaModel"
+            data-role="pizza-model"
             gltf-model="#pizzaGLB"
             position="0 0 0"
             rotation="0 0 0"
@@ -894,7 +919,7 @@
         ></a-text>
 
         <a-text
-          value="AR BUSINESS CARD"
+          value="AR FREEZE LOCK"
           position="-0.34 0.28 0.055"
           width="0.95"
           align="center"
@@ -932,7 +957,8 @@
 
           <a-text
             id="menuInfoText"
-            value="PIZZA CARD\nTABLE MODE\nSIZE +\nROTATE"
+            data-role="menu-info"
+            value="PIZZA 30 CM\nSCAN ONCE\nLOCK AFTER LOST\nRESET LOCK"
             position="-0.37 0.025 0.05"
             width="0.78"
             color="#ffffff"
@@ -948,24 +974,26 @@
   <script>
     const CONFIG = {
       siteUrl: "https://soulflame-ar-card.vercel.app",
+      tableARUrl: "./table-ar.html",
       email: "soulflame.mitko@gmail.com",
       phone: "+359xxxxxxxxx",
       mailSubject: "SoulFlame AR Pizza",
       scanTimeoutMs: 14000,
       glbFile: "./uploads_files_6479452_187.glb",
       targetFile: "./targets/soulflame-black.mind",
-      tableArFile: "./table-ar.html",
 
-      /*
-        ОСНОВЕН РАЗМЕР:
-        3.33 ≈ реална 30 см пица, ако визитката е около 9 см.
-        Всички SIZE + степени умножават тази база.
-      */
-      giantPizzaWidth: 3.33
+      giantPizzaWidth: 3.33,
+
+      lockAfterFirstScan: true,
+      autoShowPizzaOnFirstScan: true,
+
+      autoFocusDelayMs: 650,
+      autoFocusRetryMs: 1200
     };
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
+    const openTableFromStart = document.getElementById("openTableFromStart");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
@@ -973,7 +1001,7 @@
 
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
-    const tableModeBtn = document.getElementById("tableModeBtn");
+    const openTableAR = document.getElementById("openTableAR");
     const openSite = document.getElementById("openSite");
     const contactMail = document.getElementById("contactMail");
     const openDigitalBtn = document.getElementById("openDigitalBtn");
@@ -981,12 +1009,12 @@
     const menuSheet = document.getElementById("menuSheet");
     const closeMenuBtn = document.getElementById("closeMenuBtn");
     const pizzaBtn = document.getElementById("pizzaBtn");
-    const tableSheetBtn = document.getElementById("tableSheetBtn");
     const sizeBtn = document.getElementById("sizeBtn");
     const rotateBtn = document.getElementById("rotateBtn");
     const flipBtn = document.getElementById("flipBtn");
     const resetBtn = document.getElementById("resetBtn");
     const hidePizzaBtn = document.getElementById("hidePizzaBtn");
+    const resetLockBtn = document.getElementById("resetLockBtn");
     const debugBtn = document.getElementById("debugBtn");
 
     const sizeLabel = document.getElementById("sizeLabel");
@@ -995,6 +1023,7 @@
 
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
+    const stableWorld = document.getElementById("stableWorld");
     const scanFrame = document.getElementById("scanFrame");
     const fallbackBtn = document.getElementById("fallbackBtn");
 
@@ -1004,7 +1033,6 @@
     const digitalCall = document.getElementById("digitalCall");
     const digitalEmail = document.getElementById("digitalEmail");
 
-    const pizzaRig = document.getElementById("pizzaRig");
     const pizzaModel = document.getElementById("pizzaModel");
 
     const fxCanvas = document.getElementById("fxCanvas");
@@ -1015,6 +1043,10 @@
     let visible = false;
     let scanTimer = null;
 
+    let cameraTrack = null;
+    let autoFocusReady = false;
+    let autoFocusMode = "unknown";
+
     let pizzaVisible = false;
     let sizeIndex = 2;
     let rotateOn = false;
@@ -1023,6 +1055,11 @@
     let currentPizzaY = 0;
     let modelAutoFitted = false;
     let modelDebugInfo = "MODEL NOT LOADED";
+
+    let frozenWorld = null;
+    let lockPoseRAF = null;
+    let lockedOnce = false;
+    let lastPoseReady = false;
 
     const pizzaScales = [
       "0.55 0.55 0.55",
@@ -1072,6 +1109,14 @@
       showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
     });
 
+    function openTableARPage() {
+      haptic(35);
+      window.location.href = CONFIG.tableARUrl;
+    }
+
+    openTableFromStart.addEventListener("click", openTableARPage);
+    openTableAR.addEventListener("click", openTableARPage);
+
     openSite.addEventListener("click", () => {
       window.open(CONFIG.siteUrl, "_blank");
       haptic(25);
@@ -1081,29 +1126,6 @@
       window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
       haptic(25);
     });
-
-    tableModeBtn.addEventListener("click", openTableMode);
-    tableSheetBtn.addEventListener("click", openTableMode);
-
-    async function openTableMode() {
-      haptic(45);
-      setStatus("TABLE MODE", "OPENING TABLE AR");
-      menuSheet.classList.remove("active");
-
-      try {
-        if (arSystem && started) {
-          await arSystem.stop();
-        }
-      } catch (error) {
-        console.warn("MindAR stop before TABLE failed:", error);
-      }
-
-      started = false;
-      visible = false;
-      clearTimeout(scanTimer);
-
-      window.location.href = CONFIG.tableArFile;
-    }
 
     fallbackBtn.addEventListener("click", openDigitalCard);
     openDigitalFromStart.addEventListener("click", openDigitalCard);
@@ -1116,32 +1138,32 @@
 
     menuBtn.addEventListener("click", () => {
       menuSheet.classList.toggle("active");
-      setStatus("SOULFLAME MENU", "CARD OR TABLE");
+      setStatus("SOULFLAME MENU", "CHOOSE AR OPTION");
       haptic(30);
     });
 
     closeMenuBtn.addEventListener("click", () => {
       menuSheet.classList.remove("active");
-      setStatus("SOULFLAME LOCKED", "MENU / TABLE / PIZZA");
+      setStatus(lockedOnce ? "PIZZA WORLD LOCKED" : "SOULFLAME LOCKED", lockedOnce ? "CARD NOT NEEDED" : "MOVE PHONE SLOWLY");
       haptic(20);
     });
 
     pizzaBtn.addEventListener("click", () => {
       pizzaVisible = true;
-      pizzaRig.setAttribute("visible", "true");
+      setAllPizzaRigVisible(true);
       applyPizzaSize();
       menuSheet.classList.remove("active");
       setPizzaRotation();
 
       const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
-      setStatus(`PIZZA ${label}`, modelAutoFitted ? "CARD ANCHOR ACTIVE" : "PIZZA LOADING");
+      setStatus(`PIZZA ${label}`, modelAutoFitted ? "LOCK MODE ACTIVE" : "PIZZA LOADING");
       haptic(45);
     });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
-      pizzaRig.setAttribute("visible", String(pizzaVisible));
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "CARD ANCHOR ON" : "CARD ANCHOR OFF");
+      setAllPizzaRigVisible(pizzaVisible);
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ANCHOR ON" : "ANCHOR OFF");
       haptic(25);
     });
 
@@ -1178,7 +1200,7 @@
       rotateOn = false;
       flipped = false;
 
-      pizzaRig.setAttribute("visible", "true");
+      setAllPizzaRigVisible(true);
       applyPizzaSize();
       setPizzaRotation();
 
@@ -1189,26 +1211,51 @@
       haptic(35);
     });
 
+    resetLockBtn.addEventListener("click", () => {
+      resetFrozenLock();
+      haptic(35);
+    });
+
     debugBtn.addEventListener("click", () => {
-      showDebug(modelDebugInfo);
+      showDebug(
+        modelDebugInfo +
+        "\n\nLOCKED ONCE: " + lockedOnce +
+        "\nLAST POSE READY: " + lastPoseReady +
+        "\nFROZEN WORLD: " + Boolean(frozenWorld) +
+        "\nAUTOFOCUS MODE: " + autoFocusMode +
+        "\nTABLE AR URL: " + CONFIG.tableARUrl
+      );
       haptic(20);
     });
+
+    function getAllPizzaRigs() {
+      return Array.from(document.querySelectorAll('[data-role="pizza-rig"]'));
+    }
+
+    function setAllPizzaRigVisible(isVisible) {
+      getAllPizzaRigs().forEach((rig) => {
+        rig.setAttribute("visible", String(isVisible));
+      });
+    }
 
     function applyPizzaSize() {
       const scale = pizzaScales[sizeIndex] || "1 1 1";
       const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
 
-      pizzaRig.setAttribute("scale", scale);
+      getAllPizzaRigs().forEach((rig) => {
+        rig.setAttribute("scale", scale);
+      });
+
       sizeBtn.textContent = label;
       sizeLabel.textContent = label;
 
-      if (arSizeText) {
-        arSizeText.setAttribute("value", `PIZZA ${label}`);
-      }
+      document.querySelectorAll('[data-role="size-text"]').forEach((textEl) => {
+        textEl.setAttribute("value", `PIZZA ${label}`);
+      });
 
-      if (menuInfoText) {
-        menuInfoText.setAttribute("value", `PIZZA CARD\\nTABLE MODE\\n${label}\\nROTATE`);
-      }
+      document.querySelectorAll('[data-role="menu-info"]').forEach((textEl) => {
+        textEl.setAttribute("value", `PIZZA ${label}\\nSCAN ONCE\\nLOCK AFTER LOST\\nRESET LOCK`);
+      });
 
       modelDebugInfo += `\nSIZE SELECTED: ${label}`;
       modelDebugInfo += `\nRIG SCALE: ${scale}`;
@@ -1216,7 +1263,10 @@
 
     function setPizzaRotation() {
       const baseX = flipped ? -90 : 90;
-      pizzaRig.setAttribute("rotation", `${baseX} ${currentPizzaY} 0`);
+
+      getAllPizzaRigs().forEach((rig) => {
+        rig.setAttribute("rotation", `${baseX} ${currentPizzaY} 0`);
+      });
     }
 
     function startPizzaRotation() {
@@ -1241,26 +1291,7 @@
     }
 
     pizzaModel.addEventListener("model-loaded", () => {
-      const model = pizzaModel.getObject3D("mesh");
-
-      if (!model || !window.THREE) {
-        showDebug("GLB loaded, but THREE object not ready.");
-        setStatus("PIZZA GLB LOADED", "OBJECT WAITING");
-        return;
-      }
-
-      requestAnimationFrame(() => {
-        try {
-          preparePizzaModel(model);
-          autoFitPizza(model);
-          applyPizzaSize();
-          modelAutoFitted = true;
-          setStatus("PIZZA GLB READY", "MENU / TABLE");
-        } catch (error) {
-          showDebug("AUTO-FIT ERROR: " + error.message);
-          setStatus("PIZZA GLB READY", "MANUAL SCALE");
-        }
-      });
+      handlePizzaModelLoaded(pizzaModel, "MAIN");
     });
 
     pizzaModel.addEventListener("model-error", () => {
@@ -1270,7 +1301,33 @@
       alert(msg);
     });
 
-    function preparePizzaModel(model) {
+    function handlePizzaModelLoaded(modelEntity, label = "MODEL") {
+      const model = modelEntity.getObject3D("mesh");
+
+      if (!model || !window.THREE) {
+        showDebug(label + ": GLB loaded, but THREE object not ready.");
+        setStatus("PIZZA GLB LOADED", "OBJECT WAITING");
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        try {
+          preparePizzaModel(model, label);
+          autoFitPizza(model, label);
+          applyPizzaSize();
+
+          if (label === "MAIN") {
+            modelAutoFitted = true;
+            setStatus("PIZZA GLB READY", "SCAN CARD");
+          }
+        } catch (error) {
+          showDebug(label + " AUTO-FIT ERROR: " + error.message);
+          setStatus("PIZZA GLB READY", "MANUAL SCALE");
+        }
+      });
+    }
+
+    function preparePizzaModel(model, label = "MAIN") {
       let meshCount = 0;
       let materialCount = 0;
       let textureCount = 0;
@@ -1309,19 +1366,24 @@
         });
       });
 
-      modelDebugInfo =
-        "GLB FILE: " + CONFIG.glbFile + "\n" +
-        "MESHES: " + meshCount + "\n" +
-        "MATERIALS: " + materialCount + "\n" +
-        "TEXTURES FOUND: " + textureCount + "\n" +
+      const info =
+        label + " GLB FILE: " + CONFIG.glbFile + "\n" +
+        label + " MESHES: " + meshCount + "\n" +
+        label + " MATERIALS: " + materialCount + "\n" +
+        label + " TEXTURES FOUND: " + textureCount + "\n" +
         "BASE WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
-        "TABLE AR FILE: " + CONFIG.tableArFile + "\n" +
         "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
-      console.log(modelDebugInfo);
+      if (label === "MAIN") {
+        modelDebugInfo = info;
+      } else {
+        modelDebugInfo += "\n\n" + info;
+      }
+
+      console.log(info);
     }
 
-    function autoFitPizza(model) {
+    function autoFitPizza(model, label = "MAIN") {
       model.updateMatrixWorld(true);
 
       const box = new THREE.Box3().setFromObject(model);
@@ -1346,14 +1408,263 @@
       model.scale.setScalar(scale);
       model.updateMatrixWorld(true);
 
-      modelDebugInfo += "\nMODEL SIZE: " + JSON.stringify({
+      modelDebugInfo += "\n" + label + " MODEL SIZE: " + JSON.stringify({
         x: Number(size.x.toFixed(4)),
         y: Number(size.y.toFixed(4)),
         z: Number(size.z.toFixed(4))
       });
 
-      modelDebugInfo += "\nAUTO SCALE: " + Number(scale.toFixed(4));
-      modelDebugInfo += "\nRESULT: CARD MODE + TABLE MODE READY";
+      modelDebugInfo += "\n" + label + " AUTO SCALE: " + Number(scale.toFixed(4));
+      modelDebugInfo += "\n" + label + " RESULT: MULTI SIZE MODE";
+    }
+
+    function removeIdsFromClone(root) {
+      root.removeAttribute("id");
+
+      const nodes = root.querySelectorAll("[id]");
+      nodes.forEach((node) => {
+        node.removeAttribute("id");
+      });
+    }
+
+    function ensureFrozenWorld() {
+      if (frozenWorld) return frozenWorld;
+
+      frozenWorld = stableWorld.cloneNode(true);
+      removeIdsFromClone(frozenWorld);
+
+      frozenWorld.setAttribute("id", "frozenWorld");
+      frozenWorld.setAttribute("visible", "false");
+
+      scene.appendChild(frozenWorld);
+
+      const clonedModels = frozenWorld.querySelectorAll('[data-role="pizza-model"], [gltf-model]');
+      clonedModels.forEach((modelEl) => {
+        modelEl.addEventListener("model-loaded", () => {
+          handlePizzaModelLoaded(modelEl, "FROZEN");
+        }, { once: true });
+      });
+
+      applyPizzaSize();
+      setPizzaRotation();
+      setAllPizzaRigVisible(pizzaVisible);
+
+      return frozenWorld;
+    }
+
+    function copyWorldTransform(sourceEl, targetEl) {
+      if (!sourceEl || !targetEl || !sourceEl.object3D || !targetEl.object3D || !window.THREE) {
+        return false;
+      }
+
+      sourceEl.object3D.updateMatrixWorld(true);
+
+      const worldPosition = new THREE.Vector3();
+      const worldQuaternion = new THREE.Quaternion();
+      const worldScale = new THREE.Vector3();
+
+      sourceEl.object3D.getWorldPosition(worldPosition);
+      sourceEl.object3D.getWorldQuaternion(worldQuaternion);
+      sourceEl.object3D.getWorldScale(worldScale);
+
+      targetEl.object3D.position.copy(worldPosition);
+      targetEl.object3D.quaternion.copy(worldQuaternion);
+      targetEl.object3D.scale.copy(worldScale);
+      targetEl.object3D.updateMatrixWorld(true);
+
+      return true;
+    }
+
+    function startLockPoseLoop() {
+      stopLockPoseLoop();
+
+      const clone = ensureFrozenWorld();
+
+      const tick = () => {
+        if (!visible) return;
+
+        const copied = copyWorldTransform(stableWorld, clone);
+
+        if (copied) {
+          lastPoseReady = true;
+        }
+
+        lockPoseRAF = requestAnimationFrame(tick);
+      };
+
+      tick();
+    }
+
+    function stopLockPoseLoop() {
+      if (lockPoseRAF) {
+        cancelAnimationFrame(lockPoseRAF);
+        lockPoseRAF = null;
+      }
+    }
+
+    function showFrozenWorld() {
+      const clone = ensureFrozenWorld();
+
+      if (!lastPoseReady) {
+        copyWorldTransform(stableWorld, clone);
+        lastPoseReady = true;
+      }
+
+      clone.setAttribute("visible", "true");
+      setAllPizzaRigVisible(pizzaVisible);
+
+      setStatus("PIZZA WORLD LOCKED", "CARD NOT NEEDED");
+    }
+
+    function hideFrozenWorld() {
+      if (frozenWorld) {
+        frozenWorld.setAttribute("visible", "false");
+      }
+    }
+
+    function resetFrozenLock() {
+      stopLockPoseLoop();
+
+      if (frozenWorld) {
+        frozenWorld.parentNode.removeChild(frozenWorld);
+        frozenWorld = null;
+      }
+
+      lockedOnce = false;
+      lastPoseReady = false;
+
+      if (!visible) {
+        actionDock.classList.remove("active");
+        menuSheet.classList.remove("active");
+        scanFrame.classList.remove("locked");
+        setStatus("LOCK RESET", "SCAN CARD AGAIN");
+      } else {
+        startLockPoseLoop();
+        setStatus("LOCK RESET", "CARD ACTIVE");
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function getCameraTrackFromMindAR() {
+      const maxTries = 20;
+
+      for (let i = 0; i < maxTries; i++) {
+        const videos = Array.from(document.querySelectorAll("video"));
+
+        for (const video of videos) {
+          const stream = video.srcObject;
+
+          if (stream && typeof stream.getVideoTracks === "function") {
+            const track = stream.getVideoTracks()[0];
+
+            if (track && track.readyState === "live") {
+              cameraTrack = track;
+              return track;
+            }
+          }
+        }
+
+        await sleep(150);
+      }
+
+      return null;
+    }
+
+    async function enableCameraAutoFocus(reason = "manual") {
+      try {
+        const track = cameraTrack || await getCameraTrackFromMindAR();
+
+        if (!track) {
+          autoFocusMode = "no-video-track";
+          modelDebugInfo += "\nAUTOFOCUS: No live camera track found.";
+          return false;
+        }
+
+        if (!track.getCapabilities || !track.applyConstraints) {
+          autoFocusMode = "not-supported-api";
+          modelDebugInfo += "\nAUTOFOCUS: Browser does not expose camera capabilities.";
+          return false;
+        }
+
+        const capabilities = track.getCapabilities();
+        const settingsBefore = track.getSettings ? track.getSettings() : {};
+        const advanced = [];
+
+        if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
+          advanced.push({ focusMode: "continuous" });
+          autoFocusMode = "continuous";
+        } else if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
+          advanced.push({ focusMode: "single-shot" });
+          autoFocusMode = "single-shot";
+        } else {
+          autoFocusMode = "focus-mode-not-exposed";
+          modelDebugInfo += "\nAUTOFOCUS: focusMode not exposed by this device/browser.";
+          return false;
+        }
+
+        await track.applyConstraints({ advanced });
+
+        const settingsAfter = track.getSettings ? track.getSettings() : {};
+
+        autoFocusReady = true;
+
+        modelDebugInfo +=
+          "\nAUTOFOCUS REASON: " + reason +
+          "\nAUTOFOCUS REQUEST: " + JSON.stringify(advanced) +
+          "\nFOCUS BEFORE: " + (settingsBefore.focusMode || "unknown") +
+          "\nFOCUS AFTER: " + (settingsAfter.focusMode || "unknown");
+
+        if (!visible) {
+          setStatus("AUTOFOCUS ON", "SCAN CARD SLOWLY");
+        }
+
+        return true;
+
+      } catch (error) {
+        autoFocusReady = false;
+        autoFocusMode = "error";
+        modelDebugInfo += "\nAUTOFOCUS ERROR: " + (error.message || error);
+        console.warn("AUTOFOCUS ERROR:", error);
+        return false;
+      }
+    }
+
+    async function pulseSingleShotFocus() {
+      try {
+        const track = cameraTrack || await getCameraTrackFromMindAR();
+
+        if (!track || !track.getCapabilities || !track.applyConstraints) return false;
+
+        const capabilities = track.getCapabilities();
+
+        if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
+          await track.applyConstraints({
+            advanced: [{ focusMode: "single-shot" }]
+          });
+
+          autoFocusMode = "single-shot-pulse";
+          modelDebugInfo += "\nAUTOFOCUS: single-shot pulse triggered.";
+          return true;
+        }
+
+        if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
+          await track.applyConstraints({
+            advanced: [{ focusMode: "continuous" }]
+          });
+
+          autoFocusMode = "continuous-refresh";
+          modelDebugInfo += "\nAUTOFOCUS: continuous focus refreshed.";
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        modelDebugInfo += "\nFOCUS PULSE ERROR: " + (error.message || error);
+        return false;
+      }
     }
 
     function openDigitalCard() {
@@ -1390,7 +1701,7 @@
       }
 
       applyPizzaSize();
-      setStatus("AR SYSTEM READY", "CARD + TABLE");
+      setStatus("AR SYSTEM READY", "READY");
     });
 
     startBtn.addEventListener("click", async () => {
@@ -1417,33 +1728,62 @@
 
         await arSystem.start();
 
+        await sleep(CONFIG.autoFocusDelayMs);
+        await enableCameraAutoFocus("after-ar-start");
+
+        setTimeout(() => {
+          enableCameraAutoFocus("retry-after-start");
+        }, CONFIG.autoFocusRetryMs);
+
         startScreen.classList.add("hidden");
         scanFrame.classList.remove("locked");
-        setStatus("SCAN SOULFLAME CARD", "SCANNING");
+        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "SCAN SOULFLAME CARD", "SCANNING");
 
         clearTimeout(scanTimer);
         scanTimer = setTimeout(() => {
-          if (started && !visible) {
+          if (started && !visible && !lockedOnce) {
             setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
-            showDebug("Не намира визитката. Провери дали ./targets/soulflame-black.mind съществува и дали сканираш същата визитка, от която е направен target-ът.");
+            showDebug(
+              "Не намира визитката.\n" +
+              "1. Провери дали ./targets/soulflame-black.mind съществува.\n" +
+              "2. Сканирай същата визитка, от която е направен target-ът.\n" +
+              "3. Дръж телефона по-далече и приближавай бавно.\n" +
+              "4. AUTOFOCUS MODE: " + autoFocusMode
+            );
           }
         }, CONFIG.scanTimeoutMs);
 
       } catch (error) {
         started = false;
-        startBtn.textContent = "START AR";
+        startBtn.textContent = "START CARD AR";
         setStatus("CAMERA / MINDAR ERROR", "CHECK CONSOLE");
         showDebug(error.message || String(error));
         openDigitalCard();
       }
     });
 
-    target.addEventListener("targetFound", () => {
+    target.addEventListener("targetFound", async () => {
       visible = true;
+      lockedOnce = true;
+
       clearTimeout(scanTimer);
       hideDebug();
+      hideFrozenWorld();
 
-      setStatus("SOULFLAME LOCKED", "MENU / TABLE / PIZZA");
+      await pulseSingleShotFocus();
+
+      if (CONFIG.autoShowPizzaOnFirstScan) {
+        pizzaVisible = true;
+        setAllPizzaRigVisible(true);
+        applyPizzaSize();
+        setPizzaRotation();
+      }
+
+      if (CONFIG.lockAfterFirstScan) {
+        startLockPoseLoop();
+      }
+
+      setStatus("SOULFLAME LOCKED", "PIZZA POSITION SAVED");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
@@ -1452,11 +1792,33 @@
 
     target.addEventListener("targetLost", () => {
       visible = false;
+      stopLockPoseLoop();
+
+      if (CONFIG.lockAfterFirstScan && lockedOnce) {
+        showFrozenWorld();
+
+        actionDock.classList.add("active");
+        menuSheet.classList.remove("active");
+        scanFrame.classList.add("locked");
+
+        haptic(25);
+        return;
+      }
 
       setStatus("TARGET LOST", "SHOW CARD TO CAMERA");
       actionDock.classList.remove("active");
       menuSheet.classList.remove("active");
       scanFrame.classList.remove("locked");
+    });
+
+    document.addEventListener("click", async (event) => {
+      const clickable = event.target.closest("button, a");
+      if (clickable) return;
+
+      if (started) {
+        const ok = await pulseSingleShotFocus();
+        if (ok && !visible && !lockedOnce) setStatus("FOCUS PULSE", "SCAN CARD");
+      }
     });
 
     document.addEventListener("visibilitychange", async () => {
@@ -1466,13 +1828,18 @@
 
           started = false;
           visible = false;
+          cameraTrack = null;
+          autoFocusReady = false;
+          autoFocusMode = "paused";
 
+          stopLockPoseLoop();
           clearTimeout(scanTimer);
+
           actionDock.classList.remove("active");
           menuSheet.classList.remove("active");
           scanFrame.classList.remove("locked");
           startScreen.classList.remove("hidden");
-          startBtn.textContent = "START AR";
+          startBtn.textContent = "START CARD AR";
           setStatus("AR PAUSED", "PAUSED");
         } catch (error) {
           console.warn(error);
