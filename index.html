@@ -623,7 +623,6 @@
       border: 0;
     }
 
-    #digitalCard,
     #mini3DPanel {
       position: fixed;
       inset: 0;
@@ -637,9 +636,9 @@
       overflow: hidden;
     }
 
-    .digital-inner,
     .mini-inner {
-      width: min(460px, 94vw);
+      width: min(720px, 96vw);
+      height: min(820px, 94vh);
       border: 1px solid rgba(255,255,255,.20);
       border-radius: 34px;
       background:
@@ -652,24 +651,17 @@
       box-shadow: 0 0 85px rgba(255,255,255,.13);
       position: relative;
       overflow: hidden;
-    }
-
-    .mini-inner {
-      width: min(720px, 96vw);
-      height: min(820px, 94vh);
       display: grid;
       grid-template-rows: auto 1fr auto;
       gap: 14px;
     }
 
-    .digital-inner h2,
     .mini-inner h2 {
       margin: 16px 0 8px;
       letter-spacing: .22em;
       font-size: 25px;
     }
 
-    .digital-inner p,
     .mini-inner p {
       color: rgba(255,255,255,.74);
       line-height: 1.52;
@@ -687,15 +679,12 @@
       overflow: hidden;
     }
 
-    .digital-actions,
     .mini-actions {
       display: grid;
       gap: 10px;
       margin-top: 18px;
     }
 
-    .digital-actions button,
-    .digital-actions a,
     .mini-actions button,
     .mini-actions a {
       text-decoration: none;
@@ -711,13 +700,6 @@
       display: block;
     }
 
-    .digital-actions .dark,
-    .mini-actions .dark {
-      background: rgba(0,0,0,.74);
-      color: #fff;
-    }
-
-    .digital-actions .ghost,
     .mini-actions .ghost {
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
@@ -804,8 +786,9 @@
       </div>
 
       <span class="hint">
+        DIGITAL CARD: ./digital_card.html<br>
         ARmini: ./targets/soulflame-black.mind + ./uploads_files_6479452_187.glb<br>
-        AR: table-ar.html + GLB/USDZ
+        AR: ./table-ar.html + GLB/USDZ
       </span>
 
       <div class="mini-grid">
@@ -854,26 +837,6 @@
       <button id="debugBtn" class="light">DEBUG</button>
     </div>
   </div>
-
-  <section id="digitalCard" class="hidden">
-    <div class="digital-inner">
-      <div class="logo-mark"></div>
-      <h2>PIZZA HIT</h2>
-      <p>
-        Pizza Hit Sliven · дигитална визитка, ARmini пица върху картата
-        и реален AR режим за показване на продуктите върху маса.
-      </p>
-
-      <div class="digital-actions">
-        <a id="digitalWebsite" href="#" target="_blank">SOULFLAME SAIT</a>
-        <a id="digitalCall" href="#" class="dark">CALL NOW</a>
-        <a id="digitalEmail" href="#" class="dark">EMAIL</a>
-        <button id="digitalStartMini" class="dark">START ARmini</button>
-        <button id="digitalOpenAR" class="dark">OPEN AR</button>
-        <button id="closeDigital" class="ghost">BACK</button>
-      </div>
-    </div>
-  </section>
 
   <section id="mini3DPanel" class="hidden">
     <div class="mini-inner">
@@ -997,6 +960,7 @@
   <script>
     const CONFIG = {
       menuTextureUrl: "./menu_za_vizitka/sf-menu.html",
+      digitalCardUrl: "./digital_card.html",
       siteUrl: "https://soulflame-ar-card.vercel.app",
       tableARUrl: "./table-ar.html",
       email: "soulflame.mitko@gmail.com",
@@ -1051,14 +1015,6 @@
     const stableWorld = document.getElementById("stableWorld");
     const scanFrame = document.getElementById("scanFrame");
     const miniFallbackBtn = document.getElementById("miniFallbackBtn");
-
-    const digitalCard = document.getElementById("digitalCard");
-    const closeDigital = document.getElementById("closeDigital");
-    const digitalWebsite = document.getElementById("digitalWebsite");
-    const digitalCall = document.getElementById("digitalCall");
-    const digitalEmail = document.getElementById("digitalEmail");
-    const digitalStartMini = document.getElementById("digitalStartMini");
-    const digitalOpenAR = document.getElementById("digitalOpenAR");
 
     const mini3DPanel = document.getElementById("mini3DPanel");
     const miniModelViewer = document.getElementById("miniModelViewer");
@@ -1120,9 +1076,6 @@
       "MAX"
     ];
 
-    digitalWebsite.href = CONFIG.siteUrl;
-    digitalCall.href = `tel:${CONFIG.phone}`;
-    digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
     openTableFromMini.href = CONFIG.tableARUrl;
     miniModelViewer.src = CONFIG.glbFile;
     miniModelViewer.setAttribute("ios-src", CONFIG.usdzFile);
@@ -1153,6 +1106,26 @@
 
         iframe.addEventListener("load", () => resolve(), { once: true });
       });
+    }
+
+    function openDigitalCardPage() {
+      haptic(25);
+      window.location.href = CONFIG.digitalCardUrl;
+    }
+
+    function openTableARPage() {
+      haptic(35);
+      window.location.href = CONFIG.tableARUrl;
+    }
+
+    function openMini3DPanel() {
+      mini3DPanel.classList.remove("hidden");
+      haptic(25);
+    }
+
+    function openSoulFlameSite() {
+      haptic(25);
+      window.open(CONFIG.siteUrl, "_blank");
     }
 
     function roundRect(ctx, x, y, w, h, r) {
@@ -1328,29 +1301,11 @@
       }
     }
 
-    function openTableARPage() {
-      haptic(35);
-      window.location.href = CONFIG.tableARUrl;
-    }
-
-    function openMini3DPanel() {
-      mini3DPanel.classList.remove("hidden");
-      haptic(25);
-    }
-
-    function openDigitalCard() {
-      digitalCard.classList.remove("hidden");
-      haptic(25);
-    }
-
-    function openSoulFlameSite() {
-      haptic(25);
-      window.open(CONFIG.siteUrl, "_blank");
-    }
+    openDigitalFromStart.addEventListener("click", openDigitalCardPage);
+    openDigitalBtn.addEventListener("click", openDigitalCardPage);
 
     openTableFromStart.addEventListener("click", openTableARPage);
     openTableAR.addEventListener("click", openTableARPage);
-    digitalOpenAR.addEventListener("click", openTableARPage);
 
     openMini3D.addEventListener("click", openMini3DPanel);
     miniFallbackBtn.addEventListener("click", openMini3DPanel);
@@ -1366,19 +1321,6 @@
     contactMail.addEventListener("click", () => {
       window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
       haptic(25);
-    });
-
-    openDigitalFromStart.addEventListener("click", openDigitalCard);
-    openDigitalBtn.addEventListener("click", openDigitalCard);
-
-    closeDigital.addEventListener("click", () => {
-      digitalCard.classList.add("hidden");
-      haptic(20);
-    });
-
-    digitalStartMini.addEventListener("click", () => {
-      digitalCard.classList.add("hidden");
-      startMiniAR();
     });
 
     menuBtn.addEventListener("click", () => {
@@ -1408,7 +1350,7 @@
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       setAllPizzaRigVisible(pizzaVisible);
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ARmini" : "ARmini");
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", "ARmini");
       haptic(25);
     });
 
@@ -1472,7 +1414,8 @@
     debugBtn.addEventListener("click", () => {
       showDebug(
         modelDebugInfo +
-        "\n\nMENU TEXTURE URL: " + CONFIG.menuTextureUrl +
+        "\n\nDIGITAL CARD URL: " + CONFIG.digitalCardUrl +
+        "\nMENU TEXTURE URL: " + CONFIG.menuTextureUrl +
         "\nMENU TEXTURE READY: " + menuTextureReady +
         "\nLOCKED ONCE: " + lockedOnce +
         "\nLAST POSE READY: " + lastPoseReady +
