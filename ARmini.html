@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>Pizza Hit ARmini · Card Pizza</title>
+  <title>Pizza Hit ARmini · HIT Pizza</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -17,11 +17,12 @@
       --gold: #ffb347;
       --gold2: #ffd37a;
       --green: #48ff9b;
-      --red: #ff3d3d;
+      --red: #c8152a;
+      --red2: #ef233c;
       --blue: #1d7cff;
       --purple: #8b35ff;
-      --line: rgba(255,255,255,.18);
-      --glass: rgba(0,0,0,.68);
+      --line: rgba(255,255,255,.22);
+      --glass: rgba(0,0,0,.56);
       --pill: 999px;
       --radius: 34px;
     }
@@ -99,7 +100,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .34;
+      opacity: .30;
       mix-blend-mode: screen;
     }
 
@@ -395,68 +396,237 @@
       to { transform: translateY(342px); opacity: .9; }
     }
 
-    #actionDock {
+    #arDecorFrame {
       position: fixed;
-      left: 50%;
-      bottom: max(24px, calc(env(safe-area-inset-bottom) + 18px));
-      transform: translateX(-50%) translateY(18px) scale(.96);
-      z-index: 9999;
-      display: flex;
-      gap: 7px;
-      padding: 8px;
-      border-radius: 28px;
-      background: rgba(0,0,0,.58);
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(17px) saturate(155%);
-      -webkit-backdrop-filter: blur(17px) saturate(155%);
-      opacity: 0;
+      inset: max(74px, env(safe-area-inset-top)) 18px max(106px, env(safe-area-inset-bottom)) 18px;
+      z-index: 9995;
       pointer-events: none;
-      transition: opacity .24s ease, transform .24s ease;
-      box-shadow: 0 0 44px rgba(255,255,255,.13);
-      max-width: calc(100vw - 16px);
-      overflow-x: auto;
+      opacity: 0;
+      border: 1.5px solid rgba(255,255,255,.55);
+      border-radius: 20px;
+      transition: opacity .25s ease;
+      box-shadow:
+        inset 0 0 24px rgba(255,255,255,.04),
+        0 0 26px rgba(255,255,255,.08);
     }
 
-    #actionDock.active {
+    #arDecorFrame.active {
+      opacity: 1;
+    }
+
+    .star {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,.42));
+    }
+
+    .star::before,
+    .star::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: white;
+      clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+    }
+
+    .star::after {
+      inset: 6px;
+      background: rgba(29,124,255,.68);
+      opacity: .8;
+    }
+
+    .s1 { left: -18px; top: -18px; }
+    .s2 { right: -18px; top: -18px; }
+    .s3 { left: -18px; bottom: -18px; }
+    .s4 { right: -18px; bottom: -18px; }
+
+    .sideArrow {
+      position: fixed;
+      top: 54%;
+      z-index: 9998;
+      width: 86px;
+      height: 90px;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 82px;
+      line-height: 1;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      text-shadow: 0 4px 18px rgba(0,0,0,.42);
+      transition: opacity .25s ease, transform .18s ease;
+    }
+
+    .sideArrow.active {
+      opacity: .94;
+      pointer-events: auto;
+    }
+
+    #prevPizza {
+      left: 24px;
+      transform: translateY(-50%);
+    }
+
+    #nextPizza {
+      right: 24px;
+      transform: translateY(-50%);
+    }
+
+    .sideArrow:active {
+      transform: translateY(-50%) scale(.90);
+    }
+
+    #orderDock {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, calc(env(safe-area-inset-bottom) + 14px));
+      transform: translateX(-50%) translateY(22px) scale(.96);
+      z-index: 9999;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.08fr;
+      gap: 10px;
+      width: min(830px, calc(100vw - 28px));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    #orderDock.active {
       opacity: 1;
       pointer-events: auto;
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    #actionDock button {
+    .order-btn {
+      min-height: 80px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(255,255,255,.58);
+      background: rgba(255,255,255,.16);
+      color: #fff;
+      backdrop-filter: blur(12px) saturate(130%);
+      -webkit-backdrop-filter: blur(12px) saturate(130%);
+      box-shadow:
+        0 12px 28px rgba(0,0,0,.24),
+        inset 0 0 20px rgba(255,255,255,.08);
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      padding: 10px 8px;
+      letter-spacing: .08em;
+      font-size: 15px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .order-btn .ico {
+      font-size: 26px;
+      line-height: 1;
+      opacity: .94;
+    }
+
+    .cart-btn {
+      border: 0;
+      background: linear-gradient(135deg, var(--red), var(--red2));
+      box-shadow:
+        0 14px 30px rgba(200,21,42,.32),
+        inset 0 0 24px rgba(255,255,255,.10);
+    }
+
+    #miniDock {
+      position: fixed;
+      left: 50%;
+      bottom: max(114px, calc(env(safe-area-inset-bottom) + 108px));
+      transform: translateX(-50%) translateY(18px) scale(.96);
+      z-index: 9999;
+      display: flex;
+      gap: 7px;
+      padding: 7px;
+      border-radius: 24px;
+      background: rgba(0,0,0,.46);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(15px) saturate(155%);
+      -webkit-backdrop-filter: blur(15px) saturate(155%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .24s ease, transform .24s ease;
+      box-shadow: 0 0 34px rgba(255,255,255,.10);
+      max-width: calc(100vw - 16px);
+      overflow-x: auto;
+    }
+
+    #miniDock.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    #miniDock button {
       border: 0;
       border-radius: var(--pill);
-      padding: 12px 11px;
-      font-size: 8.5px;
-      background: rgba(255,255,255,.96);
+      padding: 10px 11px;
+      font-size: 8px;
+      background: rgba(255,255,255,.94);
       color: #000;
-      box-shadow: 0 0 18px rgba(255,255,255,.20);
+      box-shadow: 0 0 18px rgba(255,255,255,.18);
       white-space: nowrap;
       flex: 0 0 auto;
     }
 
-    #actionDock button.gold {
+    #miniDock button.gold {
       background: var(--gold);
       color: #000;
-      box-shadow: 0 0 30px rgba(255,179,71,.58);
+      box-shadow: 0 0 25px rgba(255,179,71,.48);
     }
 
-    #actionDock button.green {
+    #miniDock button.green {
       background: linear-gradient(135deg, var(--green), var(--gold));
       color: #000;
     }
 
-    #actionDock button.dark {
+    #miniDock button.dark {
       background: rgba(0,0,0,.82);
       color: #fff;
       border: 1px solid rgba(255,255,255,.38);
+    }
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(208px, calc(env(safe-area-inset-bottom) + 198px));
+      transform: translateX(-50%) translateY(12px) scale(.96);
+      z-index: 10003;
+      width: min(430px, calc(100vw - 28px));
+      padding: 13px 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.74);
+      color: #fff;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 0 44px rgba(255,255,255,.12);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.35;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+    }
+
+    #toast.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     #debugBox {
       position: fixed;
       left: 12px;
       top: 56px;
-      z-index: 10002;
+      z-index: 10004;
       width: min(540px, calc(100vw - 24px));
       max-height: 64vh;
       overflow: auto;
@@ -543,15 +713,49 @@
         width: min(72vw, 315px);
       }
 
-      #actionDock {
+      #arDecorFrame {
+        inset: max(64px, env(safe-area-inset-top)) 13px max(98px, env(safe-area-inset-bottom)) 13px;
+      }
+
+      .sideArrow {
+        width: 58px;
+        height: 70px;
+        font-size: 56px;
+      }
+
+      #prevPizza {
+        left: 10px;
+      }
+
+      #nextPizza {
+        right: 10px;
+      }
+
+      #orderDock {
+        width: calc(100vw - 20px);
+        gap: 7px;
+      }
+
+      .order-btn {
+        min-height: 70px;
+        border-radius: 18px;
+        font-size: 11px;
+        padding: 8px 5px;
+      }
+
+      .order-btn .ico {
+        font-size: 22px;
+      }
+
+      #miniDock {
         width: calc(100vw - 18px);
         justify-content: flex-start;
-        border-radius: 26px;
+        border-radius: 24px;
         gap: 5px;
       }
 
-      #actionDock button {
-        padding: 13px 8px;
+      #miniDock button {
+        padding: 11px 8px;
         font-size: 7px;
       }
 
@@ -574,7 +778,7 @@
 
       <p>
         Камерата се стартира автоматично. Покажи визитката към телефона,
-        за да се появи пицата върху картата.
+        за да се появи HIT пицата върху картата.
       </p>
 
       <div class="start-actions">
@@ -597,14 +801,43 @@
 
   <div id="bottomStatus">SHOW CARD</div>
 
-  <div id="actionDock">
+  <div id="arDecorFrame">
+    <span class="star s1"></span>
+    <span class="star s2"></span>
+    <span class="star s3"></span>
+    <span class="star s4"></span>
+  </div>
+
+  <button id="prevPizza" class="sideArrow">‹‹</button>
+  <button id="nextPizza" class="sideArrow">››</button>
+
+  <div id="orderDock">
+    <button id="orderBtn" class="order-btn">
+      <span class="ico">🍽</span>
+      <span>ПОРЪЧАЙ</span>
+    </button>
+
+    <button id="ingredientsBtn" class="order-btn">
+      <span class="ico">ⓘ</span>
+      <span>СЪСТАВКИ</span>
+    </button>
+
+    <button id="cartBtn" class="order-btn cart-btn">
+      <span class="ico">🛒</span>
+      <span>ДОБАВИ<br>В КОЛИЧКА</span>
+    </button>
+  </div>
+
+  <div id="miniDock">
     <button id="resetScanBtn" class="gold">SCAN</button>
-    <button id="sizeBtn">MINI</button>
+    <button id="sizeBtn">1:1</button>
     <button id="rotateBtn" class="green">ROTATE</button>
     <button id="flipBtn">FLIP</button>
     <button id="fallbackBtn" class="dark">3D</button>
     <button id="debugBtn" class="dark">DEBUG</button>
   </div>
+
+  <div id="toast"></div>
 
   <section id="fallbackPanel" class="hidden">
     <div class="fallback-inner">
@@ -641,9 +874,9 @@
       uiScanning: no;
       uiLoading: no;
       warmupTolerance: 5;
-      missTolerance: 80;
+      missTolerance: 95;
       filterMinCF: 0.00004;
-      filterBeta: 0.0006;
+      filterBeta: 0.0004;
     "
     color-space="sRGB"
     renderer="
@@ -669,29 +902,83 @@
       camera="near: 0.001; far: 100000"
     ></a-camera>
 
-    <a-light type="ambient" intensity="0.75" color="#ffffff"></a-light>
-    <a-light type="directional" intensity="1.0" color="#ffffff" position="0 2 1"></a-light>
+    <a-light type="ambient" intensity="0.82" color="#ffffff"></a-light>
+    <a-light type="directional" intensity="1.05" color="#ffffff" position="0 2 1"></a-light>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <a-light type="ambient" intensity="1.15" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="1.55" color="#ffffff" position="0 1.3 1"></a-light>
-      <a-light type="point" intensity="0.55" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="ambient" intensity="1.18" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="1.65" color="#ffffff" position="0 1.3 1"></a-light>
+      <a-light type="point" intensity="0.58" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity
-        id="pizzaRig"
-        visible="true"
-        position="0 -0.10 0.20"
-        rotation="90 0 0"
-        scale="0.42 0.42 0.42"
-        animation__float="property: position; from: 0 -0.11 0.20; to: 0 -0.075 0.20; dur: 1800; dir: alternate; loop: true; easing: easeInOutSine"
+        id="productStage"
+        position="0 0 0"
+        rotation="0 0 0"
+        scale="1 1 1"
+        animation__softfloat="property: position; from: 0 -0.006 0; to: 0 0.006 0; dur: 2400; dir: alternate; loop: true; easing: easeInOutSine"
       >
-        <a-entity
-          id="pizzaModel"
-          gltf-model="#pizzaGLB"
-          position="0 0 0"
+        <a-plane
+          id="boardPlane"
+          position="0 -0.19 0.055"
           rotation="0 0 0"
+          width="1.52"
+          height="0.76"
+          material="
+            shader: flat;
+            color: #8a5a2b;
+            transparent: true;
+            opacity: 0.78;
+            side: double;
+            depthWrite: false;
+          "
+        ></a-plane>
+
+        <a-plane
+          id="shadowPlane"
+          position="0 -0.12 0.082"
+          rotation="0 0 0"
+          width="1.18"
+          height="0.40"
+          material="
+            shader: flat;
+            color: #000000;
+            transparent: true;
+            opacity: 0.22;
+            side: double;
+            depthWrite: false;
+          "
+        ></a-plane>
+
+        <a-entity
+          id="pizzaRig"
+          visible="true"
+          position="0 -0.10 0.20"
+          rotation="90 0 0"
           scale="1 1 1"
-        ></a-entity>
+          animation__pizzafloat="property: position; from: 0 -0.108 0.20; to: 0 -0.078 0.20; dur: 1900; dir: alternate; loop: true; easing: easeInOutSine"
+        >
+          <a-entity
+            id="pizzaModel"
+            gltf-model="#pizzaGLB"
+            position="0 0 0"
+            rotation="0 0 0"
+            scale="1 1 1"
+          ></a-entity>
+        </a-entity>
+
+        <a-plane
+          id="infoPlane"
+          position="0 0.50 0.24"
+          rotation="0 0 0"
+          width="1.58"
+          height="0.67"
+          material="
+            shader: flat;
+            transparent: true;
+            side: double;
+            depthWrite: false;
+          "
+        ></a-plane>
       </a-entity>
     </a-entity>
   </a-scene>
@@ -706,13 +993,24 @@
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200,
       autoStartDelayMs: 450,
-      basePizzaWidth: 0.52
+
+      pizzaName: "HIT",
+      price: "18 лв",
+      ingredients: "доматен сос, моцарела, италиански колбас, броколи, маслини, пармезан",
+
+      orderUrl: "",
+      phone: "+359xxxxxxxxx",
+
+      basePizzaWidth: 1.12
     };
 
     const scene = document.getElementById("scene");
     const target = document.getElementById("target");
     const pizzaRig = document.getElementById("pizzaRig");
     const pizzaModel = document.getElementById("pizzaModel");
+    const infoPlane = document.getElementById("infoPlane");
+    const boardPlane = document.getElementById("boardPlane");
+    const shadowPlane = document.getElementById("shadowPlane");
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
@@ -721,8 +1019,18 @@
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
     const scanFrame = document.getElementById("scanFrame");
-    const actionDock = document.getElementById("actionDock");
+    const arDecorFrame = document.getElementById("arDecorFrame");
+    const orderDock = document.getElementById("orderDock");
+    const miniDock = document.getElementById("miniDock");
     const debugBox = document.getElementById("debugBox");
+    const toast = document.getElementById("toast");
+
+    const prevPizza = document.getElementById("prevPizza");
+    const nextPizza = document.getElementById("nextPizza");
+
+    const orderBtn = document.getElementById("orderBtn");
+    const ingredientsBtn = document.getElementById("ingredientsBtn");
+    const cartBtn = document.getElementById("cartBtn");
 
     const resetScanBtn = document.getElementById("resetScanBtn");
     const sizeBtn = document.getElementById("sizeBtn");
@@ -759,18 +1067,20 @@
     let rotationRAF = null;
     let normalizedModelScale = 1;
 
+    let infoTexture = null;
+    let cartCount = 0;
+
     const pizzaScales = [
-      { label: "TINY", scale: "0.28 0.28 0.28" },
-      { label: "MINI", scale: "0.42 0.42 0.42" },
-      { label: "30 CM", scale: "0.58 0.58 0.58" },
-      { label: "BIG", scale: "0.78 0.78 0.78" },
-      { label: "MAX", scale: "1 1 1" }
+      { label: "70%", scale: "0.70 0.70 0.70", width: 0.98 },
+      { label: "1:1", scale: "1 1 1", width: 1.12 },
+      { label: "BIG", scale: "1.18 1.18 1.18", width: 1.28 },
+      { label: "MAX", scale: "1.36 1.36 1.36", width: 1.42 }
     ];
 
     let sizeIndex = 1;
 
     let debugInfo =
-      "ARmini DEBUG\n" +
+      "ARmini HIT DEBUG\n" +
       "URL: " + location.href + "\n" +
       "HTTPS: " + window.isSecureContext + "\n" +
       "TARGET: " + CONFIG.targetFile + "\n" +
@@ -801,6 +1111,16 @@
       debugBox.classList.remove("active");
     }
 
+    function showToast(message, ms = 2600) {
+      toast.textContent = message;
+      toast.classList.add("active");
+
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove("active");
+      }, ms);
+    }
+
     function waitForSceneLoaded() {
       return new Promise(resolve => {
         if (scene.hasLoaded) {
@@ -810,6 +1130,264 @@
 
         scene.addEventListener("loaded", () => resolve(), { once: true });
       });
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+      ctx.lineTo(x + w, y + h - radius);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function drawRibbon(ctx, x, y, w, h) {
+      ctx.save();
+
+      ctx.beginPath();
+      ctx.moveTo(x + 46, y);
+      ctx.lineTo(x + w - 46, y);
+      ctx.lineTo(x + w - 6, y + h / 2);
+      ctx.lineTo(x + w - 46, y + h);
+      ctx.lineTo(x + 46, y + h);
+      ctx.lineTo(x + 6, y + h / 2);
+      ctx.closePath();
+
+      const grad = ctx.createLinearGradient(x, y, x, y + h);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(1, "#e8e8e8");
+
+      ctx.fillStyle = grad;
+      ctx.shadowColor = "rgba(0,0,0,.22)";
+      ctx.shadowBlur = 22;
+      ctx.shadowOffsetY = 10;
+      ctx.fill();
+
+      ctx.shadowColor = "transparent";
+      ctx.strokeStyle = "rgba(0,0,0,.08)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(0,0,0,.045)";
+      for (let i = 0; i < 110; i++) {
+        const px = x + Math.random() * w;
+        const py = y + Math.random() * h;
+        ctx.fillRect(px, py, Math.random() * 3 + 1, 1);
+      }
+
+      ctx.fillStyle = "#be1e33";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "italic 900 92px Arial";
+      ctx.fillText("-  " + CONFIG.pizzaName + "  -", x + w / 2, y + h / 2 + 5);
+
+      ctx.restore();
+    }
+
+    function drawPriceBadge(ctx, cx, cy, r) {
+      ctx.save();
+
+      ctx.beginPath();
+
+      const spikes = 18;
+
+      for (let i = 0; i < spikes * 2; i++) {
+        const angle = (Math.PI * 2 * i) / (spikes * 2);
+        const rr = i % 2 === 0 ? r : r * 0.91;
+        const x = cx + Math.cos(angle) * rr;
+        const y = cy + Math.sin(angle) * rr;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      ctx.closePath();
+
+      const grad = ctx.createRadialGradient(cx - 16, cy - 18, 8, cx, cy, r);
+      grad.addColorStop(0, "#ff3d52");
+      grad.addColorStop(1, "#c8152a");
+
+      ctx.fillStyle = grad;
+      ctx.shadowColor = "rgba(0,0,0,.30)";
+      ctx.shadowBlur = 18;
+      ctx.shadowOffsetY = 8;
+      ctx.fill();
+
+      ctx.shadowColor = "transparent";
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "900 62px Arial";
+      ctx.fillText("18", cx - 10, cy + 2);
+
+      ctx.font = "900 28px Arial";
+      ctx.fillText("лв", cx + 48, cy + 7);
+
+      ctx.restore();
+    }
+
+    function createInfoTexture() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1600;
+      canvas.height = 680;
+
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawRibbon(ctx, 340, 22, 850, 130);
+
+      ctx.save();
+
+      ctx.fillStyle = "rgba(0,0,0,.42)";
+      ctx.shadowColor = "rgba(0,0,0,.22)";
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+      roundRect(ctx, 210, 120, 1120, 270, 36);
+      ctx.fill();
+
+      ctx.shadowColor = "transparent";
+
+      ctx.fillStyle = "rgba(0,0,0,.62)";
+      roundRect(ctx, 560, 158, 340, 52, 26);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "900 30px Arial";
+      ctx.fillText("СЪСТАВКИ", 730, 185);
+
+      ctx.fillStyle = "rgba(255,255,255,.94)";
+      ctx.font = "700 42px Arial";
+      ctx.fillText("доматен сос, моцарела, италиански", 770, 260);
+      ctx.fillText("колбас, броколи, маслини, пармезан", 770, 315);
+
+      drawPriceBadge(ctx, 1310, 322, 76);
+
+      ctx.restore();
+
+      const texture = new THREE.CanvasTexture(canvas);
+
+      if (THREE.SRGBColorSpace) {
+        texture.colorSpace = THREE.SRGBColorSpace;
+      }
+
+      texture.anisotropy = 8;
+      texture.needsUpdate = true;
+
+      return texture;
+    }
+
+    function applyInfoTexture() {
+      if (!window.THREE) return;
+
+      const mesh = infoPlane.getObject3D("mesh");
+
+      if (!mesh) {
+        infoPlane.addEventListener("object3dset", applyInfoTexture, { once: true });
+        return;
+      }
+
+      if (infoTexture) {
+        infoTexture.dispose();
+        infoTexture = null;
+      }
+
+      infoTexture = createInfoTexture();
+
+      mesh.material = new THREE.MeshBasicMaterial({
+        map: infoTexture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+      mesh.material.needsUpdate = true;
+    }
+
+    function applyBoardTexture() {
+      if (!window.THREE) return;
+
+      const mesh = boardPlane.getObject3D("mesh");
+      const shadowMesh = shadowPlane.getObject3D("mesh");
+
+      if (mesh) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 900;
+        canvas.height = 440;
+
+        const ctx = canvas.getContext("2d");
+
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, "#a36a32");
+        grad.addColorStop(.45, "#6f451f");
+        grad.addColorStop(1, "#3f2716");
+
+        ctx.fillStyle = grad;
+        roundRect(ctx, 20, 20, 860, 400, 38);
+        ctx.fill();
+
+        for (let i = 0; i < 190; i++) {
+          ctx.strokeStyle = `rgba(0,0,0,${Math.random() * .16 + .05})`;
+          ctx.lineWidth = Math.random() * 2 + .4;
+          ctx.beginPath();
+
+          const y = Math.random() * canvas.height;
+          ctx.moveTo(20, y);
+          ctx.bezierCurveTo(
+            220 + Math.random() * 120,
+            y + Math.random() * 50 - 25,
+            520 + Math.random() * 100,
+            y + Math.random() * 50 - 25,
+            880,
+            y + Math.random() * 30 - 15
+          );
+
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = "rgba(255,255,255,.10)";
+        ctx.lineWidth = 4;
+        roundRect(ctx, 23, 23, 854, 394, 36);
+        ctx.stroke();
+
+        const texture = new THREE.CanvasTexture(canvas);
+
+        if (THREE.SRGBColorSpace) {
+          texture.colorSpace = THREE.SRGBColorSpace;
+        }
+
+        texture.anisotropy = 8;
+        texture.needsUpdate = true;
+
+        mesh.material = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+
+        mesh.material.needsUpdate = true;
+      }
+
+      if (shadowMesh) {
+        shadowMesh.material = new THREE.MeshBasicMaterial({
+          color: 0x000000,
+          transparent: true,
+          opacity: 0.26,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+
+        shadowMesh.material.needsUpdate = true;
+      }
     }
 
     async function getCameraTrackFromMindAR() {
@@ -948,8 +1526,8 @@
         startScreen.classList.add("hidden");
         scanFrame.classList.add("active");
         scanFrame.classList.remove("locked");
-        actionDock.classList.remove("active");
 
+        setOverlayActive(false);
         setStatus(autoFocusReady ? "AUTOFOCUS ON" : "ПОКАЖЕТЕ ВИЗИТКАТА", "SCANNING CARD");
 
         clearTimeout(scanTimer);
@@ -978,10 +1556,23 @@
       }
     }
 
+    function setOverlayActive(isActive) {
+      arDecorFrame.classList.toggle("active", isActive);
+      orderDock.classList.toggle("active", isActive);
+      miniDock.classList.toggle("active", isActive);
+      prevPizza.classList.toggle("active", isActive);
+      nextPizza.classList.toggle("active", isActive);
+    }
+
     function applyPizzaSize() {
       const selected = pizzaScales[sizeIndex] || pizzaScales[1];
+
+      CONFIG.basePizzaWidth = selected.width;
       pizzaRig.setAttribute("scale", selected.scale);
       sizeBtn.textContent = selected.label;
+
+      const shadowScale = selected.label === "MAX" ? "1.25 1.25 1" : selected.label === "BIG" ? "1.1 1.1 1" : "1 1 1";
+      shadowPlane.setAttribute("scale", shadowScale);
     }
 
     function setPizzaRotation() {
@@ -995,7 +1586,7 @@
       const tick = () => {
         if (!rotateOn) return;
 
-        currentPizzaY = (currentPizzaY + 0.35) % 360;
+        currentPizzaY = (currentPizzaY + 0.22) % 360;
         setPizzaRotation();
         rotationRAF = requestAnimationFrame(tick);
       };
@@ -1135,7 +1726,10 @@
         scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
 
+      applyInfoTexture();
+      applyBoardTexture();
       applyPizzaSize();
+
       setStatus("ARmini READY", "AUTO STARTING");
     });
 
@@ -1151,9 +1745,10 @@
       setPizzaRotation();
       applyPizzaSize();
 
-      setStatus(modelReady ? "PIZZA LOCKED" : "TARGET FOUND", modelReady ? "ON CARD" : "MODEL LOADING");
-      actionDock.classList.add("active");
+      setStatus(modelReady ? "HIT LOCKED" : "TARGET FOUND", modelReady ? "PIZZA ON CARD" : "MODEL LOADING");
+
       scanFrame.classList.add("locked");
+      setOverlayActive(true);
 
       haptic(60);
     });
@@ -1162,9 +1757,10 @@
       visible = false;
 
       setStatus("TARGET LOST", "SHOW CARD AGAIN");
-      actionDock.classList.remove("active");
+
       scanFrame.classList.remove("locked");
       scanFrame.classList.add("active");
+      setOverlayActive(false);
     });
 
     startBtn.addEventListener("click", startARmini);
@@ -1177,7 +1773,7 @@
     resetScanBtn.addEventListener("click", () => {
       scanFrame.classList.add("active");
       scanFrame.classList.remove("locked");
-      actionDock.classList.remove("active");
+      setOverlayActive(false);
       setStatus("SCAN RESET", "SHOW CARD AGAIN");
       haptic(25);
     });
@@ -1197,10 +1793,10 @@
 
       if (rotateOn) {
         startPizzaRotation();
-        setStatus("ROTATION ON", "PIZZA");
+        setStatus("ROTATION ON", "HIT");
       } else {
         stopPizzaRotation();
-        setStatus("ROTATION OFF", "PIZZA");
+        setStatus("ROTATION OFF", "HIT");
       }
 
       haptic(25);
@@ -1223,9 +1819,43 @@
       haptic(20);
     });
 
+    prevPizza.addEventListener("click", () => {
+      showToast("Предишна пица — тук можеш да вържеш следващ GLB/продукт.");
+      haptic(25);
+    });
+
+    nextPizza.addEventListener("click", () => {
+      showToast("Следваща пица — тук можеш да вържеш следващ GLB/продукт.");
+      haptic(25);
+    });
+
+    orderBtn.addEventListener("click", () => {
+      haptic(35);
+
+      if (CONFIG.orderUrl) {
+        window.location.href = CONFIG.orderUrl;
+        return;
+      }
+
+      showToast("Поръчка: HIT пица · 18 лв. Настрой CONFIG.orderUrl или телефон за реална поръчка.");
+    });
+
+    ingredientsBtn.addEventListener("click", () => {
+      haptic(25);
+      showToast("Съставки: " + CONFIG.ingredients, 4200);
+    });
+
+    cartBtn.addEventListener("click", () => {
+      cartCount += 1;
+      cartBtn.innerHTML = `<span class="ico">🛒</span><span>ДОБАВЕНО<br>${cartCount} БР.</span>`;
+      setStatus("ADDED TO CART", "HIT · 18 ЛВ");
+      showToast("HIT пица е добавена в количката.");
+      haptic(45);
+    });
+
     debugBtn.addEventListener("click", () => {
       showDebug(
-        "ARmini LIVE DEBUG\n" +
+        "ARmini HIT LIVE DEBUG\n" +
         "URL: " + location.href + "\n" +
         "HTTPS: " + window.isSecureContext + "\n" +
         "TARGET: " + CONFIG.targetFile + "\n" +
@@ -1233,7 +1863,8 @@
         "STARTED: " + started + "\n" +
         "VISIBLE: " + visible + "\n" +
         "MODEL READY: " + modelReady + "\n" +
-        "AUTOFOCUS: " + autoFocusMode + "\n\n" +
+        "AUTOFOCUS: " + autoFocusMode + "\n" +
+        "SIZE: " + pizzaScales[sizeIndex].label + "\n\n" +
         modelDebugInfo
       );
 
@@ -1267,7 +1898,7 @@
         clearTimeout(scanTimer);
         stopPizzaRotation();
 
-        actionDock.classList.remove("active");
+        setOverlayActive(false);
         scanFrame.classList.remove("active", "locked");
         startScreen.classList.remove("hidden");
         startBtn.disabled = false;
