@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR · External SF Menu Locked To Card</title>
+  <title>Pizza Hit Sliven · SoulFlame AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -16,9 +16,11 @@
       --bg: #030303;
       --text: #ffffff;
       --gold: #ffb347;
+      --gold2: #ffd37a;
       --green: #48ff9b;
       --blue: #1d7cff;
       --purple: #8b35ff;
+      --red: #ff3d3d;
       --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
@@ -72,7 +74,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .36;
+      opacity: .34;
       mix-blend-mode: screen;
     }
 
@@ -88,7 +90,7 @@
     body::before {
       background:
         radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
-        radial-gradient(circle at 82% 72%, rgba(255,179,71,.16), transparent 26%),
+        radial-gradient(circle at 82% 72%, rgba(255,179,71,.18), transparent 26%),
         radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
         linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
       filter: blur(18px);
@@ -124,6 +126,7 @@
       padding: 22px;
       background:
         radial-gradient(circle at center, rgba(255,255,255,.14), rgba(0,0,0,.96) 62%),
+        radial-gradient(circle at 50% 20%, rgba(255,179,71,.18), transparent 34%),
         linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,179,71,.08));
       overflow: hidden;
     }
@@ -149,18 +152,19 @@
     .start-card {
       position: relative;
       z-index: 3;
-      width: min(500px, 93vw);
+      width: min(520px, 93vw);
       padding: 34px 24px 24px;
       border-radius: var(--radius-xl);
       border: 1px solid rgba(255,255,255,.22);
       background:
         linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.025)),
-        rgba(0,0,0,.74);
+        rgba(0,0,0,.76);
       backdrop-filter: blur(26px) saturate(150%);
       -webkit-backdrop-filter: blur(26px) saturate(150%);
       text-align: center;
       box-shadow:
         0 0 90px rgba(255,255,255,.18),
+        0 0 80px rgba(255,179,71,.10),
         inset 0 0 30px rgba(255,255,255,.055);
       overflow: hidden;
     }
@@ -201,8 +205,8 @@
 
     .start-card h1 {
       margin: 20px 0 8px;
-      letter-spacing: .20em;
-      font-size: clamp(23px, 6vw, 33px);
+      letter-spacing: .18em;
+      font-size: clamp(22px, 6vw, 33px);
       line-height: 1;
       text-shadow: 0 0 28px rgba(255,255,255,.40);
     }
@@ -210,14 +214,15 @@
     .subtitle {
       margin-bottom: 18px;
       font-size: 11px;
-      letter-spacing: .24em;
-      color: rgba(255,255,255,.60);
+      letter-spacing: .22em;
+      color: rgba(255,179,71,.78);
       text-transform: uppercase;
+      font-weight: 950;
     }
 
     .start-card p {
       margin: 0 auto 22px;
-      max-width: 390px;
+      max-width: 410px;
       color: rgba(255,255,255,.82);
       line-height: 1.52;
       font-size: 15px;
@@ -229,71 +234,59 @@
       justify-items: center;
     }
 
-    #startBtn,
-    .ghost-btn,
-    #fallbackBtn,
-    #actionDock button,
-    #menuSheet button,
-    .digital-actions button,
-    .digital-actions a,
-    .fallback-actions button,
-    .fallback-actions a {
+    button,
+    a {
       cursor: pointer;
       font-weight: 950;
       letter-spacing: .12em;
       transition: transform .18s ease, opacity .18s ease;
+      text-decoration: none;
+      text-align: center;
     }
 
-    #startBtn {
+    button:active,
+    a:active {
+      transform: scale(.95);
+    }
+
+    .main-btn {
       border: 0;
       border-radius: var(--radius-pill);
-      padding: 15px 24px;
-      min-width: 240px;
-      background: #fff;
+      padding: 15px 20px;
+      min-width: min(300px, 100%);
+      width: min(330px, 100%);
+      font-size: 12px;
+      box-shadow:
+        0 0 28px rgba(255,255,255,.16),
+        inset 0 -12px 22px rgba(0,0,0,.11);
+    }
+
+    .btn-white {
+      background: rgba(255,255,255,.96);
+      color: #000;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #fff, var(--gold) 46%, var(--gold2));
       color: #000;
       box-shadow:
-        0 0 36px rgba(255,255,255,.42),
-        inset 0 -12px 22px rgba(0,0,0,.13);
+        0 0 30px rgba(255,179,71,.42),
+        inset 0 -12px 22px rgba(0,0,0,.12);
     }
 
-    .ghost-btn {
+    .btn-green {
+      background: linear-gradient(135deg, var(--green), var(--gold));
+      color: #000;
+      box-shadow:
+        0 0 28px rgba(72,255,155,.30),
+        0 0 34px rgba(255,179,71,.25);
+    }
+
+    .btn-dark {
       border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--radius-pill);
-      padding: 12px 16px;
-      min-width: 210px;
       background: rgba(255,255,255,.055);
-      color: rgba(255,255,255,.78);
+      color: rgba(255,255,255,.84);
       backdrop-filter: blur(10px);
-    }
-
-    .ghost-btn.table-start {
-      background: linear-gradient(135deg, rgba(72,255,155,.18), rgba(255,179,71,.13));
-      color: rgba(255,255,255,.92);
-      border: 1px solid rgba(72,255,155,.30);
-      box-shadow:
-        0 0 22px rgba(72,255,155,.12),
-        inset 0 0 18px rgba(255,179,71,.05);
-    }
-
-    .ghost-btn.fallback-start {
-      background: linear-gradient(135deg, rgba(29,124,255,.20), rgba(139,53,255,.16));
-      color: rgba(255,255,255,.92);
-      border: 1px solid rgba(29,124,255,.35);
-      box-shadow:
-        0 0 22px rgba(29,124,255,.12),
-        inset 0 0 18px rgba(139,53,255,.05);
-    }
-
-    #startBtn:active,
-    .ghost-btn:active,
-    #fallbackBtn:active,
-    #actionDock button:active,
-    #menuSheet button:active,
-    .digital-actions button:active,
-    .digital-actions a:active,
-    .fallback-actions button:active,
-    .fallback-actions a:active {
-      transform: scale(.95);
     }
 
     .hint {
@@ -358,8 +351,12 @@
       transform: translate(-50%, -50%);
       border-radius: 30px;
       pointer-events: none;
-      opacity: .72;
+      opacity: 0;
       transition: opacity .25s ease, transform .25s ease;
+    }
+
+    #scanFrame.active {
+      opacity: .72;
     }
 
     #scanFrame.locked {
@@ -378,7 +375,7 @@
     #scanFrame::before {
       border: 1px solid rgba(255,255,255,.26);
       box-shadow:
-        0 0 54px rgba(255,255,255,.11),
+        0 0 54px rgba(255,179,71,.16),
         inset 0 0 42px rgba(255,255,255,.06);
     }
 
@@ -392,7 +389,7 @@
         linear-gradient(#fff,#fff) left bottom / 2px 46px no-repeat,
         linear-gradient(#fff,#fff) right bottom / 46px 2px no-repeat,
         linear-gradient(#fff,#fff) right bottom / 2px 46px no-repeat;
-      filter: drop-shadow(0 0 11px rgba(255,255,255,.70));
+      filter: drop-shadow(0 0 11px rgba(255,179,71,.78));
       animation: framePulse 1.35s ease-in-out infinite alternate;
     }
 
@@ -403,8 +400,8 @@
       top: 10%;
       height: 2px;
       border-radius: 99px;
-      background: linear-gradient(90deg, transparent, #fff, transparent);
-      box-shadow: 0 0 18px rgba(255,255,255,.85);
+      background: linear-gradient(90deg, transparent, var(--gold), #fff, var(--gold), transparent);
+      box-shadow: 0 0 18px rgba(255,179,71,.85);
       animation: scanLineMove 2.1s ease-in-out infinite alternate;
     }
 
@@ -439,7 +436,7 @@
       text-overflow: ellipsis;
     }
 
-    #fallbackBtn {
+    #miniFallbackBtn {
       position: fixed;
       right: max(12px, env(safe-area-inset-right));
       bottom: max(12px, env(safe-area-inset-bottom));
@@ -458,11 +455,13 @@
       left: 12px;
       top: 54px;
       z-index: 10002;
-      width: min(460px, calc(100vw - 24px));
+      width: min(520px, calc(100vw - 24px));
+      max-height: 62vh;
+      overflow: auto;
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.35);
       border-radius: 16px;
-      background: rgba(0,0,0,.78);
+      background: rgba(0,0,0,.82);
       color: rgba(255,255,255,.86);
       font-size: 11px;
       line-height: 1.38;
@@ -482,9 +481,9 @@
       transform: translateX(-50%) translateY(18px) scale(.96);
       z-index: 9999;
       display: flex;
-      gap: 9px;
+      gap: 7px;
       padding: 8px;
-      border-radius: var(--radius-pill);
+      border-radius: 28px;
       background: rgba(0,0,0,.58);
       border: 1px solid rgba(255,255,255,.18);
       backdrop-filter: blur(17px) saturate(155%);
@@ -493,6 +492,8 @@
       pointer-events: none;
       transition: opacity .24s ease, transform .24s ease;
       box-shadow: 0 0 44px rgba(255,255,255,.13);
+      max-width: calc(100vw - 16px);
+      overflow-x: auto;
     }
 
     #actionDock.active {
@@ -504,12 +505,13 @@
     #actionDock button {
       border: 0;
       border-radius: var(--radius-pill);
-      padding: 12px 12px;
-      font-size: 9px;
+      padding: 12px 11px;
+      font-size: 8.5px;
       background: rgba(255,255,255,.96);
       color: #000;
       box-shadow: 0 0 18px rgba(255,255,255,.20);
       white-space: nowrap;
+      flex: 0 0 auto;
     }
 
     #actionDock button.dark {
@@ -532,7 +534,7 @@
         0 0 34px rgba(255,179,71,.25);
     }
 
-    #actionDock button.fallback {
+    #actionDock button.mini {
       background: linear-gradient(135deg, var(--blue), var(--purple));
       color: #fff;
       box-shadow:
@@ -543,7 +545,7 @@
     #menuSheet {
       position: fixed;
       left: 50%;
-      bottom: max(88px, calc(env(safe-area-inset-bottom) + 86px));
+      bottom: max(94px, calc(env(safe-area-inset-bottom) + 92px));
       transform: translateX(-50%) translateY(16px) scale(.96);
       width: min(460px, calc(100vw - 24px));
       z-index: 10001;
@@ -596,6 +598,7 @@
     }
 
     #menuSheet button {
+      cursor: pointer;
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 20px;
       padding: 13px 12px;
@@ -603,6 +606,8 @@
       color: #fff;
       font-size: 11px;
       min-height: 48px;
+      font-weight: 950;
+      letter-spacing: .12em;
     }
 
     #menuSheet button.primary {
@@ -619,7 +624,7 @@
     }
 
     #digitalCard,
-    #fallback3D {
+    #mini3DPanel {
       position: fixed;
       inset: 0;
       z-index: 10000;
@@ -633,7 +638,7 @@
     }
 
     .digital-inner,
-    .fallback-inner {
+    .mini-inner {
       width: min(460px, 94vw);
       border: 1px solid rgba(255,255,255,.20);
       border-radius: 34px;
@@ -649,7 +654,7 @@
       overflow: hidden;
     }
 
-    .fallback-inner {
+    .mini-inner {
       width: min(720px, 96vw);
       height: min(820px, 94vh);
       display: grid;
@@ -658,20 +663,20 @@
     }
 
     .digital-inner h2,
-    .fallback-inner h2 {
+    .mini-inner h2 {
       margin: 16px 0 8px;
-      letter-spacing: .24em;
-      font-size: 26px;
+      letter-spacing: .22em;
+      font-size: 25px;
     }
 
     .digital-inner p,
-    .fallback-inner p {
+    .mini-inner p {
       color: rgba(255,255,255,.74);
       line-height: 1.52;
       margin: 0 0 18px;
     }
 
-    #fallbackModel {
+    #miniModelViewer {
       width: 100%;
       height: 100%;
       min-height: 430px;
@@ -683,7 +688,7 @@
     }
 
     .digital-actions,
-    .fallback-actions {
+    .mini-actions {
       display: grid;
       gap: 10px;
       margin-top: 18px;
@@ -691,8 +696,8 @@
 
     .digital-actions button,
     .digital-actions a,
-    .fallback-actions button,
-    .fallback-actions a {
+    .mini-actions button,
+    .mini-actions a {
       text-decoration: none;
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 999px;
@@ -703,16 +708,17 @@
       letter-spacing: .12em;
       font-size: 12px;
       cursor: pointer;
+      display: block;
     }
 
     .digital-actions .dark,
-    .fallback-actions .dark {
+    .mini-actions .dark {
       background: rgba(0,0,0,.74);
       color: #fff;
     }
 
     .digital-actions .ghost,
-    .fallback-actions .ghost {
+    .mini-actions .ghost {
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
     }
@@ -735,19 +741,18 @@
       }
 
       #actionDock {
-        width: calc(100vw - 20px);
-        justify-content: center;
+        width: calc(100vw - 18px);
+        justify-content: flex-start;
         border-radius: 26px;
         gap: 5px;
       }
 
       #actionDock button {
-        flex: 1;
-        padding: 13px 3px;
-        font-size: 6.7px;
+        padding: 13px 8px;
+        font-size: 7px;
       }
 
-      #fallbackBtn {
+      #miniFallbackBtn {
         display: none;
       }
 
@@ -763,11 +768,11 @@
         grid-template-columns: 1fr;
       }
 
-      .fallback-inner {
+      .mini-inner {
         padding: 18px;
       }
 
-      #fallbackModel {
+      #miniModelViewer {
         min-height: 390px;
       }
     }
@@ -783,67 +788,68 @@
   <section id="startScreen">
     <div class="start-card">
       <div class="logo-mark"></div>
-      <h1>SOULFLAME AR</h1>
-      <div class="subtitle">SF-MENU.HTML + CARD LOCK</div>
+      <h1>PIZZA HIT AR</h1>
+      <div class="subtitle">SLIVEN · SOULFLAME EXPERIENCE</div>
 
       <p>
-        Менюто се зарежда от <b>./menu_za_vizitka/sf-menu.html</b>,
-        превръща се в texture и се заключва върху визитката.
+        Избери режим: дигитална визитка, ARmini върху картата,
+        реален AR за маса или SoulFlame сайт.
       </p>
 
       <div class="start-actions">
-        <button id="startBtn">START CARD AR</button>
-        <button id="openTableFromStart" class="ghost-btn table-start">TABLE AR</button>
-        <button id="openFallbackFromStart" class="ghost-btn fallback-start">3D FALLBACK</button>
-        <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
+        <button id="openDigitalFromStart" class="main-btn btn-white">DIGITAL CARD</button>
+        <button id="startBtn" class="main-btn btn-gold">ARmini</button>
+        <button id="openTableFromStart" class="main-btn btn-green">AR</button>
+        <button id="openSiteFromStart" class="main-btn btn-dark">SOULFLAME SAIT</button>
       </div>
 
       <span class="hint">
-        ./targets/soulflame-black.mind · ./uploads_files_6479452_187.glb · ./menu_za_vizitka/sf-menu.html
+        ARmini: ./targets/soulflame-black.mind + ./uploads_files_6479452_187.glb<br>
+        AR: table-ar.html + GLB/USDZ
       </span>
 
       <div class="mini-grid">
-        <span>SCAN</span>
-        <span>MENU</span>
-        <span>3D</span>
-        <span>LOCK</span>
+        <span>CARD</span>
+        <span>ARmini</span>
+        <span>AR</span>
+        <span>SAIT</span>
       </div>
     </div>
   </section>
 
-  <div id="topHud">LOADING MENU TEXTURE</div>
+  <div id="topHud">ИЗБЕРИ РЕЖИМ</div>
 
   <div id="scanFrame">
     <div id="scanLine"></div>
   </div>
 
   <div id="bottomStatus">READY</div>
-  <button id="fallbackBtn">3D FALLBACK</button>
+  <button id="miniFallbackBtn">ARmini</button>
 
   <div id="actionDock">
     <button id="menuBtn" class="gold">MENU</button>
-    <button id="openTableAR" class="table">TABLE AR</button>
-    <button id="openFallback3D" class="fallback">3D</button>
-    <button id="openSite">WEBSITE</button>
+    <button id="openTableAR" class="table">AR</button>
+    <button id="openMini3D" class="mini">ARmini</button>
+    <button id="openSite" class="dark">SOULFLAME SAIT</button>
     <button id="contactMail" class="dark">EMAIL</button>
     <button id="openDigitalBtn">CARD</button>
   </div>
 
   <div id="menuSheet">
     <div class="sheet-title">
-      <strong>SOULFLAME MENU</strong>
-      <span id="sizeLabel">30 CM</span>
+      <strong>ARmini CONTROLS</strong>
+      <span id="sizeLabel">MINI</span>
     </div>
 
     <div class="sheet-grid">
-      <button id="pizzaBtn" class="primary">PIZZA</button>
-      <button id="sizeBtn">30 CM</button>
+      <button id="pizzaBtn" class="primary">SHOW PIZZA</button>
+      <button id="sizeBtn">MINI</button>
       <button id="rotateBtn">ROTATE</button>
       <button id="flipBtn">FLIP</button>
       <button id="resetBtn">RESET PIZZA</button>
       <button id="hidePizzaBtn">HIDE / SHOW</button>
       <button id="reloadMenuBtn">RELOAD MENU</button>
-      <button id="resetLockBtn">RESET LOCK</button>
+      <button id="resetLockBtn">RESET SCAN</button>
       <button id="closeMenuBtn" class="light">CLOSE</button>
       <button id="debugBtn" class="light">DEBUG</button>
     </div>
@@ -852,34 +858,38 @@
   <section id="digitalCard" class="hidden">
     <div class="digital-inner">
       <div class="logo-mark"></div>
-      <h2>SOULFLAME</h2>
+      <h2>PIZZA HIT</h2>
       <p>
-        AR меню, AR/NFC визитки, сайтове и AI системи за бизнеси,
-        които искат да изглеждат като бъдещето.
+        Pizza Hit Sliven · дигитална визитка, ARmini пица върху картата
+        и реален AR режим за показване на продуктите върху маса.
       </p>
 
       <div class="digital-actions">
-        <a id="digitalWebsite" href="#" target="_blank">OPEN WEBSITE</a>
+        <a id="digitalWebsite" href="#" target="_blank">SOULFLAME SAIT</a>
         <a id="digitalCall" href="#" class="dark">CALL NOW</a>
         <a id="digitalEmail" href="#" class="dark">EMAIL</a>
-        <button id="closeDigital" class="ghost">BACK TO AR</button>
+        <button id="digitalStartMini" class="dark">START ARmini</button>
+        <button id="digitalOpenAR" class="dark">OPEN AR</button>
+        <button id="closeDigital" class="ghost">BACK</button>
       </div>
     </div>
   </section>
 
-  <section id="fallback3D" class="hidden">
-    <div class="fallback-inner">
+  <section id="mini3DPanel" class="hidden">
+    <div class="mini-inner">
       <div>
         <div class="logo-mark"></div>
-        <h2>3D FALLBACK</h2>
+        <h2>ARmini 3D</h2>
         <p>
-          Това е 3D режим без сканиране. Работи и когато телефонът няма стабилен ARCore/WebXR.
+          Това е fallback 3D/AR режим. Android зарежда GLB, iPhone използва USDZ Quick Look,
+          ако файлът съществува.
         </p>
       </div>
 
       <model-viewer
-        id="fallbackModel"
+        id="miniModelViewer"
         src="./uploads_files_6479452_187.glb"
+        ios-src="./uploads_files_6479452_187.usdz"
         ar
         ar-modes="webxr scene-viewer quick-look"
         camera-controls
@@ -888,12 +898,12 @@
         autoplay
         shadow-intensity="1"
         exposure="1"
-        alt="SoulFlame 3D Model"
+        alt="Pizza Hit Sliven ARmini 3D Model"
       ></model-viewer>
 
-      <div class="fallback-actions">
-        <a id="openTableFromFallback" href="./table-ar.html">OPEN TABLE AR</a>
-        <button id="closeFallback3D" class="ghost">BACK TO AR</button>
+      <div class="mini-actions">
+        <a id="openTableFromMini" href="./table-ar.html">OPEN AR</a>
+        <button id="closeMini3D" class="ghost">BACK</button>
       </div>
     </div>
   </section>
@@ -903,7 +913,7 @@
     mindar-image="
       imageTargetSrc: ./targets/soulflame-black.mind;
       autoStart: false;
-      uiScanning: yes;
+      uiScanning: no;
       uiLoading: no;
       warmupTolerance: 5;
       missTolerance: 80;
@@ -934,22 +944,22 @@
       camera="near: 0.001; far: 100000"
     ></a-camera>
 
-    <a-light type="ambient" intensity="0.55" color="#ffffff"></a-light>
-    <a-light type="directional" intensity="0.75" color="#ffffff" position="0 2 1"></a-light>
+    <a-light type="ambient" intensity="0.65" color="#ffffff"></a-light>
+    <a-light type="directional" intensity="0.85" color="#ffffff" position="0 2 1"></a-light>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <a-light type="ambient" intensity="0.95" color="#ffffff"></a-light>
+      <a-light type="ambient" intensity="1.0" color="#ffffff"></a-light>
       <a-light type="directional" intensity="1.35" color="#ffffff" position="0 1.3 1"></a-light>
-      <a-light type="point" intensity="0.45" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="point" intensity="0.50" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity id="stableWorld" position="0 0 0">
         <a-entity
           id="arFloatingMenuRig"
           data-role="ar-floating-menu-rig"
-          position="0 0 0.09"
+          position="0 0 0.08"
           rotation="0 0 0"
           scale="1 1 1"
-          animation__float="property: position; from: 0 -0.010 0.09; to: 0 0.010 0.09; dur: 2500; dir: alternate; loop: true; easing: easeInOutSine"
+          animation__float="property: position; from: 0 -0.006 0.08; to: 0 0.006 0.08; dur: 2500; dir: alternate; loop: true; easing: easeInOutSine"
         >
           <a-plane
             id="arFloatingMenuPlane"
@@ -965,10 +975,11 @@
         <a-entity
           id="pizzaRig"
           data-role="pizza-rig"
-          visible="false"
-          position="0 -0.12 0.24"
+          visible="true"
+          position="0 -0.18 0.28"
           rotation="90 0 0"
-          scale="1 1 1"
+          scale="0.42 0.42 0.42"
+          animation__pizzafloat="property: position; from: 0 -0.185 0.28; to: 0 -0.155 0.28; dur: 1800; dir: alternate; loop: true; easing: easeInOutSine"
         >
           <a-entity
             id="pizzaModel"
@@ -990,13 +1001,14 @@
       tableARUrl: "./table-ar.html",
       email: "soulflame.mitko@gmail.com",
       phone: "+359xxxxxxxxx",
-      mailSubject: "SoulFlame AR Menu",
+      mailSubject: "Pizza Hit Sliven · SoulFlame AR",
       scanTimeoutMs: 14000,
       glbFile: "./uploads_files_6479452_187.glb",
+      usdzFile: "./uploads_files_6479452_187.usdz",
       targetFile: "./targets/soulflame-black.mind",
-      giantPizzaWidth: 3.33,
+      miniPizzaWidth: 0.52,
       lockAfterFirstScan: true,
-      autoShowPizzaOnFirstScan: false,
+      autoShowPizzaOnFirstScan: true,
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200
     };
@@ -1006,8 +1018,8 @@
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
     const openTableFromStart = document.getElementById("openTableFromStart");
-    const openFallbackFromStart = document.getElementById("openFallbackFromStart");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
+    const openSiteFromStart = document.getElementById("openSiteFromStart");
 
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
@@ -1016,7 +1028,7 @@
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
     const openTableAR = document.getElementById("openTableAR");
-    const openFallback3D = document.getElementById("openFallback3D");
+    const openMini3D = document.getElementById("openMini3D");
     const openSite = document.getElementById("openSite");
     const contactMail = document.getElementById("contactMail");
     const openDigitalBtn = document.getElementById("openDigitalBtn");
@@ -1038,18 +1050,20 @@
     const target = document.getElementById("target");
     const stableWorld = document.getElementById("stableWorld");
     const scanFrame = document.getElementById("scanFrame");
-    const fallbackBtn = document.getElementById("fallbackBtn");
+    const miniFallbackBtn = document.getElementById("miniFallbackBtn");
 
     const digitalCard = document.getElementById("digitalCard");
     const closeDigital = document.getElementById("closeDigital");
     const digitalWebsite = document.getElementById("digitalWebsite");
     const digitalCall = document.getElementById("digitalCall");
     const digitalEmail = document.getElementById("digitalEmail");
+    const digitalStartMini = document.getElementById("digitalStartMini");
+    const digitalOpenAR = document.getElementById("digitalOpenAR");
 
-    const fallback3D = document.getElementById("fallback3D");
-    const fallbackModel = document.getElementById("fallbackModel");
-    const closeFallback3D = document.getElementById("closeFallback3D");
-    const openTableFromFallback = document.getElementById("openTableFromFallback");
+    const mini3DPanel = document.getElementById("mini3DPanel");
+    const miniModelViewer = document.getElementById("miniModelViewer");
+    const closeMini3D = document.getElementById("closeMini3D");
+    const openTableFromMini = document.getElementById("openTableFromMini");
 
     const pizzaModel = document.getElementById("pizzaModel");
 
@@ -1065,8 +1079,8 @@
     let autoFocusReady = false;
     let autoFocusMode = "unknown";
 
-    let pizzaVisible = false;
-    let sizeIndex = 2;
+    let pizzaVisible = true;
+    let sizeIndex = 1;
     let rotateOn = false;
     let flipped = false;
     let rotationRAF = null;
@@ -1085,46 +1099,33 @@
     let menuTextureInProgress = false;
 
     const pizzaScales = [
+      "0.28 0.28 0.28",
+      "0.42 0.42 0.42",
       "0.55 0.55 0.55",
       "0.75 0.75 0.75",
       "1 1 1",
       "1.25 1.25 1.25",
-      "1.45 1.45 1.45",
-      "1.65 1.65 1.65",
-      "1.9 1.9 1.9",
-      "2.2 2.2 2.2",
-      "2.6 2.6 2.6",
-      "3 3 3",
-      "3.6 3.6 3.6",
-      "4.3 4.3 4.3",
-      "5.2 5.2 5.2",
-      "6.3 6.3 6.3",
-      "7.5 7.5 7.5"
+      "1.55 1.55 1.55",
+      "1.9 1.9 1.9"
     ];
 
     const pizzaSizeLabels = [
-      "SMALL",
-      "20 CM",
+      "TINY",
+      "MINI",
       "30 CM",
       "37 CM",
-      "43 CM",
       "50 CM",
-      "57 CM",
-      "66 CM",
-      "78 CM",
-      "90 CM",
       "XL",
-      "XXL",
       "GIANT",
-      "SHOWCASE",
       "MAX"
     ];
 
     digitalWebsite.href = CONFIG.siteUrl;
     digitalCall.href = `tel:${CONFIG.phone}`;
     digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
-    openTableFromFallback.href = CONFIG.tableARUrl;
-    fallbackModel.src = CONFIG.glbFile;
+    openTableFromMini.href = CONFIG.tableARUrl;
+    miniModelViewer.src = CONFIG.glbFile;
+    miniModelViewer.setAttribute("ios-src", CONFIG.usdzFile);
 
     window.addEventListener("error", (event) => {
       showDebug("JS ERROR: " + event.message);
@@ -1178,9 +1179,9 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const g = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      g.addColorStop(0, "#1d7cff");
-      g.addColorStop(.45, "#8b35ff");
-      g.addColorStop(1, "#f72585");
+      g.addColorStop(0, "#ffffff");
+      g.addColorStop(.45, "#ffb347");
+      g.addColorStop(1, "#8b35ff");
 
       ctx.fillStyle = "rgba(0,0,0,.18)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1189,17 +1190,17 @@
       roundRect(ctx, 55, 55, 1050, 790, 58);
       ctx.fill();
 
-      ctx.fillStyle = "rgba(0,0,0,.25)";
+      ctx.fillStyle = "rgba(0,0,0,.30)";
       roundRect(ctx, 75, 75, 1010, 750, 46);
       ctx.fill();
 
       ctx.fillStyle = "#fff";
       ctx.font = "900 78px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("SoulFlame AR", 580, 240);
+      ctx.fillText("Pizza Hit Sliven", 580, 230);
 
-      ctx.font = "800 42px Arial";
-      ctx.fillText("SF menu texture failed", 580, 335);
+      ctx.font = "800 48px Arial";
+      ctx.fillText("SoulFlame ARmini", 580, 330);
 
       ctx.font = "700 26px Arial";
       ctx.fillText(String(reason).slice(0, 70), 580, 405);
@@ -1233,10 +1234,10 @@
           await doc.fonts.ready;
         }
 
-        const targetMenu = doc.querySelector(".floating-menu") || doc.body;
+        const targetMenu = doc.querySelector(".floating-menu") || doc.querySelector("#arCard") || doc.body;
 
         if (!targetMenu) {
-          throw new Error("No .floating-menu found in sf-menu.html");
+          throw new Error("No menu element found in sf-menu.html");
         }
 
         const images = Array.from(doc.images || []);
@@ -1318,8 +1319,8 @@
         });
 
         setStatus(
-          menuTextureReady ? "SF MENU READY" : "MENU FALLBACK ACTIVE",
-          menuTextureReady ? "SCAN CARD" : "CHECK sf-menu.html"
+          menuTextureReady ? "ARmini READY" : "MENU FALLBACK ACTIVE",
+          menuTextureReady ? "CHOOSE MODE" : "CHECK sf-menu.html"
         );
 
       } finally {
@@ -1332,8 +1333,8 @@
       window.location.href = CONFIG.tableARUrl;
     }
 
-    function openFallback3DPanel() {
-      fallback3D.classList.remove("hidden");
+    function openMini3DPanel() {
+      mini3DPanel.classList.remove("hidden");
       haptic(25);
     }
 
@@ -1342,22 +1343,25 @@
       haptic(25);
     }
 
+    function openSoulFlameSite() {
+      haptic(25);
+      window.open(CONFIG.siteUrl, "_blank");
+    }
+
     openTableFromStart.addEventListener("click", openTableARPage);
     openTableAR.addEventListener("click", openTableARPage);
+    digitalOpenAR.addEventListener("click", openTableARPage);
 
-    openFallbackFromStart.addEventListener("click", openFallback3DPanel);
-    openFallback3D.addEventListener("click", openFallback3DPanel);
-    fallbackBtn.addEventListener("click", openFallback3DPanel);
+    openMini3D.addEventListener("click", openMini3DPanel);
+    miniFallbackBtn.addEventListener("click", openMini3DPanel);
 
-    closeFallback3D.addEventListener("click", () => {
-      fallback3D.classList.add("hidden");
+    closeMini3D.addEventListener("click", () => {
+      mini3DPanel.classList.add("hidden");
       haptic(20);
     });
 
-    openSite.addEventListener("click", () => {
-      window.open(CONFIG.siteUrl, "_blank");
-      haptic(25);
-    });
+    openSite.addEventListener("click", openSoulFlameSite);
+    openSiteFromStart.addEventListener("click", openSoulFlameSite);
 
     contactMail.addEventListener("click", () => {
       window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
@@ -1372,15 +1376,20 @@
       haptic(20);
     });
 
+    digitalStartMini.addEventListener("click", () => {
+      digitalCard.classList.add("hidden");
+      startMiniAR();
+    });
+
     menuBtn.addEventListener("click", () => {
       menuSheet.classList.toggle("active");
-      setStatus("SOULFLAME MENU", "CHOOSE AR OPTION");
+      setStatus("ARmini MENU", "CONTROL PIZZA");
       haptic(30);
     });
 
     closeMenuBtn.addEventListener("click", () => {
       menuSheet.classList.remove("active");
-      setStatus(lockedOnce ? "AR MENU LOCKED" : "SOULFLAME LOCKED", lockedOnce ? "CARD NOT NEEDED" : "MOVE PHONE SLOWLY");
+      setStatus(lockedOnce ? "ARmini LOCKED" : "SHOW CARD", lockedOnce ? "PIZZA ON CARD" : "SCAN CARD");
       haptic(20);
     });
 
@@ -1392,14 +1401,14 @@
       setPizzaRotation();
 
       const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
-      setStatus(`PIZZA ${label}`, modelAutoFitted ? "LOCK MODE ACTIVE" : "PIZZA LOADING");
+      setStatus(`PIZZA ${label}`, modelAutoFitted ? "ON CARD" : "PIZZA LOADING");
       haptic(45);
     });
 
     hidePizzaBtn.addEventListener("click", () => {
       pizzaVisible = !pizzaVisible;
       setAllPizzaRigVisible(pizzaVisible);
-      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ANCHOR ON" : "ANCHOR OFF");
+      setStatus(pizzaVisible ? "PIZZA ACTIVE" : "PIZZA HIDDEN", pizzaVisible ? "ARmini" : "ARmini");
       haptic(25);
     });
 
@@ -1431,7 +1440,7 @@
 
     resetBtn.addEventListener("click", () => {
       pizzaVisible = true;
-      sizeIndex = 2;
+      sizeIndex = 1;
       currentPizzaY = 0;
       rotateOn = false;
       flipped = false;
@@ -1443,15 +1452,15 @@
       rotateBtn.textContent = "ROTATE";
       stopPizzaRotation();
 
-      setStatus("PIZZA RESET", "30 CM");
+      setStatus("PIZZA RESET", "MINI");
       haptic(35);
     });
 
     reloadMenuBtn.addEventListener("click", async () => {
-      setStatus("RELOADING SF MENU", "WAIT");
+      setStatus("RELOADING MENU", "WAIT");
       await applyExternalMenuTexture(true);
       menuSheet.classList.remove("active");
-      setStatus("SF MENU RELOADED", "SCAN / LOCK ACTIVE");
+      setStatus("MENU RELOADED", "SCAN CARD");
       haptic(35);
     });
 
@@ -1471,6 +1480,7 @@
         "\nAUTOFOCUS MODE: " + autoFocusMode +
         "\nTARGET FILE: " + CONFIG.targetFile +
         "\nGLB FILE: " + CONFIG.glbFile +
+        "\nUSDZ FILE: " + CONFIG.usdzFile +
         "\nTABLE AR URL: " + CONFIG.tableARUrl
       );
       haptic(20);
@@ -1487,7 +1497,7 @@
     }
 
     function applyPizzaSize() {
-      const scale = pizzaScales[sizeIndex] || "1 1 1";
+      const scale = pizzaScales[sizeIndex] || "0.42 0.42 0.42";
       const label = pizzaSizeLabels[sizeIndex] || `SIZE ${sizeIndex + 1}`;
 
       getAllPizzaRigs().forEach((rig) => {
@@ -1515,7 +1525,7 @@
       const tick = () => {
         if (!rotateOn) return;
 
-        currentPizzaY = (currentPizzaY + 0.18) % 360;
+        currentPizzaY = (currentPizzaY + 0.35) % 360;
         setPizzaRotation();
         rotationRAF = requestAnimationFrame(tick);
       };
@@ -1558,7 +1568,7 @@
 
           if (label === "MAIN") {
             modelAutoFitted = true;
-            setStatus("PIZZA GLB READY", "SCAN CARD");
+            setStatus("PIZZA GLB READY", "CHOOSE MODE");
           }
         } catch (error) {
           showDebug(label + " AUTO-FIT ERROR: " + error.message);
@@ -1611,7 +1621,7 @@
         label + " MESHES: " + meshCount + "\n" +
         label + " MATERIALS: " + materialCount + "\n" +
         label + " TEXTURES FOUND: " + textureCount + "\n" +
-        "BASE WIDTH: " + CONFIG.giantPizzaWidth + "\n" +
+        "ARmini WIDTH: " + CONFIG.miniPizzaWidth + "\n" +
         "TIP: Ако TEXTURES FOUND е 0, браузърът зарежда грешен GLB или GLB няма вградена текстура.";
 
       if (label === "MAIN") {
@@ -1643,7 +1653,7 @@
       model.position.y -= center.y;
       model.position.z -= center.z;
 
-      const scale = CONFIG.giantPizzaWidth / maxSize;
+      const scale = CONFIG.miniPizzaWidth / maxSize;
 
       model.scale.setScalar(scale);
       model.updateMatrixWorld(true);
@@ -1655,7 +1665,7 @@
       });
 
       modelDebugInfo += "\n" + label + " AUTO SCALE: " + Number(scale.toFixed(4));
-      modelDebugInfo += "\n" + label + " RESULT: MULTI SIZE MODE";
+      modelDebugInfo += "\n" + label + " RESULT: ARmini CARD MODE";
     }
 
     function removeIdsFromClone(root) {
@@ -1759,7 +1769,7 @@
       clone.setAttribute("visible", "true");
       setAllPizzaRigVisible(pizzaVisible);
 
-      setStatus("AR MENU LOCKED", "CARD NOT NEEDED");
+      setStatus("ARmini LOCKED", "PIZZA ON CARD");
     }
 
     function hideFrozenWorld() {
@@ -1783,10 +1793,11 @@
         actionDock.classList.remove("active");
         menuSheet.classList.remove("active");
         scanFrame.classList.remove("locked");
-        setStatus("LOCK RESET", "SCAN CARD AGAIN");
+        scanFrame.classList.add("active");
+        setStatus("SCAN RESET", "SHOW CARD AGAIN");
       } else {
         startLockPoseLoop();
-        setStatus("LOCK RESET", "CARD ACTIVE");
+        setStatus("SCAN RESET", "CARD ACTIVE");
       }
     }
 
@@ -1939,10 +1950,10 @@
 
       applyPizzaSize();
       await applyExternalMenuTexture(false);
-      setStatus("AR SYSTEM READY", "READY");
+      setStatus("SYSTEM READY", "CHOOSE MODE");
     });
 
-    startBtn.addEventListener("click", async () => {
+    async function startMiniAR() {
       if (started) return;
 
       if (location.protocol === "file:") {
@@ -1953,7 +1964,7 @@
 
       try {
         started = true;
-        startBtn.textContent = "STARTING...";
+        startBtn.textContent = "STARTING ARmini...";
 
         if (!arSystem) {
           await new Promise((resolve) => {
@@ -1971,15 +1982,18 @@
         await arSystem.start();
 
         await sleep(CONFIG.autoFocusDelayMs);
-        await enableCameraAutoFocus("after-ar-start");
+        await enableCameraAutoFocus("after-armini-start");
 
         setTimeout(() => {
-          enableCameraAutoFocus("retry-after-start");
+          enableCameraAutoFocus("retry-after-armini-start");
         }, CONFIG.autoFocusRetryMs);
 
         startScreen.classList.add("hidden");
+        scanFrame.classList.add("active");
         scanFrame.classList.remove("locked");
-        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "SCAN SOULFLAME CARD", "SCANNING");
+        actionDock.classList.remove("active");
+
+        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "ПОКАЖЕТЕ ВИЗИТКАТА", "ARmini SCANNING");
 
         clearTimeout(scanTimer);
         scanTimer = setTimeout(() => {
@@ -1990,19 +2004,24 @@
               "1. Провери дали ./targets/soulflame-black.mind съществува.\n" +
               "2. Сканирай същата визитка, от която е направен target-ът.\n" +
               "3. Дръж телефона по-далече и приближавай бавно.\n" +
-              "4. AUTOFOCUS MODE: " + autoFocusMode
+              "4. Не отваряй през Viber/Messenger/Facebook browser.\n" +
+              "5. AUTOFOCUS MODE: " + autoFocusMode
             );
           }
         }, CONFIG.scanTimeoutMs);
 
+        haptic(45);
+
       } catch (error) {
         started = false;
-        startBtn.textContent = "START CARD AR";
-        setStatus("CAMERA / MINDAR ERROR", "OPEN 3D FALLBACK");
+        startBtn.textContent = "ARmini";
+        setStatus("CAMERA / MINDAR ERROR", "OPEN ARmini 3D");
         showDebug(error.message || String(error));
-        openFallback3DPanel();
+        openMini3DPanel();
       }
-    });
+    }
+
+    startBtn.addEventListener("click", startMiniAR);
 
     target.addEventListener("targetFound", async () => {
       visible = true;
@@ -2018,22 +2037,20 @@
         await applyExternalMenuTexture(false);
       }
 
-      if (CONFIG.autoShowPizzaOnFirstScan) {
-        pizzaVisible = true;
-        setAllPizzaRigVisible(true);
-        applyPizzaSize();
-        setPizzaRotation();
-      }
+      pizzaVisible = true;
+      setAllPizzaRigVisible(true);
+      applyPizzaSize();
+      setPizzaRotation();
 
       if (CONFIG.lockAfterFirstScan) {
         startLockPoseLoop();
       }
 
-      setStatus("SF MENU LOCKED", "FROM sf-menu.html");
+      setStatus("ARmini LOCKED", "PIZZA ON CARD");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
-      haptic(38);
+      haptic(55);
     });
 
     target.addEventListener("targetLost", () => {
@@ -2055,6 +2072,7 @@
       actionDock.classList.remove("active");
       menuSheet.classList.remove("active");
       scanFrame.classList.remove("locked");
+      scanFrame.classList.add("active");
     });
 
     document.addEventListener("click", async (event) => {
@@ -2083,9 +2101,9 @@
 
           actionDock.classList.remove("active");
           menuSheet.classList.remove("active");
-          scanFrame.classList.remove("locked");
+          scanFrame.classList.remove("active", "locked");
           startScreen.classList.remove("hidden");
-          startBtn.textContent = "START CARD AR";
+          startBtn.textContent = "ARmini";
           setStatus("AR PAUSED", "PAUSED");
         } catch (error) {
           console.warn(error);
