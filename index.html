@@ -959,7 +959,7 @@
   <script>
     const CONFIG = {
       menuTextureUrl: "./menu_za_vizitka/sf-menu.html",
-      digitalCardUrl: "./digital_card.html",
+      arMiniUrl: "./ARmini.html",
       siteUrl: "https://soulflame-ar-card.vercel.app",
       tableARUrl: "./table-ar.html",
       email: "soulflame.mitko@gmail.com",
@@ -1106,9 +1106,9 @@
       });
     }
 
-    function openDigitalCardHtml() {
+    function openARminiHtml() {
       haptic(25);
-      window.location.href = CONFIG.digitalCardUrl;
+      window.location.href = CONFIG.arMiniUrl;
     }
 
     function openTableARPage() {
@@ -1300,8 +1300,8 @@
     }
 
     digitalCardButton.addEventListener("click", startMiniAR);
-    arMiniButton.addEventListener("click", openDigitalCardHtml);
-    openDigitalCardPage.addEventListener("click", openDigitalCardHtml);
+    arMiniButton.addEventListener("click", openARminiHtml);
+    openDigitalCardPage.addEventListener("click", openARminiHtml);
 
     openTableFromStart.addEventListener("click", openTableARPage);
     openTableAR.addEventListener("click", openTableARPage);
