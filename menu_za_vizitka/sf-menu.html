@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <title>SoulFlame AR Floating Menu</title>
+
+  <style>
+    :root {
+      --orange: #ff7a18;
+      --green: #57d600;
+      --cyan: #00b8d9;
+      --pink: #f72585;
+      --blue: #1d7cff;
+      --purple: #8b35ff;
+      --white: #ffffff;
+      --black: #050505;
+      --shadow: 0 14px 28px rgba(0, 0, 0, .34);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+    }
+
+    #camera {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      background: #000;
+      z-index: 0;
+    }
+
+    .camera-fallback {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(29,124,255,.25), transparent 34%),
+        radial-gradient(circle at 85% 18%, rgba(139,53,255,.22), transparent 34%),
+        radial-gradient(circle at 50% 100%, rgba(247,37,133,.18), transparent 42%),
+        linear-gradient(135deg, #020617, #050505);
+    }
+
+    .hud {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 22px;
+      perspective: 1200px;
+    }
+
+    .floating-menu {
+      position: relative;
+      width: min(1160px, 96vw);
+      height: min(900px, 94vh);
+      transform-style: preserve-3d;
+      animation: softFloat 5.8s ease-in-out infinite;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,.24));
+    }
+
+    @keyframes softFloat {
+      0%, 100% {
+        transform: translateY(0) rotateX(0deg) rotateY(0deg);
+      }
+
+      50% {
+        transform: translateY(-8px) rotateX(.6deg) rotateY(-.6deg);
+      }
+    }
+
+    .top {
+      position: absolute;
+      left: 62px;
+      right: 36px;
+      top: 12px;
+      height: 154px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .logo-orb {
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: rgba(255,255,255,.96);
+      box-shadow:
+        0 12px 28px rgba(0,0,0,.26),
+        0 0 0 5px rgba(255,255,255,.58);
+      overflow: hidden;
+    }
+
+    .logo-orb::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
+      padding: 5px;
+      background: linear-gradient(135deg, #1d7cff, #6a4dff, #8b35ff, #f72585);
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .real-logo {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+      display: block;
+      position: relative;
+      z-index: 1;
+      filter: contrast(1.18) brightness(.88);
+    }
+
+    .title {
+      transform: translateZ(42px);
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: clamp(48px, 7vw, 84px);
+      line-height: .9;
+      font-weight: 900;
+      letter-spacing: -3px;
+      background: linear-gradient(90deg, #1d7cff, #386cff, #773cff, #a020ff);
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-stroke: .7px rgba(255,255,255,.35);
+      text-shadow:
+        0 3px 8px rgba(0,0,0,.34),
+        0 0 8px rgba(255,255,255,.14);
+    }
+
+    .title p {
+      margin: 10px 0 0;
+      font-size: clamp(22px, 3vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 3px 6px rgba(0,0,0,.76);
+    }
+
+    .rows {
+      position: absolute;
+      left: 16px;
+      right: 8px;
+      top: 190px;
+      bottom: 24px;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 292px 318px minmax(330px, 1fr) 62px;
+      gap: 22px;
+      align-items: center;
+      transform-style: preserve-3d;
+    }
+
+    .row:nth-child(1) { transform: translateZ(70px); }
+    .row:nth-child(2) { transform: translateZ(54px); }
+    .row:nth-child(3) { transform: translateZ(38px); }
+    .row:nth-child(4) { transform: translateZ(22px); }
+
+    .option {
+      height: 132px;
+      border-radius: 36px;
+      display: flex;
+      align-items: center;
+      padding: 18px 30px;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+
+    .option::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.27), transparent 42%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.16));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .option::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      top: 50%;
+      width: 78px;
+      height: 78px;
+      border-radius: 22px;
+      transform: translateY(-50%) rotate(45deg);
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.24);
+      z-index: 0;
+    }
+
+    .option-content {
+      position: relative;
+      z-index: 3;
+    }
+
+    .num {
+      display: block;
+      font-size: 72px;
+      line-height: .78;
+      letter-spacing: -4px;
+      text-shadow: 0 3px 6px rgba(0,0,0,.34);
+    }
+
+    .opt {
+      display: block;
+      margin-top: 8px;
+      font-size: 31px;
+      line-height: 1;
+      text-shadow: 0 2px 5px rgba(0,0,0,.35);
+    }
+
+    .label {
+      height: 112px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: white;
+      font-size: 40px;
+      font-weight: 900;
+      text-shadow:
+        0 3px 5px rgba(0,0,0,.78),
+        0 0 5px rgba(255,255,255,.12);
+    }
+
+    .icon {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      font-size: 50px;
+      line-height: 1;
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,.55));
+    }
+
+    .text-wrap {
+      position: relative;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .dots {
+      position: absolute;
+      left: 0;
+      bottom: -27px;
+      display: flex;
+      gap: 13px;
+    }
+
+    .dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 3px 5px rgba(0,0,0,.25);
+    }
+
+    .dot:nth-child(4) { opacity: .55; }
+    .dot:nth-child(5) { opacity: .32; }
+
+    .product {
+      height: 132px;
+      border-radius: 36px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0,0,0,.26);
+      border: 3px solid currentColor;
+      box-shadow: var(--shadow);
+    }
+
+    .product img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.08) saturate(1.22) brightness(1.03);
+    }
+
+    .product::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.20), transparent 48%, rgba(0,0,0,.34)),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.10));
+      pointer-events: none;
+    }
+
+    .product::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,.24);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .badge3d {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      z-index: 4;
+      width: 58px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,.42);
+      border: 2px solid currentColor;
+      color: white;
+      font-size: 23px;
+      font-weight: 900;
+      text-shadow: 0 2px 4px rgba(0,0,0,.55);
+      box-shadow: 0 8px 18px rgba(0,0,0,.24);
+    }
+
+    .arrow {
+      width: 56px;
+      height: 76px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      background: currentColor;
+      color: white;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .arrow::before {
+      content: "›";
+      font-size: 64px;
+      font-weight: 300;
+      line-height: 1;
+      color: white;
+      transform: translateY(-3px);
+      text-shadow: 0 2px 4px rgba(0,0,0,.3);
+    }
+
+    .orange { color: var(--orange); }
+    .green { color: var(--green); }
+    .cyan { color: var(--cyan); }
+    .pink { color: var(--pink); }
+
+    .bg-orange {
+      background: linear-gradient(135deg, #ff4d00, #ff7a18 50%, #ffb000);
+    }
+
+    .bg-green {
+      background: linear-gradient(135deg, #239d00, #57d600 50%, #94ef00);
+    }
+
+    .bg-cyan {
+      background: linear-gradient(135deg, #007a95, #00b8d9 50%, #00e0ff);
+    }
+
+    .bg-pink {
+      background: linear-gradient(135deg, #c90057, #f72585 50%, #ff5daf);
+    }
+
+    .status {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      z-index: 5;
+      max-width: calc(100vw - 32px);
+      padding: 11px 14px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.62);
+      color: white;
+      font-size: 13px;
+      line-height: 1.35;
+      box-shadow: 0 10px 25px rgba(0,0,0,.32);
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 920px) {
+      .hud {
+        padding: 8px;
+        align-items: flex-start;
+      }
+
+      .floating-menu {
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .top {
+        left: 16px;
+        right: 12px;
+        top: 18px;
+        height: 108px;
+        grid-template-columns: 92px 1fr;
+        gap: 14px;
+      }
+
+      .logo-orb {
+        width: 78px;
+        height: 78px;
+      }
+
+      .logo-orb::before {
+        inset: -7px;
+        padding: 4px;
+      }
+
+      .real-logo {
+        width: 82%;
+        height: 82%;
+      }
+
+      .title h1 {
+        font-size: 41px;
+        letter-spacing: -2px;
+      }
+
+      .title p {
+        font-size: 18px;
+        margin-top: 5px;
+      }
+
+      .rows {
+        left: 8px;
+        right: 6px;
+        top: 150px;
+        bottom: 22px;
+        gap: 12px;
+      }
+
+      .row {
+        grid-template-columns: 104px 1fr 150px 30px;
+        gap: 7px;
+      }
+
+      .option {
+        height: 84px;
+        padding: 10px 13px;
+        border-radius: 24px;
+      }
+
+      .option::after {
+        width: 44px;
+        height: 44px;
+        right: -19px;
+        border-radius: 14px;
+      }
+
+      .num {
+        font-size: 39px;
+        letter-spacing: -2px;
+      }
+
+      .opt {
+        font-size: 16px;
+        margin-top: 5px;
+      }
+
+      .label {
+        height: 84px;
+        gap: 8px;
+        font-size: 22px;
+      }
+
+      .icon {
+        width: 34px;
+        height: 34px;
+        font-size: 30px;
+      }
+
+      .dots {
+        bottom: -16px;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+      }
+
+      .product {
+        height: 82px;
+        border-radius: 22px;
+        border-width: 2px;
+      }
+
+      .product::after {
+        inset: 2px;
+        border-radius: 18px;
+      }
+
+      .badge3d {
+        width: 38px;
+        height: 32px;
+        top: 8px;
+        right: 8px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+
+      .arrow {
+        width: 30px;
+        height: 54px;
+        border-radius: 16px;
+      }
+
+      .arrow::before {
+        font-size: 42px;
+      }
+
+      .status {
+        left: 10px;
+        bottom: 10px;
+        font-size: 11px;
+        padding: 8px 10px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .row {
+        grid-template-columns: 96px 1fr 128px 24px;
+      }
+
+      .label {
+        font-size: 20px;
+      }
+
+      .product {
+        height: 78px;
+      }
+
+      .title h1 {
+        font-size: 36px;
+      }
+
+      .title p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="camera-fallback" id="fallbackBg"></div>
+  <video id="camera" autoplay playsinline muted></video>
+
+  <div class="hud">
+    <main class="floating-menu">
+
+      <header class="top">
+        <div class="logo-orb">
+          <img
+            class="real-logo"
+            src="./soulflame-logo.png"
+            alt="SoulFlame Logo"
+            onerror="this.onerror=null; this.src='./ChatGPT Image 2.05.2026 г., 19_55_36.png';"
+          />
+        </div>
+
+        <div class="title">
+          <h1>SoulFlame AR</h1>
+          <p>Interactive 3D Experiences</p>
+        </div>
+      </header>
+
+      <section class="rows">
+        <article class="row orange">
+          <div class="option bg-orange">
+            <div class="option-content">
+              <span class="num">01</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">🍴</div>
+            <div class="text-wrap">
+              Ресторанти
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85" alt="Ресторанти AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+
+        <article class="row green">
+          <div class="option bg-green">
+            <div class="option-content">
+              <span class="num">02</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">👕</div>
+            <div class="text-wrap">
+              Дрехи
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85" alt="Дрехи AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+
+        <article class="row cyan">
+          <div class="option bg-cyan">
+            <div class="option-content">
+              <span class="num">03</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">🛋</div>
+            <div class="text-wrap">
+              Мебели
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=85" alt="Мебели AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+
+        <article class="row pink">
+          <div class="option bg-pink">
+            <div class="option-content">
+              <span class="num">04</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">🚗</div>
+            <div class="text-wrap">
+              Коли
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=85" alt="Коли AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="status" id="status">
+    Зареждам камерата... Ако не тръгне, докосни екрана.
+  </div>
+
+  <script>
+    const video = document.getElementById("camera");
+    const fallbackBg = document.getElementById("fallbackBg");
+    const statusBox = document.getElementById("status");
+
+    let currentStream = null;
+    let cameraStarted = false;
+
+    function setStatus(text, autoHide = true) {
+      statusBox.textContent = text;
+      statusBox.classList.remove("hidden");
+
+      clearTimeout(window.__statusTimer);
+
+      if (autoHide) {
+        window.__statusTimer = setTimeout(() => {
+          statusBox.classList.add("hidden");
+        }, 4200);
+      }
+    }
+
+    async function stopCamera() {
+      if (!currentStream) return;
+      currentStream.getTracks().forEach(track => track.stop());
+      currentStream = null;
+      cameraStarted = false;
+    }
+
+    async function startCamera() {
+      try {
+        if (cameraStarted) return;
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setStatus("Браузърът не поддържа камера. Отвори през Chrome/Safari, HTTPS или localhost.", false);
+          return;
+        }
+
+        currentStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }
+        });
+
+        video.srcObject = currentStream;
+
+        video.onloadedmetadata = async () => {
+          await video.play();
+          cameraStarted = true;
+          fallbackBg.classList.add("hidden");
+          video.style.transform = "scaleX(1)";
+          setStatus("Камерата работи. Менюто е във въздуха без бутони.");
+        };
+      } catch (err) {
+        fallbackBg.classList.remove("hidden");
+        setStatus("Докосни екрана за старт на камерата. Нужно е HTTPS, Vercel или localhost.", false);
+      }
+    }
+
+    window.addEventListener("load", () => {
+      startCamera();
+    });
+
+    document.body.addEventListener("click", () => {
+      startCamera();
+    });
+
+    document.body.addEventListener("touchstart", () => {
+      startCamera();
+    }, { passive: true });
+  </script>
+</body>
+</html>

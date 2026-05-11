@@ -4,10 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Freeze Lock + Table AR</title>
+  <title>SoulFlame AR Pizza · Floating Menu + Freeze Lock + Table AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
     :root {
@@ -15,6 +16,11 @@
       --text: #ffffff;
       --gold: #ffb347;
       --green: #48ff9b;
+      --orange: #ff7a18;
+      --cyan: #00b8d9;
+      --pink: #f72585;
+      --blue: #1d7cff;
+      --purple: #8b35ff;
       --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
@@ -216,7 +222,11 @@
     .ghost-btn,
     #fallbackBtn,
     #actionDock button,
-    #menuSheet button {
+    #menuSheet button,
+    .digital-actions button,
+    .digital-actions a,
+    .fallback-actions button,
+    .fallback-actions a {
       cursor: pointer;
       font-weight: 950;
       letter-spacing: .12em;
@@ -254,11 +264,24 @@
         inset 0 0 18px rgba(255,179,71,.05);
     }
 
+    .ghost-btn.fallback-start {
+      background: linear-gradient(135deg, rgba(29,124,255,.20), rgba(139,53,255,.16));
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(29,124,255,.35);
+      box-shadow:
+        0 0 22px rgba(29,124,255,.12),
+        inset 0 0 18px rgba(139,53,255,.05);
+    }
+
     #startBtn:active,
     .ghost-btn:active,
     #fallbackBtn:active,
     #actionDock button:active,
-    #menuSheet button:active {
+    #menuSheet button:active,
+    .digital-actions button:active,
+    .digital-actions a:active,
+    .fallback-actions button:active,
+    .fallback-actions a:active {
       transform: scale(.95);
     }
 
@@ -272,10 +295,10 @@
 
     .mini-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin: 20px auto 0;
-      max-width: 350px;
+      max-width: 390px;
     }
 
     .mini-grid span {
@@ -470,8 +493,8 @@
     #actionDock button {
       border: 0;
       border-radius: var(--radius-pill);
-      padding: 12px 14px;
-      font-size: 10px;
+      padding: 12px 12px;
+      font-size: 9px;
       background: rgba(255,255,255,.96);
       color: #000;
       box-shadow: 0 0 18px rgba(255,255,255,.20);
@@ -496,6 +519,14 @@
       box-shadow:
         0 0 28px rgba(72,255,155,.30),
         0 0 34px rgba(255,179,71,.25);
+    }
+
+    #actionDock button.fallback {
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      box-shadow:
+        0 0 28px rgba(29,124,255,.30),
+        0 0 34px rgba(139,53,255,.25);
     }
 
     #menuSheet {
@@ -576,7 +607,8 @@
       border: 0;
     }
 
-    #digitalCard {
+    #digitalCard,
+    #fallback3D {
       position: fixed;
       inset: 0;
       z-index: 10000;
@@ -589,7 +621,8 @@
       overflow: hidden;
     }
 
-    .digital-inner {
+    .digital-inner,
+    .fallback-inner {
       width: min(460px, 94vw);
       border: 1px solid rgba(255,255,255,.20);
       border-radius: 34px;
@@ -605,26 +638,50 @@
       overflow: hidden;
     }
 
-    .digital-inner h2 {
+    .fallback-inner {
+      width: min(720px, 96vw);
+      height: min(820px, 94vh);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+    }
+
+    .digital-inner h2,
+    .fallback-inner h2 {
       margin: 16px 0 8px;
       letter-spacing: .24em;
       font-size: 26px;
     }
 
-    .digital-inner p {
+    .digital-inner p,
+    .fallback-inner p {
       color: rgba(255,255,255,.74);
       line-height: 1.52;
       margin: 0 0 18px;
     }
 
-    .digital-actions {
+    #fallbackModel {
+      width: 100%;
+      height: 100%;
+      min-height: 430px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.08), rgba(0,0,0,.45)),
+        #050505;
+      overflow: hidden;
+    }
+
+    .digital-actions,
+    .fallback-actions {
       display: grid;
       gap: 10px;
       margin-top: 18px;
     }
 
     .digital-actions button,
-    .digital-actions a {
+    .digital-actions a,
+    .fallback-actions button,
+    .fallback-actions a {
       text-decoration: none;
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 999px;
@@ -637,12 +694,14 @@
       cursor: pointer;
     }
 
-    .digital-actions .dark {
+    .digital-actions .dark,
+    .fallback-actions .dark {
       background: rgba(0,0,0,.74);
       color: #fff;
     }
 
-    .digital-actions .ghost {
+    .digital-actions .ghost,
+    .fallback-actions .ghost {
       background: rgba(255,255,255,.055);
       color: rgba(255,255,255,.78);
     }
@@ -657,7 +716,7 @@
       }
 
       .mini-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
 
       #topHud {
@@ -668,13 +727,13 @@
         width: calc(100vw - 20px);
         justify-content: center;
         border-radius: 26px;
-        gap: 6px;
+        gap: 5px;
       }
 
       #actionDock button {
         flex: 1;
-        padding: 13px 5px;
-        font-size: 7.6px;
+        padding: 13px 3px;
+        font-size: 6.7px;
       }
 
       #fallbackBtn {
@@ -692,6 +751,14 @@
       .sheet-grid {
         grid-template-columns: 1fr;
       }
+
+      .fallback-inner {
+        padding: 18px;
+      }
+
+      #fallbackModel {
+        min-height: 390px;
+      }
     }
   </style>
 </head>
@@ -704,16 +771,17 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">CARD AR + TABLE AR PORTAL</div>
+      <div class="subtitle">CARD AR + TABLE AR + 3D FALLBACK</div>
 
       <p>
-        Сканирай визитката за <b>Card AR</b> или отвори <b>TABLE AR</b>,
-        за да поставиш пицата върху истинска маса чрез WebXR.
+        Сканирай визитката за <b>AR Floating Menu</b>, отвори <b>TABLE AR</b>
+        или използвай <b>3D fallback</b>, ако телефонът няма ARCore/WebXR.
       </p>
 
       <div class="start-actions">
         <button id="startBtn">START CARD AR</button>
         <button id="openTableFromStart" class="ghost-btn table-start">TABLE AR</button>
+        <button id="openFallbackFromStart" class="ghost-btn fallback-start">3D FALLBACK</button>
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
@@ -722,6 +790,7 @@
       <div class="mini-grid">
         <span>SCAN</span>
         <span>TABLE</span>
+        <span>3D</span>
         <span>LOCK</span>
       </div>
     </div>
@@ -734,11 +803,12 @@
   </div>
 
   <div id="bottomStatus">READY</div>
-  <button id="fallbackBtn">DIGITAL CARD</button>
+  <button id="fallbackBtn">3D FALLBACK</button>
 
   <div id="actionDock">
     <button id="menuBtn" class="gold">MENU</button>
     <button id="openTableAR" class="table">TABLE AR</button>
+    <button id="openFallback3D" class="fallback">3D</button>
     <button id="openSite">WEBSITE</button>
     <button id="contactMail" class="dark">EMAIL</button>
     <button id="openDigitalBtn">CARD</button>
@@ -777,6 +847,37 @@
         <a id="digitalCall" href="#" class="dark">CALL NOW</a>
         <a id="digitalEmail" href="#" class="dark">EMAIL</a>
         <button id="closeDigital" class="ghost">BACK TO AR</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="fallback3D" class="hidden">
+    <div class="fallback-inner">
+      <div>
+        <div class="logo-mark"></div>
+        <h2>3D FALLBACK</h2>
+        <p>
+          Това е 3D режим без сканиране. Работи и когато телефонът няма стабилен ARCore/WebXR.
+        </p>
+      </div>
+
+      <model-viewer
+        id="fallbackModel"
+        src="./uploads_files_6479452_187.glb"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        camera-controls
+        touch-action="pan-y"
+        auto-rotate
+        autoplay
+        shadow-intensity="1"
+        exposure="1"
+        alt="SoulFlame 3D Pizza"
+      ></model-viewer>
+
+      <div class="fallback-actions">
+        <a id="openTableFromFallback" href="./table-ar.html">OPEN TABLE AR</a>
+        <button id="closeFallback3D" class="ghost">BACK TO AR</button>
       </div>
     </div>
   </section>
@@ -826,54 +927,30 @@
       <a-light type="point" intensity="0.45" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity id="stableWorld" position="0 0 0">
-        <a-circle
-          id="arTable"
-          position="0 -0.09 0.052"
-          radius="0.58"
-          color="#ffffff"
-          opacity="0.10"
-          material="transparent: true; depthWrite: false; side: double"
-          animation="property: opacity; from: 0.055; to: 0.15; dur: 1600; dir: alternate; loop: true; easing: easeInOutSine"
-        ></a-circle>
-
-        <a-ring
-          id="tableRing"
-          position="0 -0.09 0.064"
-          radius-inner="0.49"
-          radius-outer="0.505"
-          color="#ffffff"
-          opacity="0.58"
-          material="transparent: true; depthWrite: false"
-          animation="property: rotation; to: 0 0 360; dur: 16000; loop: true; easing: linear"
-        ></a-ring>
-
-        <a-text
-          id="arSizeText"
-          data-role="size-text"
-          value="PIZZA 30 CM"
-          position="-0.28 -0.73 0.083"
-          width="0.95"
-          align="center"
-          color="#ffb347"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="FREEZE LOCK TEST"
-          position="-0.42 -0.88 0.083"
-          width="0.92"
-          align="center"
-          color="#ffffff"
-          opacity="0.82"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
+        <a-entity
+          id="arFloatingMenuRig"
+          data-role="ar-floating-menu-rig"
+          position="0 0 0.09"
+          rotation="0 0 0"
+          scale="1 1 1"
+          animation__float="property: position; from: 0 -0.012 0.09; to: 0 0.012 0.09; dur: 2500; dir: alternate; loop: true; easing: easeInOutSine"
+        >
+          <a-plane
+            id="arFloatingMenuPlane"
+            data-role="ar-floating-menu-plane"
+            position="0 0 0"
+            rotation="0 0 0"
+            width="2.18"
+            height="1.50"
+            material="shader: flat; transparent: true; side: double; depthWrite: false"
+          ></a-plane>
+        </a-entity>
 
         <a-entity
           id="pizzaRig"
           data-role="pizza-rig"
           visible="false"
-          position="0 -0.09 0.17"
+          position="0 -0.12 0.24"
           rotation="90 0 0"
           scale="1 1 1"
         >
@@ -885,87 +962,6 @@
             rotation="0 0 0"
             scale="1 1 1"
           ></a-entity>
-        </a-entity>
-
-        <a-ring
-          position="0 0.62 0.035"
-          radius-inner="0.17"
-          radius-outer="0.186"
-          color="#ffffff"
-          opacity="0.88"
-          material="transparent: true; depthWrite: false"
-          animation="property: rotation; to: 0 0 360; dur: 12000; loop: true; easing: linear"
-        ></a-ring>
-
-        <a-ring
-          position="0 0.62 0.04"
-          radius-inner="0.235"
-          radius-outer="0.244"
-          color="#ffffff"
-          opacity="0.42"
-          material="transparent: true; depthWrite: false"
-          animation="property: rotation; to: 0 0 -360; dur: 16000; loop: true; easing: linear"
-        ></a-ring>
-
-        <a-text
-          value="SOULFLAME"
-          position="-0.29 0.39 0.055"
-          width="1.2"
-          align="center"
-          color="#ffffff"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false"
-          animation="property: position; from: -0.29 0.39 0.055; to: -0.29 0.425 0.055; dur: 2100; dir: alternate; loop: true; easing: easeInOutSine"
-        ></a-text>
-
-        <a-text
-          value="AR FREEZE LOCK"
-          position="-0.34 0.28 0.055"
-          width="0.95"
-          align="center"
-          color="#ffffff"
-          opacity="0.78"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-entity position="0.72 0.10 0.075">
-          <a-plane
-            width="0.94"
-            height="0.65"
-            color="#ffffff"
-            opacity="0.14"
-            material="transparent: true; depthWrite: false"
-          ></a-plane>
-
-          <a-plane
-            position="0 0.23 0.025"
-            width="0.82"
-            height="0.13"
-            color="#ffffff"
-            opacity="0.94"
-            material="transparent: true; depthWrite: false"
-          ></a-plane>
-
-          <a-text
-            value="AR MENU"
-            position="-0.31 0.19 0.05"
-            width="0.8"
-            color="#000000"
-            align="left"
-            material="transparent: true; depthWrite: false"
-          ></a-text>
-
-          <a-text
-            id="menuInfoText"
-            data-role="menu-info"
-            value="PIZZA 30 CM\nSCAN ONCE\nLOCK AFTER LOST\nRESET LOCK"
-            position="-0.37 0.025 0.05"
-            width="0.78"
-            color="#ffffff"
-            align="left"
-            opacity="0.96"
-            material="transparent: true; depthWrite: false"
-          ></a-text>
         </a-entity>
       </a-entity>
     </a-entity>
@@ -985,7 +981,7 @@
       giantPizzaWidth: 3.33,
 
       lockAfterFirstScan: true,
-      autoShowPizzaOnFirstScan: true,
+      autoShowPizzaOnFirstScan: false,
 
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200
@@ -994,6 +990,7 @@
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
     const openTableFromStart = document.getElementById("openTableFromStart");
+    const openFallbackFromStart = document.getElementById("openFallbackFromStart");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
@@ -1002,6 +999,7 @@
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
     const openTableAR = document.getElementById("openTableAR");
+    const openFallback3D = document.getElementById("openFallback3D");
     const openSite = document.getElementById("openSite");
     const contactMail = document.getElementById("contactMail");
     const openDigitalBtn = document.getElementById("openDigitalBtn");
@@ -1018,8 +1016,6 @@
     const debugBtn = document.getElementById("debugBtn");
 
     const sizeLabel = document.getElementById("sizeLabel");
-    const arSizeText = document.getElementById("arSizeText");
-    const menuInfoText = document.getElementById("menuInfoText");
 
     const scene = document.querySelector("a-scene");
     const target = document.getElementById("target");
@@ -1032,6 +1028,11 @@
     const digitalWebsite = document.getElementById("digitalWebsite");
     const digitalCall = document.getElementById("digitalCall");
     const digitalEmail = document.getElementById("digitalEmail");
+
+    const fallback3D = document.getElementById("fallback3D");
+    const fallbackModel = document.getElementById("fallbackModel");
+    const closeFallback3D = document.getElementById("closeFallback3D");
+    const openTableFromFallback = document.getElementById("openTableFromFallback");
 
     const pizzaModel = document.getElementById("pizzaModel");
 
@@ -1060,6 +1061,9 @@
     let lockPoseRAF = null;
     let lockedOnce = false;
     let lastPoseReady = false;
+
+    let arMenuCanvas = null;
+    let arMenuTexture = null;
 
     const pizzaScales = [
       "0.55 0.55 0.55",
@@ -1100,6 +1104,8 @@
     digitalWebsite.href = CONFIG.siteUrl;
     digitalCall.href = `tel:${CONFIG.phone}`;
     digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
+    openTableFromFallback.href = CONFIG.tableARUrl;
+    fallbackModel.src = CONFIG.glbFile;
 
     window.addEventListener("error", (event) => {
       showDebug("JS ERROR: " + event.message);
@@ -1114,8 +1120,27 @@
       window.location.href = CONFIG.tableARUrl;
     }
 
+    function openFallback3DPanel() {
+      fallback3D.classList.remove("hidden");
+      haptic(25);
+    }
+
+    function openDigitalCard() {
+      digitalCard.classList.remove("hidden");
+      haptic(25);
+    }
+
     openTableFromStart.addEventListener("click", openTableARPage);
     openTableAR.addEventListener("click", openTableARPage);
+
+    openFallbackFromStart.addEventListener("click", openFallback3DPanel);
+    openFallback3D.addEventListener("click", openFallback3DPanel);
+    fallbackBtn.addEventListener("click", openFallback3DPanel);
+
+    closeFallback3D.addEventListener("click", () => {
+      fallback3D.classList.add("hidden");
+      haptic(20);
+    });
 
     openSite.addEventListener("click", () => {
       window.open(CONFIG.siteUrl, "_blank");
@@ -1127,7 +1152,6 @@
       haptic(25);
     });
 
-    fallbackBtn.addEventListener("click", openDigitalCard);
     openDigitalFromStart.addEventListener("click", openDigitalCard);
     openDigitalBtn.addEventListener("click", openDigitalCard);
 
@@ -1144,7 +1168,7 @@
 
     closeMenuBtn.addEventListener("click", () => {
       menuSheet.classList.remove("active");
-      setStatus(lockedOnce ? "PIZZA WORLD LOCKED" : "SOULFLAME LOCKED", lockedOnce ? "CARD NOT NEEDED" : "MOVE PHONE SLOWLY");
+      setStatus(lockedOnce ? "AR MENU LOCKED" : "SOULFLAME LOCKED", lockedOnce ? "CARD NOT NEEDED" : "MOVE PHONE SLOWLY");
       haptic(20);
     });
 
@@ -1223,6 +1247,8 @@
         "\nLAST POSE READY: " + lastPoseReady +
         "\nFROZEN WORLD: " + Boolean(frozenWorld) +
         "\nAUTOFOCUS MODE: " + autoFocusMode +
+        "\nTARGET FILE: " + CONFIG.targetFile +
+        "\nGLB FILE: " + CONFIG.glbFile +
         "\nTABLE AR URL: " + CONFIG.tableARUrl
       );
       haptic(20);
@@ -1248,14 +1274,6 @@
 
       sizeBtn.textContent = label;
       sizeLabel.textContent = label;
-
-      document.querySelectorAll('[data-role="size-text"]').forEach((textEl) => {
-        textEl.setAttribute("value", `PIZZA ${label}`);
-      });
-
-      document.querySelectorAll('[data-role="menu-info"]').forEach((textEl) => {
-        textEl.setAttribute("value", `PIZZA ${label}\\nSCAN ONCE\\nLOCK AFTER LOST\\nRESET LOCK`);
-      });
 
       modelDebugInfo += `\nSIZE SELECTED: ${label}`;
       modelDebugInfo += `\nRIG SCALE: ${scale}`;
@@ -1288,6 +1306,424 @@
         cancelAnimationFrame(rotationRAF);
         rotationRAF = null;
       }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+      ctx.lineTo(x + w, y + h - radius);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function gradient(ctx, x, y, w, h, colors) {
+      const g = ctx.createLinearGradient(x, y, x + w, y + h);
+      colors.forEach((item) => g.addColorStop(item[0], item[1]));
+      return g;
+    }
+
+    function drawARFloatingMenuCanvas() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1800;
+      canvas.height = 1240;
+
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,.38)";
+      ctx.shadowBlur = 38;
+      ctx.shadowOffsetY = 20;
+
+      roundRect(ctx, 35, 35, 1730, 1170, 70);
+      ctx.fillStyle = "rgba(0,0,0,.13)";
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.save();
+      roundRect(ctx, 35, 35, 1730, 1170, 70);
+      ctx.clip();
+
+      const bg = ctx.createLinearGradient(0, 0, 1800, 1240);
+      bg.addColorStop(0, "rgba(255,255,255,.06)");
+      bg.addColorStop(.35, "rgba(0,0,0,.10)");
+      bg.addColorStop(1, "rgba(255,255,255,.03)");
+      ctx.fillStyle = bg;
+      ctx.fillRect(35, 35, 1730, 1170);
+
+      ctx.fillStyle = "rgba(255,255,255,.08)";
+      ctx.beginPath();
+      ctx.arc(250, 150, 260, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(29,124,255,.08)";
+      ctx.beginPath();
+      ctx.arc(1460, 190, 310, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(247,37,133,.06)";
+      ctx.beginPath();
+      ctx.arc(900, 1160, 380, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      const logoX = 190;
+      const logoY = 170;
+      const logoR = 94;
+
+      const logoBorder = ctx.createLinearGradient(logoX - logoR, logoY - logoR, logoX + logoR, logoY + logoR);
+      logoBorder.addColorStop(0, "#1d7cff");
+      logoBorder.addColorStop(.35, "#6a4dff");
+      logoBorder.addColorStop(.7, "#8b35ff");
+      logoBorder.addColorStop(1, "#f72585");
+
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,.32)";
+      ctx.shadowBlur = 26;
+      ctx.shadowOffsetY = 12;
+
+      ctx.beginPath();
+      ctx.arc(logoX, logoY, logoR + 12, 0, Math.PI * 2);
+      ctx.fillStyle = logoBorder;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,.96)";
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.fillStyle = "#050505";
+      ctx.font = "900 56px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("SF", logoX, logoY + 2);
+
+      ctx.strokeStyle = "rgba(0,0,0,.16)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(logoX, logoY, logoR - 17, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const titleGrad = ctx.createLinearGradient(320, 90, 1080, 90);
+      titleGrad.addColorStop(0, "#1d7cff");
+      titleGrad.addColorStop(.35, "#386cff");
+      titleGrad.addColorStop(.68, "#773cff");
+      titleGrad.addColorStop(1, "#a020ff");
+
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,.45)";
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 4;
+
+      ctx.fillStyle = titleGrad;
+      ctx.font = "900 104px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("SoulFlame AR", 330, 160);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 47px Arial";
+      ctx.fillText("Interactive 3D Experiences", 336, 225);
+
+      ctx.restore();
+
+      const rows = [
+        {
+          n: "01",
+          opt: "опция",
+          label: "Ресторанти",
+          icon: "🍴",
+          color: "#ff7a18",
+          c1: "#ff4d00",
+          c2: "#ff7a18",
+          c3: "#ffb000",
+          product: "AR меню • 3D храна • Пица",
+          emoji: "🍕"
+        },
+        {
+          n: "02",
+          opt: "опция",
+          label: "Дрехи",
+          icon: "👕",
+          color: "#57d600",
+          c1: "#239d00",
+          c2: "#57d600",
+          c3: "#94ef00",
+          product: "AR проба • Мода • Каталог",
+          emoji: "👗"
+        },
+        {
+          n: "03",
+          opt: "опция",
+          label: "Мебели",
+          icon: "🛋",
+          color: "#00b8d9",
+          c1: "#007a95",
+          c2: "#00b8d9",
+          c3: "#00e0ff",
+          product: "AR стая • Размер • Дизайн",
+          emoji: "🛋"
+        },
+        {
+          n: "04",
+          opt: "опция",
+          label: "Коли",
+          icon: "🚗",
+          color: "#f72585",
+          c1: "#c90057",
+          c2: "#f72585",
+          c3: "#ff5daf",
+          product: "AR 360 • Showroom • Детайли",
+          emoji: "🚘"
+        }
+      ];
+
+      const startY = 330;
+      const rowH = 145;
+      const gap = 45;
+
+      rows.forEach((row, index) => {
+        const y = startY + index * (rowH + gap);
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.34)";
+        ctx.shadowBlur = 22;
+        ctx.shadowOffsetY = 14;
+
+        const optX = 70;
+        const optY = y;
+        const optW = 292;
+        const optH = 132;
+
+        roundRect(ctx, optX, optY, optW, optH, 36);
+        ctx.fillStyle = gradient(ctx, optX, optY, optW, optH, [
+          [0, row.c1],
+          [.5, row.c2],
+          [1, row.c3]
+        ]);
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.save();
+        roundRect(ctx, optX, optY, optW, optH, 36);
+        ctx.clip();
+
+        ctx.fillStyle = "rgba(255,255,255,.20)";
+        ctx.beginPath();
+        ctx.moveTo(optX, optY);
+        ctx.lineTo(optX + optW * .72, optY);
+        ctx.lineTo(optX + optW * .32, optY + optH);
+        ctx.lineTo(optX, optY + optH);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(255,255,255,.12)";
+        ctx.save();
+        ctx.translate(optX + optW - 8, optY + optH / 2);
+        ctx.rotate(Math.PI / 4);
+        roundRect(ctx, -39, -39, 78, 78, 22);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.restore();
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.36)";
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetY = 3;
+
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+        ctx.font = "900 72px Arial";
+        ctx.fillText(row.n, optX + 30, optY + 72);
+
+        ctx.font = "900 31px Arial";
+        ctx.fillText(row.opt, optX + 33, optY + 112);
+
+        ctx.restore();
+
+        const labelX = 405;
+        const labelY = y + 66;
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.78)";
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetY = 3;
+
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.font = "900 54px Arial";
+        ctx.fillText(row.icon, labelX, labelY);
+
+        ctx.font = "900 48px Arial";
+        ctx.fillText(row.label, labelX + 85, labelY);
+
+        ctx.restore();
+
+        for (let d = 0; d < 5; d++) {
+          ctx.beginPath();
+          ctx.arc(labelX + 90 + d * 31, labelY + 54, 9, 0, Math.PI * 2);
+          if (d < 3) ctx.fillStyle = row.color;
+          else if (d === 3) ctx.fillStyle = "rgba(255,255,255,.55)";
+          else ctx.fillStyle = "rgba(255,255,255,.30)";
+          ctx.fill();
+        }
+
+        const pX = 870;
+        const pY = y;
+        const pW = 520;
+        const pH = 132;
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.34)";
+        ctx.shadowBlur = 22;
+        ctx.shadowOffsetY = 14;
+
+        roundRect(ctx, pX, pY, pW, pH, 36);
+        ctx.fillStyle = "rgba(0,0,0,.28)";
+        ctx.fill();
+
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = row.color;
+        ctx.stroke();
+
+        ctx.restore();
+
+        ctx.save();
+        roundRect(ctx, pX + 5, pY + 5, pW - 10, pH - 10, 30);
+        ctx.clip();
+
+        const pg = ctx.createLinearGradient(pX, pY, pX + pW, pY + pH);
+        pg.addColorStop(0, row.c1);
+        pg.addColorStop(.42, "rgba(0,0,0,.28)");
+        pg.addColorStop(1, row.c3);
+        ctx.fillStyle = pg;
+        ctx.fillRect(pX, pY, pW, pH);
+
+        ctx.fillStyle = "rgba(255,255,255,.12)";
+        ctx.beginPath();
+        ctx.arc(pX + 420, pY + 40, 160, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(0,0,0,.22)";
+        ctx.fillRect(pX, pY, pW, pH);
+
+        ctx.fillStyle = "rgba(255,255,255,.92)";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.font = "900 31px Arial";
+        ctx.fillText(row.product, pX + 34, pY + 74);
+
+        ctx.font = "900 64px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(row.emoji, pX + pW - 122, pY + 78);
+
+        ctx.restore();
+
+        ctx.save();
+
+        roundRect(ctx, pX + pW - 82, pY + 15, 58, 48, 18);
+        ctx.fillStyle = "rgba(0,0,0,.42)";
+        ctx.fill();
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = row.color;
+        ctx.stroke();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "900 23px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("3D", pX + pW - 53, pY + 39);
+
+        ctx.restore();
+
+        const aX = 1435;
+        const aY = y + 28;
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.34)";
+        ctx.shadowBlur = 22;
+        ctx.shadowOffsetY = 14;
+
+        roundRect(ctx, aX, aY, 56, 76, 24);
+        ctx.fillStyle = row.color;
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "300 64px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("›", aX + 31, aY + 35);
+      });
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.88)";
+      ctx.font = "900 30px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0,0,0,.75)";
+      ctx.shadowBlur = 7;
+      ctx.shadowOffsetY = 3;
+      ctx.fillText("AR Floating Menu · Locked to SoulFlame Card", 900, 1152);
+      ctx.restore();
+
+      return canvas;
+    }
+
+    function applyARFloatingMenuTexture() {
+      if (!window.THREE) return;
+
+      if (!arMenuCanvas) {
+        arMenuCanvas = drawARFloatingMenuCanvas();
+      }
+
+      if (!arMenuTexture) {
+        arMenuTexture = new THREE.CanvasTexture(arMenuCanvas);
+
+        if (THREE.SRGBColorSpace) {
+          arMenuTexture.colorSpace = THREE.SRGBColorSpace;
+        }
+
+        arMenuTexture.anisotropy = 8;
+        arMenuTexture.needsUpdate = true;
+      }
+
+      const planes = document.querySelectorAll('[data-role="ar-floating-menu-plane"]');
+
+      planes.forEach((plane) => {
+        const mesh = plane.getObject3D("mesh");
+
+        if (!mesh) {
+          plane.addEventListener("object3dset", applyARFloatingMenuTexture, { once: true });
+          return;
+        }
+
+        mesh.material = new THREE.MeshBasicMaterial({
+          map: arMenuTexture,
+          transparent: true,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+
+        mesh.material.needsUpdate = true;
+      });
     }
 
     pizzaModel.addEventListener("model-loaded", () => {
@@ -1438,6 +1874,10 @@
 
       scene.appendChild(frozenWorld);
 
+      requestAnimationFrame(() => {
+        applyARFloatingMenuTexture();
+      });
+
       const clonedModels = frozenWorld.querySelectorAll('[data-role="pizza-model"], [gltf-model]');
       clonedModels.forEach((modelEl) => {
         modelEl.addEventListener("model-loaded", () => {
@@ -1513,7 +1953,7 @@
       clone.setAttribute("visible", "true");
       setAllPizzaRigVisible(pizzaVisible);
 
-      setStatus("PIZZA WORLD LOCKED", "CARD NOT NEEDED");
+      setStatus("AR MENU LOCKED", "CARD NOT NEEDED");
     }
 
     function hideFrozenWorld() {
@@ -1667,11 +2107,6 @@
       }
     }
 
-    function openDigitalCard() {
-      digitalCard.classList.remove("hidden");
-      haptic(25);
-    }
-
     function setStatus(top, bottom) {
       topHud.textContent = top;
       bottomStatus.textContent = bottom;
@@ -1701,6 +2136,7 @@
       }
 
       applyPizzaSize();
+      applyARFloatingMenuTexture();
       setStatus("AR SYSTEM READY", "READY");
     });
 
@@ -1756,9 +2192,9 @@
       } catch (error) {
         started = false;
         startBtn.textContent = "START CARD AR";
-        setStatus("CAMERA / MINDAR ERROR", "CHECK CONSOLE");
+        setStatus("CAMERA / MINDAR ERROR", "OPEN 3D FALLBACK");
         showDebug(error.message || String(error));
-        openDigitalCard();
+        openFallback3DPanel();
       }
     });
 
@@ -1783,7 +2219,9 @@
         startLockPoseLoop();
       }
 
-      setStatus("SOULFLAME LOCKED", "PIZZA POSITION SAVED");
+      applyARFloatingMenuTexture();
+
+      setStatus("SOULFLAME MENU LOCKED", "AR PANEL ON CARD");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
@@ -1812,7 +2250,7 @@
     });
 
     document.addEventListener("click", async (event) => {
-      const clickable = event.target.closest("button, a");
+      const clickable = event.target.closest("button, a, model-viewer");
       if (clickable) return;
 
       if (started) {
