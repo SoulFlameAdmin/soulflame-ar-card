@@ -21,7 +21,6 @@
       --blue: #1d7cff;
       --purple: #8b35ff;
       --red: #ff3d3d;
-      --glass: rgba(0,0,0,.68);
       --line: rgba(255,255,255,.18);
       --radius-xl: 34px;
       --radius-pill: 999px;
@@ -61,7 +60,7 @@
       width: 1160px;
       height: 900px;
       border: 0;
-      opacity: 0.01;
+      opacity: .01;
       pointer-events: none;
       z-index: -1;
       background: transparent;
@@ -774,21 +773,21 @@
       <div class="subtitle">SLIVEN · SOULFLAME EXPERIENCE</div>
 
       <p>
-        Избери режим: дигитална визитка, ARmini върху картата,
-        реален AR за маса или SoulFlame сайт.
+        DIGITAL CARD стартира ARmini сканирането.  
+        ARmini отваря отделната дигитална визитка.
       </p>
 
       <div class="start-actions">
-        <button id="openDigitalFromStart" class="main-btn btn-white">DIGITAL CARD</button>
-        <button id="startBtn" class="main-btn btn-gold">ARmini</button>
+        <button id="digitalCardButton" class="main-btn btn-white">DIGITAL CARD</button>
+        <button id="arMiniButton" class="main-btn btn-gold">ARmini</button>
         <button id="openTableFromStart" class="main-btn btn-green">AR</button>
         <button id="openSiteFromStart" class="main-btn btn-dark">SOULFLAME SAIT</button>
       </div>
 
       <span class="hint">
-        DIGITAL CARD: ./digital_card.html<br>
-        ARmini: ./targets/soulflame-black.mind + ./uploads_files_6479452_187.glb<br>
-        AR: ./table-ar.html + GLB/USDZ
+        DIGITAL CARD → ARmini камера<br>
+        ARmini → ./digital_card.html<br>
+        AR → ./table-ar.html
       </span>
 
       <div class="mini-grid">
@@ -807,15 +806,15 @@
   </div>
 
   <div id="bottomStatus">READY</div>
-  <button id="miniFallbackBtn">ARmini</button>
+  <button id="miniFallbackBtn">3D</button>
 
   <div id="actionDock">
     <button id="menuBtn" class="gold">MENU</button>
     <button id="openTableAR" class="table">AR</button>
-    <button id="openMini3D" class="mini">ARmini</button>
-    <button id="openSite" class="dark">SOULFLAME SAIT</button>
+    <button id="openDigitalCardPage" class="mini">ARmini</button>
+    <button id="openSite" class="dark">SAIT</button>
     <button id="contactMail" class="dark">EMAIL</button>
-    <button id="openDigitalBtn">CARD</button>
+    <button id="resetScanDock">SCAN</button>
   </div>
 
   <div id="menuSheet">
@@ -972,7 +971,6 @@
       targetFile: "./targets/soulflame-black.mind",
       miniPizzaWidth: 0.52,
       lockAfterFirstScan: true,
-      autoShowPizzaOnFirstScan: true,
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200
     };
@@ -980,9 +978,9 @@
     const menuCaptureFrame = document.getElementById("menuCaptureFrame");
 
     const startScreen = document.getElementById("startScreen");
-    const startBtn = document.getElementById("startBtn");
+    const digitalCardButton = document.getElementById("digitalCardButton");
+    const arMiniButton = document.getElementById("arMiniButton");
     const openTableFromStart = document.getElementById("openTableFromStart");
-    const openDigitalFromStart = document.getElementById("openDigitalFromStart");
     const openSiteFromStart = document.getElementById("openSiteFromStart");
 
     const topHud = document.getElementById("topHud");
@@ -992,10 +990,10 @@
     const actionDock = document.getElementById("actionDock");
     const menuBtn = document.getElementById("menuBtn");
     const openTableAR = document.getElementById("openTableAR");
-    const openMini3D = document.getElementById("openMini3D");
+    const openDigitalCardPage = document.getElementById("openDigitalCardPage");
     const openSite = document.getElementById("openSite");
     const contactMail = document.getElementById("contactMail");
-    const openDigitalBtn = document.getElementById("openDigitalBtn");
+    const resetScanDock = document.getElementById("resetScanDock");
 
     const menuSheet = document.getElementById("menuSheet");
     const closeMenuBtn = document.getElementById("closeMenuBtn");
@@ -1108,7 +1106,7 @@
       });
     }
 
-    function openDigitalCardPage() {
+    function openDigitalCardHtml() {
       haptic(25);
       window.location.href = CONFIG.digitalCardUrl;
     }
@@ -1301,13 +1299,13 @@
       }
     }
 
-    openDigitalFromStart.addEventListener("click", openDigitalCardPage);
-    openDigitalBtn.addEventListener("click", openDigitalCardPage);
+    digitalCardButton.addEventListener("click", startMiniAR);
+    arMiniButton.addEventListener("click", openDigitalCardHtml);
+    openDigitalCardPage.addEventListener("click", openDigitalCardHtml);
 
     openTableFromStart.addEventListener("click", openTableARPage);
     openTableAR.addEventListener("click", openTableARPage);
 
-    openMini3D.addEventListener("click", openMini3DPanel);
     miniFallbackBtn.addEventListener("click", openMini3DPanel);
 
     closeMini3D.addEventListener("click", () => {
@@ -1320,6 +1318,11 @@
 
     contactMail.addEventListener("click", () => {
       window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
+      haptic(25);
+    });
+
+    resetScanDock.addEventListener("click", () => {
+      resetFrozenLock();
       haptic(25);
     });
 
@@ -1608,7 +1611,7 @@
       });
 
       modelDebugInfo += "\n" + label + " AUTO SCALE: " + Number(scale.toFixed(4));
-      modelDebugInfo += "\n" + label + " RESULT: ARmini CARD MODE";
+      modelDebugInfo += "\n" + label + " RESULT: DIGITAL CARD BUTTON = ARmini MODE";
     }
 
     function removeIdsFromClone(root) {
@@ -1907,7 +1910,7 @@
 
       try {
         started = true;
-        startBtn.textContent = "STARTING ARmini...";
+        digitalCardButton.textContent = "STARTING ARmini...";
 
         if (!arSystem) {
           await new Promise((resolve) => {
@@ -1925,7 +1928,7 @@
         await arSystem.start();
 
         await sleep(CONFIG.autoFocusDelayMs);
-        await enableCameraAutoFocus("after-armini-start");
+        await enableCameraAutoFocus("digital-card-button-started-armini");
 
         setTimeout(() => {
           enableCameraAutoFocus("retry-after-armini-start");
@@ -1936,7 +1939,7 @@
         scanFrame.classList.remove("locked");
         actionDock.classList.remove("active");
 
-        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "ПОКАЖЕТЕ ВИЗИТКАТА", "ARmini SCANNING");
+        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "ПОКАЖЕТЕ ВИЗИТКАТА", "DIGITAL CARD → ARmini");
 
         clearTimeout(scanTimer);
         scanTimer = setTimeout(() => {
@@ -1957,14 +1960,12 @@
 
       } catch (error) {
         started = false;
-        startBtn.textContent = "ARmini";
-        setStatus("CAMERA / MINDAR ERROR", "OPEN ARmini 3D");
+        digitalCardButton.textContent = "DIGITAL CARD";
+        setStatus("CAMERA / MINDAR ERROR", "OPEN 3D");
         showDebug(error.message || String(error));
         openMini3DPanel();
       }
     }
-
-    startBtn.addEventListener("click", startMiniAR);
 
     target.addEventListener("targetFound", async () => {
       visible = true;
@@ -2046,7 +2047,7 @@
           menuSheet.classList.remove("active");
           scanFrame.classList.remove("active", "locked");
           startScreen.classList.remove("hidden");
-          startBtn.textContent = "ARmini";
+          digitalCardButton.textContent = "DIGITAL CARD";
           setStatus("AR PAUSED", "PAUSED");
         } catch (error) {
           console.warn(error);
