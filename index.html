@@ -4,10 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Pizza · Floating Menu + Freeze Lock + Table AR</title>
+  <title>SoulFlame AR · External Menu Locked To Card</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
@@ -16,9 +17,6 @@
       --text: #ffffff;
       --gold: #ffb347;
       --green: #48ff9b;
-      --orange: #ff7a18;
-      --cyan: #00b8d9;
-      --pink: #f72585;
       --blue: #1d7cff;
       --purple: #8b35ff;
       --glass: rgba(0,0,0,.68);
@@ -102,6 +100,19 @@
     @keyframes gridDrift {
       from { transform: translate3d(0,0,0); }
       to { transform: translate3d(44px,44px,0); }
+    }
+
+    #menuCaptureFrame {
+      position: fixed;
+      left: -99999px;
+      top: -99999px;
+      width: 1160px;
+      height: 900px;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: transparent;
     }
 
     #startScreen {
@@ -764,6 +775,8 @@
 </head>
 
 <body>
+  <iframe id="menuCaptureFrame" src="./menu_za_vizitka/sf-menu.html"></iframe>
+
   <canvas id="fxCanvas"></canvas>
   <div id="debugBox"></div>
 
@@ -771,11 +784,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">CARD AR + TABLE AR + 3D FALLBACK</div>
+      <div class="subtitle">EXTERNAL MENU + CARD LOCK</div>
 
       <p>
-        Сканирай визитката за <b>AR Floating Menu</b>, отвори <b>TABLE AR</b>
-        или използвай <b>3D fallback</b>, ако телефонът няма ARCore/WebXR.
+        Дизайнът идва от <b>./menu_za_vizitka/sf-menu.html</b>,
+        превръща се в AR texture и се заключва към визитката.
       </p>
 
       <div class="start-actions">
@@ -785,18 +798,20 @@
         <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
       </div>
 
-      <span class="hint">Файлове: ./targets/soulflame-black.mind · ./uploads_files_6479452_187.glb · ./table-ar.html</span>
+      <span class="hint">
+        ./targets/soulflame-black.mind · ./uploads_files_6479452_187.glb · ./menu_za_vizitka/sf-menu.html
+      </span>
 
       <div class="mini-grid">
         <span>SCAN</span>
-        <span>TABLE</span>
+        <span>MENU</span>
         <span>3D</span>
         <span>LOCK</span>
       </div>
     </div>
   </section>
 
-  <div id="topHud">SCAN SOULFLAME CARD</div>
+  <div id="topHud">LOADING MENU TEXTURE</div>
 
   <div id="scanFrame">
     <div id="scanLine"></div>
@@ -827,6 +842,7 @@
       <button id="flipBtn">FLIP</button>
       <button id="resetBtn">RESET PIZZA</button>
       <button id="hidePizzaBtn">HIDE / SHOW</button>
+      <button id="reloadMenuBtn">RELOAD MENU</button>
       <button id="resetLockBtn">RESET LOCK</button>
       <button id="closeMenuBtn" class="light">CLOSE</button>
       <button id="debugBtn" class="light">DEBUG</button>
@@ -872,7 +888,7 @@
         autoplay
         shadow-intensity="1"
         exposure="1"
-        alt="SoulFlame 3D Pizza"
+        alt="SoulFlame 3D Model"
       ></model-viewer>
 
       <div class="fallback-actions">
@@ -933,15 +949,15 @@
           position="0 0 0.09"
           rotation="0 0 0"
           scale="1 1 1"
-          animation__float="property: position; from: 0 -0.012 0.09; to: 0 0.012 0.09; dur: 2500; dir: alternate; loop: true; easing: easeInOutSine"
+          animation__float="property: position; from: 0 -0.010 0.09; to: 0 0.010 0.09; dur: 2500; dir: alternate; loop: true; easing: easeInOutSine"
         >
           <a-plane
             id="arFloatingMenuPlane"
             data-role="ar-floating-menu-plane"
             position="0 0 0"
             rotation="0 0 0"
-            width="2.18"
-            height="1.50"
+            width="1.82"
+            height="1.41"
             material="shader: flat; transparent: true; side: double; depthWrite: false"
           ></a-plane>
         </a-entity>
@@ -969,29 +985,30 @@
 
   <script>
     const CONFIG = {
+      menuTextureUrl: "./menu_za_vizitka/sf-menu.html",
       siteUrl: "https://soulflame-ar-card.vercel.app",
       tableARUrl: "./table-ar.html",
       email: "soulflame.mitko@gmail.com",
       phone: "+359xxxxxxxxx",
-      mailSubject: "SoulFlame AR Pizza",
+      mailSubject: "SoulFlame AR Menu",
       scanTimeoutMs: 14000,
       glbFile: "./uploads_files_6479452_187.glb",
       targetFile: "./targets/soulflame-black.mind",
-
       giantPizzaWidth: 3.33,
-
       lockAfterFirstScan: true,
       autoShowPizzaOnFirstScan: false,
-
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200
     };
+
+    const menuCaptureFrame = document.getElementById("menuCaptureFrame");
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
     const openTableFromStart = document.getElementById("openTableFromStart");
     const openFallbackFromStart = document.getElementById("openFallbackFromStart");
     const openDigitalFromStart = document.getElementById("openDigitalFromStart");
+
     const topHud = document.getElementById("topHud");
     const bottomStatus = document.getElementById("bottomStatus");
     const debugBox = document.getElementById("debugBox");
@@ -1012,9 +1029,9 @@
     const flipBtn = document.getElementById("flipBtn");
     const resetBtn = document.getElementById("resetBtn");
     const hidePizzaBtn = document.getElementById("hidePizzaBtn");
+    const reloadMenuBtn = document.getElementById("reloadMenuBtn");
     const resetLockBtn = document.getElementById("resetLockBtn");
     const debugBtn = document.getElementById("debugBtn");
-
     const sizeLabel = document.getElementById("sizeLabel");
 
     const scene = document.querySelector("a-scene");
@@ -1064,6 +1081,7 @@
 
     let arMenuCanvas = null;
     let arMenuTexture = null;
+    let menuTextureReady = false;
 
     const pizzaScales = [
       "0.55 0.55 0.55",
@@ -1114,6 +1132,171 @@
     window.addEventListener("unhandledrejection", (event) => {
       showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
     });
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function waitForIframeLoad(iframe) {
+      return new Promise((resolve) => {
+        if (iframe.contentDocument && iframe.contentDocument.readyState === "complete") {
+          resolve();
+          return;
+        }
+
+        iframe.addEventListener("load", () => resolve(), { once: true });
+      });
+    }
+
+    function drawMenuFallbackCanvas(reason = "fallback") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1160;
+      canvas.height = 900;
+
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const g = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      g.addColorStop(0, "#1d7cff");
+      g.addColorStop(.45, "#8b35ff");
+      g.addColorStop(1, "#f72585");
+
+      ctx.fillStyle = "rgba(0,0,0,.18)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = g;
+      roundRect(ctx, 55, 55, 1050, 790, 58);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(0,0,0,.25)";
+      roundRect(ctx, 75, 75, 1010, 750, 46);
+      ctx.fill();
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 86px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("SoulFlame AR", 580, 250);
+
+      ctx.font = "800 44px Arial";
+      ctx.fillText("External menu texture failed", 580, 340);
+
+      ctx.font = "700 28px Arial";
+      ctx.fillText(reason, 580, 410);
+
+      ctx.font = "900 42px Arial";
+      ctx.fillText("Check ./menu_za_vizitka/sf-menu.html", 580, 600);
+
+      return canvas;
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+      ctx.lineTo(x + w, y + h - radius);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    async function captureExternalMenuToCanvas(forceReload = false) {
+      try {
+        if (forceReload) {
+          menuCaptureFrame.src = CONFIG.menuTextureUrl + "?v=" + Date.now();
+        }
+
+        await waitForIframeLoad(menuCaptureFrame);
+        await sleep(700);
+
+        const doc = menuCaptureFrame.contentDocument;
+        if (!doc) throw new Error("Cannot access iframe document. Use localhost or HTTPS, not file://");
+
+        if (doc.fonts && doc.fonts.ready) {
+          await doc.fonts.ready;
+        }
+
+        const targetMenu = doc.querySelector(".floating-menu") || doc.body;
+        if (!targetMenu) throw new Error("No .floating-menu found in sf-menu.html");
+
+        const images = Array.from(doc.images || []);
+        await Promise.all(images.map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        }));
+
+        const canvas = await html2canvas(targetMenu, {
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false,
+          scale: 2,
+          width: 1160,
+          height: 900,
+          windowWidth: 1160,
+          windowHeight: 900,
+          logging: false
+        });
+
+        menuTextureReady = true;
+        return canvas;
+
+      } catch (error) {
+        menuTextureReady = false;
+        showDebug("MENU TEXTURE ERROR:\n" + (error.message || error));
+        return drawMenuFallbackCanvas(error.message || String(error));
+      }
+    }
+
+    async function applyExternalMenuTexture(forceReload = false) {
+      if (!window.THREE) return;
+
+      arMenuCanvas = await captureExternalMenuToCanvas(forceReload);
+
+      if (arMenuTexture) {
+        arMenuTexture.dispose();
+        arMenuTexture = null;
+      }
+
+      arMenuTexture = new THREE.CanvasTexture(arMenuCanvas);
+
+      if (THREE.SRGBColorSpace) {
+        arMenuTexture.colorSpace = THREE.SRGBColorSpace;
+      }
+
+      arMenuTexture.anisotropy = 8;
+      arMenuTexture.needsUpdate = true;
+
+      const planes = document.querySelectorAll('[data-role="ar-floating-menu-plane"]');
+
+      planes.forEach((plane) => {
+        const mesh = plane.getObject3D("mesh");
+
+        if (!mesh) {
+          plane.addEventListener("object3dset", () => {
+            applyExternalMenuTexture(false);
+          }, { once: true });
+          return;
+        }
+
+        mesh.material = new THREE.MeshBasicMaterial({
+          map: arMenuTexture,
+          transparent: true,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+
+        mesh.material.needsUpdate = true;
+      });
+
+      setStatus(menuTextureReady ? "MENU TEXTURE READY" : "MENU FALLBACK ACTIVE", menuTextureReady ? "SCAN CARD" : "CHECK FILE PATH");
+    }
 
     function openTableARPage() {
       haptic(35);
@@ -1235,6 +1418,14 @@
       haptic(35);
     });
 
+    reloadMenuBtn.addEventListener("click", async () => {
+      setStatus("RELOADING MENU", "WAIT");
+      await applyExternalMenuTexture(true);
+      menuSheet.classList.remove("active");
+      setStatus("MENU RELOADED", "SCAN / LOCK ACTIVE");
+      haptic(35);
+    });
+
     resetLockBtn.addEventListener("click", () => {
       resetFrozenLock();
       haptic(35);
@@ -1243,7 +1434,9 @@
     debugBtn.addEventListener("click", () => {
       showDebug(
         modelDebugInfo +
-        "\n\nLOCKED ONCE: " + lockedOnce +
+        "\n\nMENU TEXTURE URL: " + CONFIG.menuTextureUrl +
+        "\nMENU TEXTURE READY: " + menuTextureReady +
+        "\nLOCKED ONCE: " + lockedOnce +
         "\nLAST POSE READY: " + lastPoseReady +
         "\nFROZEN WORLD: " + Boolean(frozenWorld) +
         "\nAUTOFOCUS MODE: " + autoFocusMode +
@@ -1306,424 +1499,6 @@
         cancelAnimationFrame(rotationRAF);
         rotationRAF = null;
       }
-    }
-
-    function roundRect(ctx, x, y, w, h, r) {
-      const radius = Math.min(r, w / 2, h / 2);
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + w - radius, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-      ctx.lineTo(x + w, y + h - radius);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-      ctx.lineTo(x + radius, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
-    }
-
-    function gradient(ctx, x, y, w, h, colors) {
-      const g = ctx.createLinearGradient(x, y, x + w, y + h);
-      colors.forEach((item) => g.addColorStop(item[0], item[1]));
-      return g;
-    }
-
-    function drawARFloatingMenuCanvas() {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1800;
-      canvas.height = 1240;
-
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,.38)";
-      ctx.shadowBlur = 38;
-      ctx.shadowOffsetY = 20;
-
-      roundRect(ctx, 35, 35, 1730, 1170, 70);
-      ctx.fillStyle = "rgba(0,0,0,.13)";
-      ctx.fill();
-
-      ctx.restore();
-
-      ctx.save();
-      roundRect(ctx, 35, 35, 1730, 1170, 70);
-      ctx.clip();
-
-      const bg = ctx.createLinearGradient(0, 0, 1800, 1240);
-      bg.addColorStop(0, "rgba(255,255,255,.06)");
-      bg.addColorStop(.35, "rgba(0,0,0,.10)");
-      bg.addColorStop(1, "rgba(255,255,255,.03)");
-      ctx.fillStyle = bg;
-      ctx.fillRect(35, 35, 1730, 1170);
-
-      ctx.fillStyle = "rgba(255,255,255,.08)";
-      ctx.beginPath();
-      ctx.arc(250, 150, 260, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "rgba(29,124,255,.08)";
-      ctx.beginPath();
-      ctx.arc(1460, 190, 310, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "rgba(247,37,133,.06)";
-      ctx.beginPath();
-      ctx.arc(900, 1160, 380, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-
-      const logoX = 190;
-      const logoY = 170;
-      const logoR = 94;
-
-      const logoBorder = ctx.createLinearGradient(logoX - logoR, logoY - logoR, logoX + logoR, logoY + logoR);
-      logoBorder.addColorStop(0, "#1d7cff");
-      logoBorder.addColorStop(.35, "#6a4dff");
-      logoBorder.addColorStop(.7, "#8b35ff");
-      logoBorder.addColorStop(1, "#f72585");
-
-      ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,.32)";
-      ctx.shadowBlur = 26;
-      ctx.shadowOffsetY = 12;
-
-      ctx.beginPath();
-      ctx.arc(logoX, logoY, logoR + 12, 0, Math.PI * 2);
-      ctx.fillStyle = logoBorder;
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,255,255,.96)";
-      ctx.fill();
-
-      ctx.restore();
-
-      ctx.fillStyle = "#050505";
-      ctx.font = "900 56px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("SF", logoX, logoY + 2);
-
-      ctx.strokeStyle = "rgba(0,0,0,.16)";
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.arc(logoX, logoY, logoR - 17, 0, Math.PI * 2);
-      ctx.stroke();
-
-      const titleGrad = ctx.createLinearGradient(320, 90, 1080, 90);
-      titleGrad.addColorStop(0, "#1d7cff");
-      titleGrad.addColorStop(.35, "#386cff");
-      titleGrad.addColorStop(.68, "#773cff");
-      titleGrad.addColorStop(1, "#a020ff");
-
-      ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,.45)";
-      ctx.shadowBlur = 8;
-      ctx.shadowOffsetY = 4;
-
-      ctx.fillStyle = titleGrad;
-      ctx.font = "900 104px Arial";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-      ctx.fillText("SoulFlame AR", 330, 160);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "800 47px Arial";
-      ctx.fillText("Interactive 3D Experiences", 336, 225);
-
-      ctx.restore();
-
-      const rows = [
-        {
-          n: "01",
-          opt: "опция",
-          label: "Ресторанти",
-          icon: "🍴",
-          color: "#ff7a18",
-          c1: "#ff4d00",
-          c2: "#ff7a18",
-          c3: "#ffb000",
-          product: "AR меню • 3D храна • Пица",
-          emoji: "🍕"
-        },
-        {
-          n: "02",
-          opt: "опция",
-          label: "Дрехи",
-          icon: "👕",
-          color: "#57d600",
-          c1: "#239d00",
-          c2: "#57d600",
-          c3: "#94ef00",
-          product: "AR проба • Мода • Каталог",
-          emoji: "👗"
-        },
-        {
-          n: "03",
-          opt: "опция",
-          label: "Мебели",
-          icon: "🛋",
-          color: "#00b8d9",
-          c1: "#007a95",
-          c2: "#00b8d9",
-          c3: "#00e0ff",
-          product: "AR стая • Размер • Дизайн",
-          emoji: "🛋"
-        },
-        {
-          n: "04",
-          opt: "опция",
-          label: "Коли",
-          icon: "🚗",
-          color: "#f72585",
-          c1: "#c90057",
-          c2: "#f72585",
-          c3: "#ff5daf",
-          product: "AR 360 • Showroom • Детайли",
-          emoji: "🚘"
-        }
-      ];
-
-      const startY = 330;
-      const rowH = 145;
-      const gap = 45;
-
-      rows.forEach((row, index) => {
-        const y = startY + index * (rowH + gap);
-
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,.34)";
-        ctx.shadowBlur = 22;
-        ctx.shadowOffsetY = 14;
-
-        const optX = 70;
-        const optY = y;
-        const optW = 292;
-        const optH = 132;
-
-        roundRect(ctx, optX, optY, optW, optH, 36);
-        ctx.fillStyle = gradient(ctx, optX, optY, optW, optH, [
-          [0, row.c1],
-          [.5, row.c2],
-          [1, row.c3]
-        ]);
-        ctx.fill();
-
-        ctx.restore();
-
-        ctx.save();
-        roundRect(ctx, optX, optY, optW, optH, 36);
-        ctx.clip();
-
-        ctx.fillStyle = "rgba(255,255,255,.20)";
-        ctx.beginPath();
-        ctx.moveTo(optX, optY);
-        ctx.lineTo(optX + optW * .72, optY);
-        ctx.lineTo(optX + optW * .32, optY + optH);
-        ctx.lineTo(optX, optY + optH);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = "rgba(255,255,255,.12)";
-        ctx.save();
-        ctx.translate(optX + optW - 8, optY + optH / 2);
-        ctx.rotate(Math.PI / 4);
-        roundRect(ctx, -39, -39, 78, 78, 22);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.restore();
-
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,.36)";
-        ctx.shadowBlur = 6;
-        ctx.shadowOffsetY = 3;
-
-        ctx.fillStyle = "#fff";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "alphabetic";
-        ctx.font = "900 72px Arial";
-        ctx.fillText(row.n, optX + 30, optY + 72);
-
-        ctx.font = "900 31px Arial";
-        ctx.fillText(row.opt, optX + 33, optY + 112);
-
-        ctx.restore();
-
-        const labelX = 405;
-        const labelY = y + 66;
-
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,.78)";
-        ctx.shadowBlur = 6;
-        ctx.shadowOffsetY = 3;
-
-        ctx.fillStyle = "#fff";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        ctx.font = "900 54px Arial";
-        ctx.fillText(row.icon, labelX, labelY);
-
-        ctx.font = "900 48px Arial";
-        ctx.fillText(row.label, labelX + 85, labelY);
-
-        ctx.restore();
-
-        for (let d = 0; d < 5; d++) {
-          ctx.beginPath();
-          ctx.arc(labelX + 90 + d * 31, labelY + 54, 9, 0, Math.PI * 2);
-          if (d < 3) ctx.fillStyle = row.color;
-          else if (d === 3) ctx.fillStyle = "rgba(255,255,255,.55)";
-          else ctx.fillStyle = "rgba(255,255,255,.30)";
-          ctx.fill();
-        }
-
-        const pX = 870;
-        const pY = y;
-        const pW = 520;
-        const pH = 132;
-
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,.34)";
-        ctx.shadowBlur = 22;
-        ctx.shadowOffsetY = 14;
-
-        roundRect(ctx, pX, pY, pW, pH, 36);
-        ctx.fillStyle = "rgba(0,0,0,.28)";
-        ctx.fill();
-
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = row.color;
-        ctx.stroke();
-
-        ctx.restore();
-
-        ctx.save();
-        roundRect(ctx, pX + 5, pY + 5, pW - 10, pH - 10, 30);
-        ctx.clip();
-
-        const pg = ctx.createLinearGradient(pX, pY, pX + pW, pY + pH);
-        pg.addColorStop(0, row.c1);
-        pg.addColorStop(.42, "rgba(0,0,0,.28)");
-        pg.addColorStop(1, row.c3);
-        ctx.fillStyle = pg;
-        ctx.fillRect(pX, pY, pW, pH);
-
-        ctx.fillStyle = "rgba(255,255,255,.12)";
-        ctx.beginPath();
-        ctx.arc(pX + 420, pY + 40, 160, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "rgba(0,0,0,.22)";
-        ctx.fillRect(pX, pY, pW, pH);
-
-        ctx.fillStyle = "rgba(255,255,255,.92)";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        ctx.font = "900 31px Arial";
-        ctx.fillText(row.product, pX + 34, pY + 74);
-
-        ctx.font = "900 64px Arial";
-        ctx.textAlign = "right";
-        ctx.fillText(row.emoji, pX + pW - 122, pY + 78);
-
-        ctx.restore();
-
-        ctx.save();
-
-        roundRect(ctx, pX + pW - 82, pY + 15, 58, 48, 18);
-        ctx.fillStyle = "rgba(0,0,0,.42)";
-        ctx.fill();
-
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = row.color;
-        ctx.stroke();
-
-        ctx.fillStyle = "#fff";
-        ctx.font = "900 23px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("3D", pX + pW - 53, pY + 39);
-
-        ctx.restore();
-
-        const aX = 1435;
-        const aY = y + 28;
-
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,.34)";
-        ctx.shadowBlur = 22;
-        ctx.shadowOffsetY = 14;
-
-        roundRect(ctx, aX, aY, 56, 76, 24);
-        ctx.fillStyle = row.color;
-        ctx.fill();
-
-        ctx.restore();
-
-        ctx.fillStyle = "#fff";
-        ctx.font = "300 64px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("›", aX + 31, aY + 35);
-      });
-
-      ctx.save();
-      ctx.fillStyle = "rgba(255,255,255,.88)";
-      ctx.font = "900 30px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.shadowColor = "rgba(0,0,0,.75)";
-      ctx.shadowBlur = 7;
-      ctx.shadowOffsetY = 3;
-      ctx.fillText("AR Floating Menu · Locked to SoulFlame Card", 900, 1152);
-      ctx.restore();
-
-      return canvas;
-    }
-
-    function applyARFloatingMenuTexture() {
-      if (!window.THREE) return;
-
-      if (!arMenuCanvas) {
-        arMenuCanvas = drawARFloatingMenuCanvas();
-      }
-
-      if (!arMenuTexture) {
-        arMenuTexture = new THREE.CanvasTexture(arMenuCanvas);
-
-        if (THREE.SRGBColorSpace) {
-          arMenuTexture.colorSpace = THREE.SRGBColorSpace;
-        }
-
-        arMenuTexture.anisotropy = 8;
-        arMenuTexture.needsUpdate = true;
-      }
-
-      const planes = document.querySelectorAll('[data-role="ar-floating-menu-plane"]');
-
-      planes.forEach((plane) => {
-        const mesh = plane.getObject3D("mesh");
-
-        if (!mesh) {
-          plane.addEventListener("object3dset", applyARFloatingMenuTexture, { once: true });
-          return;
-        }
-
-        mesh.material = new THREE.MeshBasicMaterial({
-          map: arMenuTexture,
-          transparent: true,
-          side: THREE.DoubleSide,
-          depthWrite: false
-        });
-
-        mesh.material.needsUpdate = true;
-      });
     }
 
     pizzaModel.addEventListener("model-loaded", () => {
@@ -1875,7 +1650,7 @@
       scene.appendChild(frozenWorld);
 
       requestAnimationFrame(() => {
-        applyARFloatingMenuTexture();
+        applyExternalMenuTexture(false);
       });
 
       const clonedModels = frozenWorld.querySelectorAll('[data-role="pizza-model"], [gltf-model]');
@@ -1982,10 +1757,6 @@
         startLockPoseLoop();
         setStatus("LOCK RESET", "CARD ACTIVE");
       }
-    }
-
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function getCameraTrackFromMindAR() {
@@ -2126,7 +1897,7 @@
       if (navigator.vibrate) navigator.vibrate(ms);
     }
 
-    scene.addEventListener("loaded", () => {
+    scene.addEventListener("loaded", async () => {
       arSystem = scene.systems["mindar-image-system"];
 
       if (scene.renderer && window.THREE) {
@@ -2136,7 +1907,7 @@
       }
 
       applyPizzaSize();
-      applyARFloatingMenuTexture();
+      await applyExternalMenuTexture(false);
       setStatus("AR SYSTEM READY", "READY");
     });
 
@@ -2144,7 +1915,7 @@
       if (started) return;
 
       if (location.protocol === "file:") {
-        showDebug("Не стартирай с двоен клик върху index.html. Камерата и MindAR искат HTTPS или localhost.");
+        showDebug("Не стартирай с двоен клик върху index.html. Камерата и iframe texture искат HTTPS или localhost.");
         alert("Отвори през Vercel/HTTPS или localhost. Не през file://");
         return;
       }
@@ -2161,6 +1932,10 @@
         }
 
         if (!arSystem) throw new Error("MindAR system not found");
+
+        if (!menuTextureReady) {
+          await applyExternalMenuTexture(false);
+        }
 
         await arSystem.start();
 
@@ -2219,9 +1994,11 @@
         startLockPoseLoop();
       }
 
-      applyARFloatingMenuTexture();
+      if (!menuTextureReady) {
+        await applyExternalMenuTexture(false);
+      }
 
-      setStatus("SOULFLAME MENU LOCKED", "AR PANEL ON CARD");
+      setStatus("SOULFLAME MENU LOCKED", "EXTERNAL HTML ON CARD");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
