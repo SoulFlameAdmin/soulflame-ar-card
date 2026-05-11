@@ -4,10 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#050505" />
-  <title>Pizza Hit Table AR · WebXR Pro Plane Lock</title>
+  <title>Pizza Hit Table AR · Real WebXR Placement</title>
 
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script src="./products.js"></script>
 
   <script type="importmap">
     {
@@ -22,12 +21,11 @@
     :root {
       --bg: #050505;
       --text: #ffffff;
-      --muted: rgba(255,255,255,.68);
+      --muted: rgba(255,255,255,.70);
       --gold: #ffb347;
-      --red: #ff3d3d;
       --green: #48ff9b;
+      --red: #ff3d3d;
       --line: rgba(255,255,255,.18);
-      --glass: rgba(0,0,0,.68);
       --pill: 999px;
     }
 
@@ -94,7 +92,7 @@
       padding: 22px;
       background:
         radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.97) 62%),
-        linear-gradient(135deg, rgba(255,61,61,.16), transparent 45%, rgba(255,179,71,.10));
+        linear-gradient(135deg, rgba(255,61,61,.15), transparent 45%, rgba(255,179,71,.10));
     }
 
     .card {
@@ -326,71 +324,6 @@
       border: 1px solid rgba(255,255,255,.32);
     }
 
-    #apkOverlay {
-      position: fixed;
-      inset: 0;
-      z-index: 10005;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-      background:
-        radial-gradient(circle at center, rgba(72,255,155,.16), rgba(0,0,0,.94) 58%),
-        rgba(0,0,0,.88);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .apkCard {
-      width: min(470px, 94vw);
-      padding: 27px 20px 20px;
-      border-radius: 32px;
-      border: 1px solid rgba(255,255,255,.22);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.035)),
-        rgba(0,0,0,.84);
-      box-shadow:
-        0 0 85px rgba(72,255,155,.16),
-        inset 0 0 28px rgba(255,255,255,.045);
-      text-align: center;
-    }
-
-    .apkCard h2 {
-      margin: 0 0 10px;
-      font-size: 24px;
-      letter-spacing: .10em;
-    }
-
-    .apkCard p {
-      margin: 0 auto 18px;
-      color: rgba(255,255,255,.80);
-      line-height: 1.45;
-    }
-
-    #installAPK {
-      width: 100%;
-      min-width: 0;
-      background: linear-gradient(135deg, #48ff9b, #ffb347);
-      color: #000;
-      box-shadow: 0 0 34px rgba(72,255,155,.34);
-      margin-bottom: 10px;
-    }
-
-    #closeAPK {
-      width: 100%;
-      min-width: 0;
-      background: rgba(255,255,255,.075);
-      border: 1px solid rgba(255,255,255,.18);
-      color: rgba(255,255,255,.86);
-    }
-
-    .apkCard small {
-      display: block;
-      margin-top: 12px;
-      color: rgba(255,255,255,.52);
-      font-size: 11px;
-      line-height: 1.35;
-    }
-
     #debugBox {
       position: fixed;
       left: 12px;
@@ -468,13 +401,17 @@
     <div class="card">
       <div class="logo"></div>
       <h1>TABLE AR</h1>
-      <div class="sub">WEBXR · HIT TEST · ANCHOR LOCK</div>
+      <div class="sub">REAL WEBXR · HIT TEST</div>
 
-      <div id="productMini" class="productMini">Зареждане на продукт...</div>
+      <div id="productMini" class="productMini">
+        <b>Pizza Hit Classic</b><br>
+        30 CM · 12.90 лв.<br>
+        <span style="opacity:.72">Реално поставяне върху маса чрез WebXR.</span>
+      </div>
 
       <p>
-        Натисни <b>ТЪРСИ МАСА</b>. Камерата ще се отвори през WebXR.
-        Движи телефона бавно към масата, изчакай бял кръг и натисни екрана.
+        Натисни <b>ТЪРСИ МАСА</b>. Камерата ще се отвори.
+        Движи телефона бавно към масата. Когато видиш бял кръг — натисни екрана.
       </p>
 
       <div class="actions">
@@ -485,7 +422,7 @@
     </div>
   </section>
 
-  <div id="hud">CHECKING AR SUPPORT</div>
+  <div id="hud">READY</div>
   <div id="statusChip">NO SESSION</div>
 
   <div id="bottomHelp">
@@ -494,30 +431,12 @@
 
   <div id="dock" class="hidden">
     <button id="placeAgain" class="gold">PLACE</button>
-    <button id="sizeBtn">SIZE</button>
+    <button id="sizeBtn">30 CM</button>
     <button id="rotateBtn">ROTATE</button>
     <button id="snapBtn" class="green">SNAP</button>
     <button id="resetBtn" class="dark">RESET</button>
     <button id="exitBtn" class="dark">EXIT</button>
     <button id="debugBtn" class="dark">DEBUG</button>
-  </div>
-
-  <div id="apkOverlay" class="hidden">
-    <div class="apkCard">
-      <h2>ARCore не тръгна</h2>
-
-      <p>
-        Този телефон или браузър не успя да стартира истински Table AR.
-        Можеш да инсталираш SoulFlame AR APK за Android.
-      </p>
-
-      <button id="installAPK">ИНСТАЛИРАЙ SOULFLAME AR</button>
-      <button id="closeAPK">ОСТАНИ В 3D VIEWER</button>
-
-      <small>
-        Работи само на Android. След сваляне разреши инсталация от браузъра.
-      </small>
-    </div>
   </div>
 
   <div id="debugBox"></div>
@@ -526,64 +445,20 @@
     import * as THREE from "three";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-    const FALLBACK_PRODUCT = {
-      id: "classic",
-      name: "Pizza Hit Classic",
-      shortName: "Classic",
-      price: "12.90 лв.",
-      sizeLabel: "30 CM",
-      description: "Класическа Pizza Hit пица за реално AR поставяне върху маса.",
-      glb: "./uploads_files_6479452_187.glb",
-      usdz: "./pizza.usdz",
-      realWidth: 0.30
-    };
-
-    function safeGetSelectedProduct() {
-      try {
-        if (window.getPizzaHitProductFromUrl) {
-          const product = window.getPizzaHitProductFromUrl();
-          if (product && product.glb) return product;
-        }
-
-        if (window.PIZZA_HIT_PRODUCTS && Array.isArray(window.PIZZA_HIT_PRODUCTS)) {
-          const params = new URLSearchParams(window.location.search);
-          const id = params.get("product");
-          const found = window.PIZZA_HIT_PRODUCTS.find((p) => p.id === id);
-          if (found && found.glb) return found;
-
-          const first = window.PIZZA_HIT_PRODUCTS[0];
-          if (first && first.glb) return first;
-        }
-      } catch (error) {
-        console.warn("Product fallback used:", error);
-      }
-
-      return FALLBACK_PRODUCT;
-    }
-
-    const selectedProduct = safeGetSelectedProduct();
-
     const CONFIG = {
-      glbFile: selectedProduct.glb || FALLBACK_PRODUCT.glb,
-      usdzFile: selectedProduct.usdz || FALLBACK_PRODUCT.usdz,
-      productName: selectedProduct.name || FALLBACK_PRODUCT.name,
-      productPrice: selectedProduct.price || FALLBACK_PRODUCT.price,
-      productSizeLabel: selectedProduct.sizeLabel || FALLBACK_PRODUCT.sizeLabel,
-      productDescription: selectedProduct.description || FALLBACK_PRODUCT.description,
-      defaultWidth: Number(selectedProduct.realWidth || FALLBACK_PRODUCT.realWidth || 0.30),
+      glbFile: "./uploads_files_6479452_187.glb",
+      usdzFile: "./pizza.usdz",
+      productName: "Pizza Hit Classic",
+      defaultWidth: 0.30,
 
-      apkUrl: "./downloads/soulflameAR.apk",
-      fallbackTimeoutMs: 4500,
-
-      modelRotationFix: { x: 0, y: 0, z: 0 },
       modelHeightOffset: 0.018,
-
-      reticleOuterRadius: 0.13,
-      reticleInnerRadius: 0.09,
       maxPixelRatio: 1.5,
 
-      hitSmoothing: 0.28,
-      minHitStableFrames: 8
+      hitSmoothing: 0.35,
+      minHitStableFrames: 4,
+
+      reticleOuterRadius: 0.13,
+      reticleInnerRadius: 0.09
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -604,19 +479,9 @@
     const debugBtn = document.getElementById("debugBtn");
     const debugBox = document.getElementById("debugBox");
     const mv = document.getElementById("mv");
-    const productMini = document.getElementById("productMini");
-    const apkOverlay = document.getElementById("apkOverlay");
-    const installAPK = document.getElementById("installAPK");
-    const closeAPK = document.getElementById("closeAPK");
-
-    productMini.innerHTML = `
-      <b>${CONFIG.productName}</b><br>
-      ${CONFIG.productSizeLabel} · ${CONFIG.productPrice}<br>
-      <span style="opacity:.72">${CONFIG.productDescription}</span>
-    `;
 
     mv.setAttribute("src", CONFIG.glbFile);
-    if (CONFIG.usdzFile) mv.setAttribute("ios-src", CONFIG.usdzFile);
+    mv.setAttribute("ios-src", CONFIG.usdzFile);
 
     let scene;
     let camera;
@@ -626,10 +491,6 @@
     let xrRefSpace = null;
     let viewerSpace = null;
     let hitTestSource = null;
-    let lightProbe = null;
-
-    let webXRSupported = false;
-    let supportChecked = false;
 
     let reticle;
     let reticlePulse = 0;
@@ -638,6 +499,10 @@
     let productModel;
     let productPlaced = false;
     let modelReady = false;
+    let modelNormalizeScale = 1;
+
+    let latestHitResult = null;
+    let stableHitFrames = 0;
 
     const latestHitPosition = new THREE.Vector3();
     const latestHitQuaternion = new THREE.Quaternion();
@@ -649,29 +514,10 @@
     const placedPosition = new THREE.Vector3();
     const placedQuaternion = new THREE.Quaternion();
 
-    let latestHitMatrix = null;
-    let latestHitResult = null;
-    let stableHitFrames = 0;
-
-    let modelNormalizeScale = 1;
-
     let rotateOn = false;
     let autoRotationY = 0;
     let userYawOffset = 0;
     let lastPlaceTime = 0;
-
-    let productAnchor = null;
-    let anchorSpace = null;
-    let anchorSupported = false;
-    let anchorActive = false;
-
-    let planeDetectionSupported = false;
-    let detectedPlaneCount = 0;
-    let lightEstimationSupported = false;
-    let lastLightValue = "none";
-
-    let modelViewerARStarted = false;
-    let modelViewerFallbackTimer = null;
 
     const sizeSteps = [
       { label: "20 CM", width: 0.20 },
@@ -681,76 +527,35 @@
       { label: "50 CM", width: 0.50 },
       { label: "60 CM", width: 0.60 },
       { label: "75 CM", width: 0.75 },
-      { label: "90 CM", width: 0.90 },
-      { label: "MAX", width: 1.15 }
+      { label: "90 CM", width: 0.90 }
     ];
 
-    let sizeIndex = findClosestSizeIndex(CONFIG.defaultWidth);
+    let sizeIndex = 1;
 
     let debugInfo =
-      "PIZZA HIT TABLE AR DEBUG\n" +
-      "-------------------------\n" +
-      "WebXR source: W3C Device API flow\n" +
-      "Product: " + CONFIG.productName + "\n" +
-      "GLB: " + CONFIG.glbFile + "\n" +
-      "USDZ: " + CONFIG.usdzFile + "\n" +
-      "APK: " + CONFIG.apkUrl + "\n" +
-      "Width: " + CONFIG.defaultWidth + "m\n" +
-      "Secure context: " + window.isSecureContext + "\n" +
+      "TABLE AR DEBUG\n" +
+      "----------------\n" +
+      "URL: " + location.href + "\n" +
+      "HTTPS: " + window.isSecureContext + "\n" +
       "navigator.xr: " + Boolean(navigator.xr) + "\n" +
-      "products.js loaded: " + Boolean(window.PIZZA_HIT_PRODUCTS || window.getPizzaHitProductFromUrl) + "\n" +
+      "GLB: " + CONFIG.glbFile + "\n" +
       "UserAgent: " + navigator.userAgent + "\n";
 
     initThree();
-    checkWebXRSupport();
+    checkSupportLight();
 
     startAR.addEventListener("click", startWebXR);
     openFallback.addEventListener("click", openModelViewerFallback);
-
-    mv.addEventListener("ar-status", (event) => {
-      const status = event.detail.status;
-      debugInfo += "\nmodel-viewer ar-status: " + status;
-
-      if (status === "session-started" || status === "object-placed") {
-        modelViewerARStarted = true;
-        hud.textContent = "FALLBACK AR STARTED";
-        statusChip.textContent = "AR ON";
-        clearModelViewerFallbackTimer();
-      }
-
-      if (status === "failed") {
-        modelViewerARStarted = false;
-        clearModelViewerFallbackTimer();
-        showAPKInstall("model-viewer AR failed");
-      }
-    });
-
-    mv.addEventListener("ar-tracking", (event) => {
-      const status = event.detail.status;
-      debugInfo += "\nmodel-viewer ar-tracking: " + status;
-
-      if (status === "tracking") {
-        modelViewerARStarted = true;
-        clearModelViewerFallbackTimer();
-      }
-    });
-
-    installAPK.addEventListener("click", downloadSoulFlameAPK);
-
-    closeAPK.addEventListener("click", () => {
-      apkOverlay.classList.add("hidden");
-      haptic(25);
-    });
+    xrCanvas.addEventListener("pointerup", placeProductFromHit);
 
     placeAgain.addEventListener("click", () => {
-      clearAnchor();
       productPlaced = false;
-      latestHitMatrix = null;
-      latestHitResult = null;
       stableHitFrames = 0;
+      latestHitResult = null;
       rotateOn = false;
       autoRotationY = 0;
       userYawOffset = 0;
+
       rotateBtn.textContent = "ROTATE";
 
       if (productGroup) productGroup.visible = false;
@@ -758,7 +563,7 @@
 
       hud.textContent = "SEARCHING TABLE";
       statusChip.textContent = "HIT TEST";
-      bottomHelp.textContent = "Движи телефона бавно към масата. Когато кръгът стане стабилен — натисни.";
+      bottomHelp.textContent = "Движи телефона към масата. Когато кръгът стане стабилен — натисни.";
       haptic(30);
     });
 
@@ -781,25 +586,18 @@
     });
 
     resetBtn.addEventListener("click", () => {
-      clearAnchor();
-
-      sizeIndex = findClosestSizeIndex(CONFIG.defaultWidth);
-      autoRotationY = 0;
-      userYawOffset = 0;
-      rotateOn = false;
       productPlaced = false;
-      latestHitMatrix = null;
       latestHitResult = null;
       stableHitFrames = 0;
+      rotateOn = false;
+      autoRotationY = 0;
+      userYawOffset = 0;
+      sizeIndex = 1;
 
       rotateBtn.textContent = "ROTATE";
       applyProductSize();
 
-      if (productGroup) {
-        productGroup.rotation.set(0, 0, 0);
-        productGroup.visible = false;
-      }
-
+      if (productGroup) productGroup.visible = false;
       if (reticle) reticle.visible = false;
 
       hud.textContent = "RESET · SEARCH TABLE";
@@ -810,6 +608,7 @@
 
     exitBtn.addEventListener("click", async () => {
       haptic(25);
+
       if (xrSession) {
         try {
           await xrSession.end();
@@ -834,88 +633,6 @@
       showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason || "Unknown"));
     });
 
-    function isAndroidDevice() {
-      return /Android/i.test(navigator.userAgent);
-    }
-
-    function showAPKInstall(reason = "AR не тръгна") {
-      debugInfo += "\n\nAPK OFFER REASON: " + reason;
-
-      if (!isAndroidDevice()) {
-        hud.textContent = "ANDROID APK ONLY";
-        statusChip.textContent = "NO APK";
-        bottomHelp.textContent = "APK работи само на Android. На iPhone използвай 3D Viewer / Quick Look.";
-        return;
-      }
-
-      apkOverlay.classList.remove("hidden");
-      hud.textContent = "INSTALL APK AVAILABLE";
-      statusChip.textContent = "APK";
-      bottomHelp.textContent = "Ако WebXR/ARCore не тръгва, инсталирай SoulFlame AR APK.";
-      haptic(40);
-    }
-
-    function downloadSoulFlameAPK() {
-      haptic(50);
-
-      const a = document.createElement("a");
-      a.href = CONFIG.apkUrl;
-      a.download = "soulflameAR.apk";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
-    function clearModelViewerFallbackTimer() {
-      if (modelViewerFallbackTimer) {
-        clearTimeout(modelViewerFallbackTimer);
-        modelViewerFallbackTimer = null;
-      }
-    }
-
-    async function checkWebXRSupport() {
-      if (!window.isSecureContext) {
-        supportChecked = true;
-        webXRSupported = false;
-        hud.textContent = "HTTPS REQUIRED";
-        statusChip.textContent = "NO HTTPS";
-        bottomHelp.textContent = "Истинският Table AR тръгва само през HTTPS/Vercel или localhost.";
-        debugInfo += "\nSupport check: failed secure context";
-        return;
-      }
-
-      if (!navigator.xr) {
-        supportChecked = true;
-        webXRSupported = false;
-        hud.textContent = "WEBXR NOT FOUND";
-        statusChip.textContent = "NO WEBXR";
-        bottomHelp.textContent = "Този браузър няма navigator.xr. Натисни ТЪРСИ МАСА или 3D / AR FALLBACK за алтернатива.";
-        debugInfo += "\nSupport check: navigator.xr missing";
-        return;
-      }
-
-      try {
-        webXRSupported = await navigator.xr.isSessionSupported("immersive-ar");
-        supportChecked = true;
-
-        debugInfo += "\nimmersive-ar supported: " + webXRSupported;
-
-        if (webXRSupported) {
-          hud.textContent = "TABLE AR READY";
-          statusChip.textContent = "WEBXR READY";
-          bottomHelp.textContent = "Натисни ТЪРСИ МАСА. Камерата ще се отвори през WebXR.";
-        } else {
-          hud.textContent = "AR NOT SUPPORTED";
-          statusChip.textContent = "NO AR";
-          bottomHelp.textContent = "Устройството/браузърът не поддържа immersive-ar. При натискане ще предложа APK.";
-        }
-      } catch (error) {
-        supportChecked = true;
-        webXRSupported = false;
-        showDebug("SUPPORT CHECK ERROR:\n" + (error.message || error));
-      }
-    }
-
     function initThree() {
       scene = new THREE.Scene();
 
@@ -938,17 +655,13 @@
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.xr.enabled = true;
 
-      const hemi = new THREE.HemisphereLight(0xffffff, 0x333333, 1.20);
-      hemi.name = "hemiLight";
-      scene.add(hemi);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x333333, 1.25));
 
-      const dir = new THREE.DirectionalLight(0xffffff, 1.30);
-      dir.name = "mainDirectionalLight";
+      const dir = new THREE.DirectionalLight(0xffffff, 1.45);
       dir.position.set(1.4, 3, 2.2);
       scene.add(dir);
 
-      const warm = new THREE.PointLight(0xffc27a, 0.48, 5);
-      warm.name = "warmProductLight";
+      const warm = new THREE.PointLight(0xffc27a, 0.55, 5);
       warm.position.set(0, 1.6, 1);
       scene.add(warm);
 
@@ -957,9 +670,36 @@
       loadProductModel();
 
       window.addEventListener("resize", onResize);
-      xrCanvas.addEventListener("pointerup", placeProductFromHit);
-
       renderer.setAnimationLoop(render);
+    }
+
+    async function checkSupportLight() {
+      if (!window.isSecureContext) {
+        hud.textContent = "HTTPS REQUIRED";
+        statusChip.textContent = "NO HTTPS";
+        bottomHelp.textContent = "Качи във Vercel/HTTPS или localhost. През file:// WebXR няма да тръгне.";
+        return;
+      }
+
+      if (!navigator.xr) {
+        hud.textContent = "WEBXR NOT FOUND";
+        statusChip.textContent = "NO XR";
+        bottomHelp.textContent = "Отвори през Android Chrome. Ако няма WebXR, използвай 3D / AR FALLBACK.";
+        return;
+      }
+
+      try {
+        const ok = await navigator.xr.isSessionSupported("immersive-ar");
+        debugInfo += "isSessionSupported immersive-ar: " + ok + "\n";
+
+        hud.textContent = ok ? "TABLE AR READY" : "AR CHECK FALSE · TRY ANYWAY";
+        statusChip.textContent = ok ? "WEBXR READY" : "TRY";
+        bottomHelp.textContent = "Натисни ТЪРСИ МАСА. Кодът ще пробва requestSession директно.";
+      } catch (error) {
+        debugInfo += "Support check error: " + (error.message || error) + "\n";
+        hud.textContent = "AR CHECK ERROR · TRY ANYWAY";
+        statusChip.textContent = "TRY";
+      }
     }
 
     function createReticle() {
@@ -984,11 +724,11 @@
       ring.rotation.x = -Math.PI / 2;
       group.add(ring);
 
-      const centerGeo = new THREE.CircleGeometry(0.014, 32);
+      const centerGeo = new THREE.CircleGeometry(0.016, 32);
       const centerMat = new THREE.MeshBasicMaterial({
         color: 0xffb347,
         transparent: true,
-        opacity: 0.95,
+        opacity: 0.98,
         side: THREE.DoubleSide,
         depthWrite: false
       });
@@ -997,27 +737,6 @@
       center.rotation.x = -Math.PI / 2;
       center.position.y = 0.002;
       group.add(center);
-
-      const lineMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.72,
-        depthWrite: false
-      });
-
-      const lineA = new THREE.Mesh(
-        new THREE.BoxGeometry(CONFIG.reticleOuterRadius * 2.3, 0.003, 0.003),
-        lineMat
-      );
-      lineA.position.y = 0.004;
-      group.add(lineA);
-
-      const lineB = new THREE.Mesh(
-        new THREE.BoxGeometry(0.003, 0.003, CONFIG.reticleOuterRadius * 2.3),
-        lineMat
-      );
-      lineB.position.y = 0.004;
-      group.add(lineB);
 
       reticle = group;
       scene.add(reticle);
@@ -1032,7 +751,7 @@
       const shadowMat = new THREE.MeshBasicMaterial({
         color: 0x000000,
         transparent: true,
-        opacity: 0.30,
+        opacity: 0.28,
         side: THREE.DoubleSide,
         depthWrite: false
       });
@@ -1054,12 +773,11 @@
 
           let meshCount = 0;
           let textureCount = 0;
-          let materialCount = 0;
 
           productModel.traverse((node) => {
             if (!node.isMesh) return;
 
-            meshCount++;
+            meshCount += 1;
             node.frustumCulled = false;
 
             const materials = Array.isArray(node.material) ? node.material : [node.material];
@@ -1067,11 +785,10 @@
             materials.forEach((mat) => {
               if (!mat) return;
 
-              materialCount++;
               mat.side = THREE.DoubleSide;
 
               if (mat.map) {
-                textureCount++;
+                textureCount += 1;
                 mat.map.colorSpace = THREE.SRGBColorSpace;
                 mat.map.needsUpdate = true;
               }
@@ -1083,32 +800,32 @@
 
           centerAndNormalizeModel(productModel);
 
-          productModel.rotation.set(
-            CONFIG.modelRotationFix.x,
-            CONFIG.modelRotationFix.y,
-            CONFIG.modelRotationFix.z
-          );
-
           productModel.position.y = CONFIG.modelHeightOffset;
           productGroup.add(productModel);
 
           modelReady = true;
           applyProductSize();
 
-          debugInfo += "\nGLB loaded: true";
-          debugInfo += "\nMeshes: " + meshCount;
-          debugInfo += "\nMaterials: " + materialCount;
-          debugInfo += "\nTextures: " + textureCount;
+          debugInfo += "GLB loaded: true\n";
+          debugInfo += "Meshes: " + meshCount + "\n";
+          debugInfo += "Textures: " + textureCount + "\n";
 
-          hud.textContent = webXRSupported ? "PRODUCT READY · START AR" : "PRODUCT READY";
+          hud.textContent = "PRODUCT READY";
+          statusChip.textContent = "MODEL OK";
         },
         undefined,
         (error) => {
-          const msg = "GLB ERROR: Не може да зареди " + CONFIG.glbFile + "\n" + (error.message || error);
+          const msg =
+            "GLB ERROR\n\n" +
+            "Не може да зареди файла:\n" +
+            CONFIG.glbFile +
+            "\n\nПровери дали uploads_files_6479452_187.glb е до table-ar.html.\n\n" +
+            (error.message || error);
+
           showDebug(msg);
           hud.textContent = "GLB ERROR";
-          statusChip.textContent = "GLB ERROR";
-          bottomHelp.textContent = "Провери дали GLB файлът е до table-ar.html и името е точно.";
+          statusChip.textContent = "MODEL ERROR";
+          bottomHelp.textContent = "Провери името и пътя на GLB файла.";
         }
       );
     }
@@ -1137,14 +854,13 @@
       modelNormalizeScale = 1 / maxSize;
       model.scale.setScalar(modelNormalizeScale);
 
-      debugInfo += "\nOriginal model size: " + JSON.stringify({
+      debugInfo += "Original size: " + JSON.stringify({
         x: Number(size.x.toFixed(4)),
         y: Number(size.y.toFixed(4)),
         z: Number(size.z.toFixed(4))
-      });
+      }) + "\n";
 
-      debugInfo += "\nFootprint size: " + Number(maxSize.toFixed(4));
-      debugInfo += "\nNormalize scale: " + Number(modelNormalizeScale.toFixed(6));
+      debugInfo += "Normalize scale: " + Number(modelNormalizeScale.toFixed(6)) + "\n";
     }
 
     function applyProductSize() {
@@ -1162,32 +878,15 @@
       }
 
       hud.textContent = "SIZE · " + step.label;
-
-      debugInfo += "\nSize selected: " + step.label + " / " + step.width + "m";
-      debugInfo += "\nApplied scale: " + Number((modelNormalizeScale * step.width).toFixed(6));
     }
 
     async function requestBestARSession() {
-      const sessionConfigs = [
+      const configs = [
         {
-          label: "hit-test + dom-overlay + local-floor + anchors + plane-detection + light-estimation",
+          label: "hit-test + dom-overlay + local-floor",
           init: {
             requiredFeatures: ["hit-test"],
-            optionalFeatures: [
-              "dom-overlay",
-              "local-floor",
-              "anchors",
-              "plane-detection",
-              "light-estimation"
-            ],
-            domOverlay: { root: document.body }
-          }
-        },
-        {
-          label: "hit-test + dom-overlay + local-floor + anchors",
-          init: {
-            requiredFeatures: ["hit-test"],
-            optionalFeatures: ["dom-overlay", "local-floor", "anchors"],
+            optionalFeatures: ["dom-overlay", "local-floor"],
             domOverlay: { root: document.body }
           }
         },
@@ -1208,14 +907,14 @@
 
       let lastError = null;
 
-      for (const config of sessionConfigs) {
+      for (const config of configs) {
         try {
           const session = await navigator.xr.requestSession("immersive-ar", config.init);
-          debugInfo += "\nXR session config used: " + config.label;
+          debugInfo += "XR session config used: " + config.label + "\n";
           return session;
         } catch (error) {
           lastError = error;
-          debugInfo += "\nXR session config failed: " + config.label + " · " + (error.message || error);
+          debugInfo += "XR session failed: " + config.label + " · " + (error.message || error) + "\n";
         }
       }
 
@@ -1225,46 +924,25 @@
     async function startWebXR() {
       if (xrSession) return;
 
+      debugInfo += "\nSTART BUTTON CLICKED\n";
+      debugInfo += "HTTPS: " + window.isSecureContext + "\n";
+      debugInfo += "navigator.xr: " + Boolean(navigator.xr) + "\n";
+
       if (!window.isSecureContext) {
         showDebug(
-          "SECURE CONTEXT ERROR\n\n" +
-          "WebXR и камерата искат HTTPS или localhost.\n" +
-          "Не стартирай през file://.\n\n" +
-          "Качи във Vercel и отвори HTTPS линка на Android Chrome."
+          "HTTPS REQUIRED\n\n" +
+          "WebXR камерата няма да тръгне през file://.\n\n" +
+          "Отвори през Vercel HTTPS или localhost."
         );
-
-        hud.textContent = "HTTPS / LOCALHOST REQUIRED";
-        statusChip.textContent = "NO HTTPS";
-        bottomHelp.textContent = "Качи във Vercel или пусни localhost. През file:// истинският AR няма да тръгне.";
-        showAPKInstall("secure context failed / няма HTTPS");
         return;
       }
 
       if (!navigator.xr) {
         showDebug(
-          "WEBXR ERROR\n\n" +
-          "navigator.xr липсва.\n\n" +
-          "Отвори през Android Chrome. Не през Viber/Facebook/Messenger browser."
+          "WEBXR NOT FOUND\n\n" +
+          "Този браузър няма navigator.xr.\n\n" +
+          "Ползвай Android Chrome. Не Viber/Facebook/Messenger browser."
         );
-
-        hud.textContent = "WEBXR NOT SUPPORTED";
-        statusChip.textContent = "NO WEBXR";
-        bottomHelp.textContent = "Ползвай Android Chrome на ARCore-съвместим телефон. За iPhone използвай fallback.";
-        showAPKInstall("navigator.xr missing on start");
-        return;
-      }
-
-      if (supportChecked && !webXRSupported) {
-        showDebug(
-          "AR NOT SUPPORTED\n\n" +
-          "immersive-ar не се поддържа на това устройство/браузър.\n\n" +
-          "Нужно: Android Chrome + ARCore + HTTPS."
-        );
-
-        hud.textContent = "AR NOT SUPPORTED";
-        statusChip.textContent = "NO AR";
-        bottomHelp.textContent = "Този телефон/браузър не поддържа WebXR AR. Пробвай Android Chrome с ARCore.";
-        showAPKInstall("immersive-ar unsupported on start");
         return;
       }
 
@@ -1290,10 +968,10 @@
 
         try {
           xrRefSpace = await xrSession.requestReferenceSpace("local-floor");
-          debugInfo += "\nReference space: local-floor";
+          debugInfo += "Reference space: local-floor\n";
         } catch (error) {
           xrRefSpace = await xrSession.requestReferenceSpace("local");
-          debugInfo += "\nReference space fallback: local";
+          debugInfo += "Reference space: local\n";
         }
 
         viewerSpace = await xrSession.requestReferenceSpace("viewer");
@@ -1307,24 +985,12 @@
             space: viewerSpace,
             entityTypes: ["plane", "point"]
           });
-          debugInfo += "\nHit-test source: plane + point";
+          debugInfo += "Hit-test source: plane + point\n";
         } catch (error) {
           hitTestSource = await xrSession.requestHitTestSource({
             space: viewerSpace
           });
-          debugInfo += "\nHit-test source fallback: default";
-        }
-
-        try {
-          if (typeof xrSession.requestLightProbe === "function") {
-            lightProbe = await xrSession.requestLightProbe();
-            lightEstimationSupported = true;
-            debugInfo += "\nLight estimation: requested";
-          }
-        } catch (error) {
-          lightProbe = null;
-          lightEstimationSupported = false;
-          debugInfo += "\nLight estimation failed: " + (error.message || error);
+          debugInfo += "Hit-test source: default\n";
         }
 
         startScreen.classList.add("hidden");
@@ -1333,7 +999,6 @@
         dock.classList.remove("hidden");
 
         productPlaced = false;
-        latestHitMatrix = null;
         latestHitResult = null;
         stableHitFrames = 0;
 
@@ -1341,7 +1006,7 @@
         statusChip.textContent = "HIT TEST";
         bottomHelp.textContent = "Движи телефона бавно към масата. Когато видиш бял кръг — натисни.";
 
-        debugInfo += "\n\nXR SESSION STARTED";
+        debugInfo += "XR SESSION STARTED\n";
         haptic(45);
       } catch (error) {
         xrSession = null;
@@ -1351,26 +1016,22 @@
         const message = error?.message || String(error);
 
         showDebug(
-          "XR START ERROR:\n\n" +
+          "XR START ERROR\n\n" +
           message +
           "\n\nПровери:\n" +
-          "1. Android Chrome ли е?\n" +
-          "2. HTTPS/Vercel ли е?\n" +
-          "3. Има ли ARCore / Google Play Services for AR?\n" +
+          "1. Отворено ли е през HTTPS/Vercel?\n" +
+          "2. Android Chrome ли е?\n" +
+          "3. Има ли Google Play Services for AR / ARCore?\n" +
           "4. Не е ли отворено през Viber/Facebook/Messenger browser?"
         );
 
         hud.textContent = "XR START ERROR";
         statusChip.textContent = "XR ERROR";
-        bottomHelp.textContent = "Ако камерата не се отвори, устройството/браузърът не дава WebXR AR. Пробвай fallback.";
-
-        showAPKInstall("XR START ERROR: " + message);
+        bottomHelp.textContent = "Натисни DEBUG за точната грешка.";
       }
     }
 
     function onSessionEnd() {
-      clearAnchor();
-
       if (hitTestSource && hitTestSource.cancel) {
         try {
           hitTestSource.cancel();
@@ -1383,8 +1044,6 @@
       xrRefSpace = null;
       viewerSpace = null;
       hitTestSource = null;
-      lightProbe = null;
-      latestHitMatrix = null;
       latestHitResult = null;
       stableHitFrames = 0;
       productPlaced = false;
@@ -1408,28 +1067,21 @@
       statusChip.textContent = "ENDED";
       bottomHelp.textContent = "AR сесията спря. Натисни ТЪРСИ МАСА, за да започнеш пак.";
 
-      debugInfo += "\n\nXR SESSION ENDED";
+      debugInfo += "XR SESSION ENDED\n";
     }
 
     function render(timestamp, frame) {
-      if (frame && xrSession) {
-        updatePlaneDetectionDebug(frame);
-        updateLightEstimation(frame);
-      }
-
       if (frame && xrSession && hitTestSource && xrRefSpace && !productPlaced) {
-        const hitTestResults = frame.getHitTestResults(hitTestSource);
+        const results = frame.getHitTestResults(hitTestSource);
 
-        if (hitTestResults.length > 0) {
-          const hit = hitTestResults[0];
+        if (results.length > 0) {
+          const hit = results[0];
           const pose = hit.getPose(xrRefSpace);
 
           latestHitResult = hit;
 
           if (pose) {
-            latestHitMatrix = pose.transform.matrix;
-
-            const matrix = new THREE.Matrix4().fromArray(latestHitMatrix);
+            const matrix = new THREE.Matrix4().fromArray(pose.transform.matrix);
             matrix.decompose(latestHitPosition, latestHitQuaternion, latestHitScale);
 
             if (stableHitFrames === 0) {
@@ -1440,50 +1092,33 @@
               smoothHitQuaternion.slerp(latestHitQuaternion, CONFIG.hitSmoothing);
             }
 
-            stableHitFrames++;
+            stableHitFrames += 1;
 
             reticle.visible = true;
             reticle.position.copy(smoothHitPosition);
             reticle.quaternion.copy(smoothHitQuaternion);
 
-            reticlePulse += 0.055;
-            const pulseScale = 1 + Math.sin(reticlePulse) * 0.045;
-            reticle.scale.setScalar(pulseScale);
+            reticlePulse += 0.06;
+            reticle.scale.setScalar(1 + Math.sin(reticlePulse) * 0.045);
 
             if (stableHitFrames >= CONFIG.minHitStableFrames) {
               hud.textContent = "TABLE FOUND · TAP TO PLACE";
               statusChip.textContent = "STABLE";
-              bottomHelp.textContent = "Масата е засечена стабилно. Натисни върху екрана, за да заключиш пицата.";
+              bottomHelp.textContent = "Масата е засечена. Натисни екрана, за да поставиш пицата.";
             } else {
               hud.textContent = "STABILIZING TABLE";
               statusChip.textContent = "LOCKING";
-              bottomHelp.textContent = "Задръж телефона спокойно още малко, докато кръгът се стабилизира.";
+              bottomHelp.textContent = "Задръж телефона спокойно още малко.";
             }
           }
         } else {
-          latestHitMatrix = null;
           latestHitResult = null;
           stableHitFrames = 0;
           reticle.visible = false;
+
           hud.textContent = "SEARCHING TABLE";
           statusChip.textContent = "SEARCH";
-          bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло, силен гланц и много тъмни повърхности.";
-        }
-      }
-
-      if (frame && productPlaced && anchorActive && anchorSpace && xrRefSpace) {
-        const anchorPose = frame.getPose(anchorSpace, xrRefSpace);
-
-        if (anchorPose) {
-          const matrix = new THREE.Matrix4().fromArray(anchorPose.transform.matrix);
-          const anchorPos = new THREE.Vector3();
-          const anchorQuat = new THREE.Quaternion();
-          const anchorScale = new THREE.Vector3();
-
-          matrix.decompose(anchorPos, anchorQuat, anchorScale);
-
-          placedPosition.copy(anchorPos);
-          placedQuaternion.copy(anchorQuat);
+          bottomHelp.textContent = "Насочи към маса с добра светлина. Избягвай стъкло и гланц.";
         }
       }
 
@@ -1502,7 +1137,7 @@
       if (!xrSession) return;
 
       const now = performance.now();
-      if (now - lastPlaceTime < 450) return;
+      if (now - lastPlaceTime < 350) return;
       lastPlaceTime = now;
 
       if (event && event.preventDefault) event.preventDefault();
@@ -1514,10 +1149,10 @@
         return;
       }
 
-      if (!latestHitMatrix || stableHitFrames < CONFIG.minHitStableFrames) {
+      if (!latestHitResult || stableHitFrames < CONFIG.minHitStableFrames) {
         hud.textContent = "NO STABLE TABLE";
         statusChip.textContent = "WAIT";
-        bottomHelp.textContent = "Още няма стабилна маса. Движи телефона бавно и изчакай кръгът да стане стабилен.";
+        bottomHelp.textContent = "Още няма стабилна маса. Движи телефона бавно и изчакай кръга.";
         haptic(20);
         return;
       }
@@ -1530,50 +1165,23 @@
 
       productGroup.position.copy(placedPosition);
       productGroup.quaternion.copy(placedQuaternion);
-
       productGroup.visible = true;
+
       productPlaced = true;
+      reticle.visible = false;
 
-      if (reticle) reticle.visible = false;
+      hud.textContent = "PIZZA PLACED";
+      statusChip.textContent = "LOCKED";
+      bottomHelp.textContent = "Пицата е поставена. Използвай SIZE, ROTATE, SNAP или PLACE за ново поставяне.";
 
-      try {
-        if (latestHitResult && typeof latestHitResult.createAnchor === "function") {
-          productAnchor = await latestHitResult.createAnchor();
-          anchorSpace = productAnchor.anchorSpace;
-          anchorSupported = true;
-          anchorActive = true;
-
-          hud.textContent = "ANCHORED ON TABLE";
-          statusChip.textContent = "ANCHOR";
-          bottomHelp.textContent = CONFIG.productName + " е заключена с XR Anchor. Обикаляй с телефона — трябва да стои стабилно.";
-          debugInfo += "\n\nXR ANCHOR CREATED FROM HIT RESULT";
-        } else {
-          anchorSupported = false;
-          anchorActive = false;
-
-          hud.textContent = "LOCKED ON TABLE";
-          statusChip.textContent = "LOCAL LOCK";
-          bottomHelp.textContent = CONFIG.productName + " е заключена върху плоскостта. Anchor API не е наличен, ползва local pose.";
-          debugInfo += "\n\nXR ANCHOR NOT AVAILABLE · USING LOCAL POSE";
-        }
-      } catch (error) {
-        anchorSupported = false;
-        anchorActive = false;
-
-        debugInfo += "\n\nANCHOR CREATE ERROR: " + (error.message || error);
-        hud.textContent = "LOCKED WITHOUT ANCHOR";
-        statusChip.textContent = "NO ANCHOR";
-        bottomHelp.textContent = "Пицата е поставена. Anchor не беше позволен от браузъра, но позицията остава в WebXR пространството.";
-      }
-
-      haptic(70);
-
-      debugInfo += "\n\nPRODUCT PLACED";
-      debugInfo += "\nPosition: " + JSON.stringify({
+      debugInfo += "PRODUCT PLACED\n";
+      debugInfo += "Position: " + JSON.stringify({
         x: Number(placedPosition.x.toFixed(4)),
         y: Number(placedPosition.y.toFixed(4)),
         z: Number(placedPosition.z.toFixed(4))
-      });
+      }) + "\n";
+
+      haptic(70);
     }
 
     function applyProductWorldTransform() {
@@ -1581,67 +1189,12 @@
 
       productGroup.position.copy(placedPosition);
 
-      const totalYaw = userYawOffset + autoRotationY;
       const extraRotation = new THREE.Quaternion().setFromAxisAngle(
         new THREE.Vector3(0, 1, 0),
-        totalYaw
+        userYawOffset + autoRotationY
       );
 
       productGroup.quaternion.copy(placedQuaternion).multiply(extraRotation);
-    }
-
-    function clearAnchor() {
-      try {
-        if (productAnchor && typeof productAnchor.delete === "function") {
-          productAnchor.delete();
-        }
-      } catch (error) {
-        console.warn("Anchor delete error:", error);
-      }
-
-      productAnchor = null;
-      anchorSpace = null;
-      anchorActive = false;
-    }
-
-    function updatePlaneDetectionDebug(frame) {
-      try {
-        if (frame.detectedPlanes) {
-          planeDetectionSupported = true;
-
-          if (typeof frame.detectedPlanes.size === "number") {
-            detectedPlaneCount = frame.detectedPlanes.size;
-          } else if (typeof frame.detectedPlanes.length === "number") {
-            detectedPlaneCount = frame.detectedPlanes.length;
-          } else {
-            detectedPlaneCount = 0;
-          }
-        }
-      } catch (error) {
-        planeDetectionSupported = false;
-      }
-    }
-
-    function updateLightEstimation(frame) {
-      try {
-        if (!lightProbe || typeof frame.getLightEstimate !== "function") return;
-
-        const estimate = frame.getLightEstimate(lightProbe);
-        if (!estimate) return;
-
-        lightEstimationSupported = true;
-
-        if (estimate.primaryLightIntensity) {
-          const intensity = estimate.primaryLightIntensity;
-          const avg = (Math.abs(intensity.x) + Math.abs(intensity.y) + Math.abs(intensity.z)) / 3;
-          lastLightValue = Number(avg.toFixed(3));
-
-          const dir = scene.getObjectByName("mainDirectionalLight");
-          if (dir) dir.intensity = Math.max(0.7, Math.min(2.0, avg / 900));
-        }
-      } catch (error) {
-        lightEstimationSupported = false;
-      }
     }
 
     function snapRotationToCamera() {
@@ -1673,48 +1226,18 @@
       fallbackViewer.style.display = "block";
       xrCanvas.style.display = "none";
 
-      modelViewerARStarted = false;
-
       hud.textContent = "3D / AR FALLBACK";
       statusChip.textContent = "FALLBACK";
-      bottomHelp.textContent = "Опитвам да отворя Scene Viewer / Quick Look. Ако AR не тръгне, ще предложа APK.";
+      bottomHelp.textContent = "Fallback режим. Android може да отвори Scene Viewer. iPhone използва Quick Look, ако има USDZ.";
       haptic(30);
-
-      clearModelViewerFallbackTimer();
-
-      modelViewerFallbackTimer = setTimeout(() => {
-        if (!modelViewerARStarted) {
-          showAPKInstall("model-viewer fallback timeout / AR не се отвори");
-        }
-      }, CONFIG.fallbackTimeoutMs);
 
       try {
         if (mv && typeof mv.activateAR === "function") {
           await mv.activateAR();
-        } else {
-          clearModelViewerFallbackTimer();
-          showAPKInstall("model-viewer activateAR not available");
         }
       } catch (error) {
-        clearModelViewerFallbackTimer();
         showDebug("MODEL-VIEWER FALLBACK ERROR:\n" + (error.message || error));
-        showAPKInstall("model-viewer activateAR error: " + (error.message || error));
       }
-    }
-
-    function findClosestSizeIndex(width) {
-      let bestIndex = 1;
-      let bestDiff = Infinity;
-
-      sizeSteps.forEach((step, index) => {
-        const diff = Math.abs(step.width - width);
-        if (diff < bestDiff) {
-          bestDiff = diff;
-          bestIndex = index;
-        }
-      });
-
-      return bestIndex;
     }
 
     function onResize() {
@@ -1727,22 +1250,14 @@
 
     function updateDebugInfo() {
       debugInfo +=
-        "\n\n--- LIVE DEBUG ---" +
-        "\nXR active: " + Boolean(xrSession) +
-        "\nModel ready: " + modelReady +
-        "\nProduct placed: " + productPlaced +
-        "\nHit stable frames: " + stableHitFrames +
-        "\nAnchor supported: " + anchorSupported +
-        "\nAnchor active: " + anchorActive +
-        "\nPlane detection supported: " + planeDetectionSupported +
-        "\nDetected planes: " + detectedPlaneCount +
-        "\nLight estimation supported: " + lightEstimationSupported +
-        "\nLight value: " + lastLightValue +
-        "\nReference space: " + Boolean(xrRefSpace) +
-        "\nViewer space: " + Boolean(viewerSpace) +
-        "\nHit source: " + Boolean(hitTestSource) +
-        "\nAPK url: " + CONFIG.apkUrl +
-        "\nModel-viewer AR started: " + modelViewerARStarted;
+        "\n--- LIVE DEBUG ---\n" +
+        "XR active: " + Boolean(xrSession) + "\n" +
+        "Model ready: " + modelReady + "\n" +
+        "Product placed: " + productPlaced + "\n" +
+        "Stable frames: " + stableHitFrames + "\n" +
+        "Reference space: " + Boolean(xrRefSpace) + "\n" +
+        "Viewer space: " + Boolean(viewerSpace) + "\n" +
+        "Hit source: " + Boolean(hitTestSource) + "\n";
     }
 
     function showDebug(message) {
