@@ -9,7 +9,6 @@
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
     :root {
@@ -248,6 +247,11 @@
       transform: scale(.95);
     }
 
+    button:disabled {
+      opacity: .58;
+      cursor: wait;
+    }
+
     .main-btn {
       border: 0;
       border-radius: var(--radius-pill);
@@ -263,14 +267,6 @@
     .btn-white {
       background: rgba(255,255,255,.96);
       color: #000;
-    }
-
-    .btn-gold {
-      background: linear-gradient(135deg, #fff, var(--gold) 46%, var(--gold2));
-      color: #000;
-      box-shadow:
-        0 0 30px rgba(255,179,71,.42),
-        inset 0 -12px 22px rgba(0,0,0,.12);
     }
 
     .btn-dark {
@@ -538,29 +534,29 @@
       <div class="subtitle">PIZZA HIT · SOULFLAME AR</div>
 
       <p>
-        Натисни старт, разреши камерата и покажи визитката.
-        SoulFlame менюто ще се заключи върху самата карта.
+        Камерата се стартира автоматично. Покажи визитката към телефона.
       </p>
 
       <div class="start-actions">
-        <button id="startBtn" class="main-btn btn-white">START CAMERA</button>
+        <button id="startBtn" class="main-btn btn-white">STARTING CAMERA...</button>
         <button id="backBtn" class="main-btn btn-dark">BACK TO INDEX</button>
       </div>
 
       <span class="hint">
+        Ако камерата не тръгне автоматично, докосни STARTING CAMERA.<br>
         Target: ./targets/soulflame-black.mind<br>
         Texture: ./menu_za_vizitka/sf-menu.html
       </span>
     </div>
   </section>
 
-  <div id="topHud">LOADING DIGITAL CARD</div>
+  <div id="topHud">STARTING CAMERA</div>
 
   <div id="scanFrame">
     <div id="scanLine"></div>
   </div>
 
-  <div id="bottomStatus">READY</div>
+  <div id="bottomStatus">SHOW CARD</div>
 
   <div id="actionDock">
     <button id="resetScanBtn" class="gold">SCAN</button>
@@ -637,7 +633,8 @@
       siteUrl: "https://soulflame-ar-card.vercel.app",
       scanTimeoutMs: 14000,
       autoFocusDelayMs: 650,
-      autoFocusRetryMs: 1200
+      autoFocusRetryMs: 1200,
+      autoStartDelayMs: 450
     };
 
     const menuCaptureFrame = document.getElementById("menuCaptureFrame");
@@ -715,6 +712,17 @@
         }
 
         iframe.addEventListener("load", () => resolve(), { once: true });
+      });
+    }
+
+    function waitForSceneLoaded() {
+      return new Promise(resolve => {
+        if (scene.hasLoaded) {
+          resolve();
+          return;
+        }
+
+        scene.addEventListener("loaded", () => resolve(), { once: true });
       });
     }
 
@@ -879,7 +887,7 @@
 
         setStatus(
           menuTextureReady ? "DIGITAL CARD READY" : "FALLBACK MENU ACTIVE",
-          menuTextureReady ? "PRESS START" : "CHECK sf-menu.html"
+          menuTextureReady ? "STARTING CAMERA" : "CHECK sf-menu.html"
         );
 
       } finally {
@@ -998,13 +1006,12 @@
 
       try {
         started = true;
-        startBtn.textContent = "STARTING CAMERA...";
+        startBtn.textContent = "CAMERA STARTING...";
+        startBtn.disabled = true;
+
+        await waitForSceneLoaded();
 
         if (!arSystem) {
-          await new Promise(resolve => {
-            scene.addEventListener("loaded", resolve, { once: true });
-          });
-
           arSystem = scene.systems["mindar-image-system"];
         }
 
@@ -1051,8 +1058,9 @@
 
       } catch (error) {
         started = false;
-        startBtn.textContent = "START CAMERA";
-        setStatus("CAMERA / MINDAR ERROR", "CHECK DEBUG");
+        startBtn.disabled = false;
+        startBtn.textContent = "TAP TO START CAMERA";
+        setStatus("TAP TO START CAMERA", "BROWSER BLOCKED AUTOSTART");
         showDebug(error.message || String(error));
       }
     }
@@ -1070,7 +1078,7 @@
       }
 
       await applyExternalMenuTexture(false);
-      setStatus("DIGITAL CARD READY", "PRESS START");
+      setStatus("DIGITAL CARD READY", "AUTO STARTING");
     });
 
     target.addEventListener("targetFound", async () => {
@@ -1178,10 +1186,19 @@
         actionDock.classList.remove("active");
         scanFrame.classList.remove("active", "locked");
         startScreen.classList.remove("hidden");
-        startBtn.textContent = "START CAMERA";
+        startBtn.disabled = false;
+        startBtn.textContent = "TAP TO START CAMERA";
 
-        setStatus("AR PAUSED", "PRESS START");
+        setStatus("AR PAUSED", "TAP TO START");
       }
+    });
+
+    window.addEventListener("load", () => {
+      setStatus("STARTING CAMERA", "SHOW CARD");
+
+      setTimeout(() => {
+        startDigitalCardAR();
+      }, CONFIG.autoStartDelayMs);
     });
 
     window.addEventListener("error", event => {
