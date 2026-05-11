@@ -3,25 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR Business Card · MindAR</title>
+  <meta name="theme-color" content="#000000" />
+  <title>SoulFlame AR Floating Menu · Card AR + Table AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
     :root {
-      --bg: #030303;
-      --text: #ffffff;
-      --muted: rgba(255,255,255,.66);
-      --gold: #ffb347;
-      --green: #48ff9b;
-      --blue: #70c7ff;
-      --red: #ff3d3d;
-      --line: rgba(255,255,255,.18);
-      --glass: rgba(0,0,0,.68);
-      --pill: 999px;
-      --radius-xl: 34px;
+      --orange: #ff7a18;
+      --green: #57d600;
+      --cyan: #00b8d9;
+      --pink: #f72585;
+      --blue: #1d7cff;
+      --purple: #8b35ff;
+      --white: #ffffff;
+      --black: #050505;
+      --shadow: 0 14px 28px rgba(0, 0, 0, .34);
     }
 
     * {
@@ -36,9 +34,9 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: #000;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
     }
 
     body {
@@ -51,6 +49,19 @@
       display: none !important;
     }
 
+    #scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
+
+    .a-loader-title {
+      display: none !important;
+    }
+
     #fxCanvas {
       position: fixed;
       inset: 0;
@@ -58,252 +69,8 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      opacity: .36;
+      opacity: .22;
       mix-blend-mode: screen;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: -28%;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    body::before {
-      background:
-        radial-gradient(circle at 18% 22%, rgba(255,255,255,.13), transparent 24%),
-        radial-gradient(circle at 82% 72%, rgba(255,179,71,.16), transparent 26%),
-        radial-gradient(circle at 50% 48%, rgba(255,255,255,.045), transparent 33%),
-        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.055), transparent 68%);
-      filter: blur(18px);
-      animation: universeMove 13s ease-in-out infinite alternate;
-    }
-
-    body::after {
-      opacity: .10;
-      background-image:
-        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
-      background-size: 44px 44px;
-      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
-      animation: gridDrift 18s linear infinite;
-    }
-
-    @keyframes universeMove {
-      from { transform: translate3d(-2%, -1%, 0) scale(1); }
-      to { transform: translate3d(2%, 1.5%, 0) scale(1.08); }
-    }
-
-    @keyframes gridDrift {
-      from { transform: translate3d(0,0,0); }
-      to { transform: translate3d(44px,44px,0); }
-    }
-
-    #startScreen {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-      background:
-        radial-gradient(circle at center, rgba(255,255,255,.14), rgba(0,0,0,.96) 62%),
-        linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(255,179,71,.10));
-      overflow: hidden;
-    }
-
-    #startScreen::before {
-      content: "";
-      position: absolute;
-      width: min(650px, 118vw);
-      height: min(650px, 118vw);
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow:
-        0 0 120px rgba(255,255,255,.12),
-        inset 0 0 90px rgba(255,255,255,.055);
-      animation: portalRotate 20s linear infinite;
-    }
-
-    #startScreen::after {
-      content: "";
-      position: absolute;
-      width: min(440px, 88vw);
-      height: min(440px, 88vw);
-      border-radius: 50%;
-      border: 1px dashed rgba(255,179,71,.24);
-      box-shadow: 0 0 90px rgba(255,179,71,.10);
-      animation: portalRotateReverse 28s linear infinite;
-    }
-
-    @keyframes portalRotate {
-      from { transform: rotate(0deg) scale(.92); }
-      to { transform: rotate(360deg) scale(1.02); }
-    }
-
-    @keyframes portalRotateReverse {
-      from { transform: rotate(360deg) scale(1); }
-      to { transform: rotate(0deg) scale(.94); }
-    }
-
-    .start-card {
-      position: relative;
-      z-index: 3;
-      width: min(520px, 94vw);
-      padding: 34px 24px 24px;
-      border-radius: var(--radius-xl);
-      border: 1px solid rgba(255,255,255,.22);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.025)),
-        rgba(0,0,0,.76);
-      backdrop-filter: blur(26px) saturate(150%);
-      -webkit-backdrop-filter: blur(26px) saturate(150%);
-      text-align: center;
-      box-shadow:
-        0 0 90px rgba(255,255,255,.18),
-        inset 0 0 30px rgba(255,255,255,.055);
-      overflow: hidden;
-    }
-
-    .logo-mark {
-      width: 76px;
-      height: 76px;
-      margin: 0 auto;
-      position: relative;
-      filter: drop-shadow(0 0 18px rgba(255,255,255,.48));
-      animation: logoFloat 2.9s ease-in-out infinite alternate;
-    }
-
-    .logo-mark::before,
-    .logo-mark::after {
-      content: "";
-      position: absolute;
-      border: 2px solid rgba(255,255,255,.98);
-      box-shadow:
-        0 0 13px rgba(255,255,255,.74),
-        inset 0 0 12px rgba(255,255,255,.14);
-    }
-
-    .logo-mark::before {
-      inset: 9px;
-      transform: rotate(30deg) skew(-8deg);
-    }
-
-    .logo-mark::after {
-      inset: 20px 5px 5px 34px;
-      transform: rotate(-28deg) skew(10deg);
-    }
-
-    @keyframes logoFloat {
-      from { transform: translateY(0) rotate(-2deg); }
-      to { transform: translateY(-8px) rotate(2deg); }
-    }
-
-    .start-card h1 {
-      margin: 20px 0 8px;
-      letter-spacing: .18em;
-      font-size: clamp(24px, 6vw, 36px);
-      line-height: 1;
-      text-shadow: 0 0 28px rgba(255,255,255,.40);
-    }
-
-    .subtitle {
-      margin-bottom: 18px;
-      font-size: 11px;
-      letter-spacing: .22em;
-      color: rgba(255,255,255,.60);
-      text-transform: uppercase;
-      font-weight: 900;
-    }
-
-    .start-card p {
-      margin: 0 auto 22px;
-      max-width: 410px;
-      color: rgba(255,255,255,.82);
-      line-height: 1.52;
-      font-size: 15px;
-    }
-
-    .start-actions {
-      display: grid;
-      gap: 10px;
-      justify-items: center;
-    }
-
-    button,
-    a {
-      cursor: pointer;
-      border: 0;
-      border-radius: var(--pill);
-      padding: 14px 18px;
-      min-width: 230px;
-      text-decoration: none;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing: .13em;
-      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
-    }
-
-    button:active,
-    a:active {
-      transform: scale(.96);
-    }
-
-    #startBtn {
-      background: #fff;
-      color: #000;
-      box-shadow:
-        0 0 36px rgba(255,255,255,.42),
-        inset 0 -12px 22px rgba(0,0,0,.13);
-    }
-
-    .ghost-btn {
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--pill);
-      padding: 12px 16px;
-      min-width: 210px;
-      background: rgba(255,255,255,.055);
-      color: rgba(255,255,255,.78);
-      backdrop-filter: blur(10px);
-    }
-
-    .ghost-btn.table-start {
-      background: linear-gradient(135deg, rgba(72,255,155,.18), rgba(255,179,71,.13));
-      color: rgba(255,255,255,.92);
-      border: 1px solid rgba(72,255,155,.30);
-      box-shadow:
-        0 0 22px rgba(72,255,155,.12),
-        inset 0 0 18px rgba(255,179,71,.05);
-    }
-
-    .hint {
-      display: block;
-      margin-top: 15px;
-      color: rgba(255,255,255,.50);
-      font-size: 12px;
-      line-height: 1.35;
-    }
-
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 20px auto 0;
-      max-width: 350px;
-    }
-
-    .mini-grid span {
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      padding: 10px 7px;
-      background: rgba(255,255,255,.055);
-      color: rgba(255,255,255,.72);
-      font-size: 10px;
-      font-weight: 850;
-      letter-spacing: .12em;
     }
 
     #topHud {
@@ -311,21 +78,40 @@
       top: max(14px, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%);
-      z-index: 9998;
+      z-index: 20;
       padding: 10px 15px;
-      border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 999px;
       background: rgba(0,0,0,.58);
-      backdrop-filter: blur(15px) saturate(150%);
-      -webkit-backdrop-filter: blur(15px) saturate(150%);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(15px);
       color: rgba(255,255,255,.92);
       font-size: 11px;
       font-weight: 900;
       letter-spacing: .15em;
       text-align: center;
       pointer-events: none;
-      box-shadow: 0 0 30px rgba(255,255,255,.10);
       max-width: calc(100vw - 20px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #bottomStatus {
+      position: fixed;
+      left: max(12px, env(safe-area-inset-left));
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 20;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.62);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.82);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      backdrop-filter: blur(11px);
+      pointer-events: none;
+      max-width: 70vw;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -335,13 +121,13 @@
       position: fixed;
       left: 50%;
       top: 50%;
-      z-index: 9997;
-      width: min(76vw, 390px);
-      aspect-ratio: 1.72;
+      z-index: 15;
+      width: min(68vw, 340px);
+      aspect-ratio: .56;
       transform: translate(-50%, -50%);
-      border-radius: 28px;
+      border-radius: 30px;
       pointer-events: none;
-      opacity: .76;
+      opacity: .72;
       transition: opacity .25s ease, transform .25s ease;
     }
 
@@ -359,22 +145,22 @@
     }
 
     #scanFrame::before {
-      border: 1px solid rgba(255,255,255,.28);
+      border: 1px solid rgba(255,255,255,.26);
       box-shadow:
-        0 0 54px rgba(255,255,255,.13),
+        0 0 54px rgba(255,255,255,.11),
         inset 0 0 42px rgba(255,255,255,.06);
     }
 
     #scanFrame::after {
       background:
-        linear-gradient(#fff,#fff) left top / 48px 2px no-repeat,
-        linear-gradient(#fff,#fff) left top / 2px 48px no-repeat,
-        linear-gradient(#fff,#fff) right top / 48px 2px no-repeat,
-        linear-gradient(#fff,#fff) right top / 2px 48px no-repeat,
-        linear-gradient(#fff,#fff) left bottom / 48px 2px no-repeat,
-        linear-gradient(#fff,#fff) left bottom / 2px 48px no-repeat,
-        linear-gradient(#fff,#fff) right bottom / 48px 2px no-repeat,
-        linear-gradient(#fff,#fff) right bottom / 2px 48px no-repeat;
+        linear-gradient(#fff,#fff) left top / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) left top / 2px 46px no-repeat,
+        linear-gradient(#fff,#fff) right top / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) right top / 2px 46px no-repeat,
+        linear-gradient(#fff,#fff) left bottom / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) left bottom / 2px 46px no-repeat,
+        linear-gradient(#fff,#fff) right bottom / 46px 2px no-repeat,
+        linear-gradient(#fff,#fff) right bottom / 2px 46px no-repeat;
       filter: drop-shadow(0 0 11px rgba(255,255,255,.70));
       animation: framePulse 1.35s ease-in-out infinite alternate;
     }
@@ -388,7 +174,7 @@
       border-radius: 99px;
       background: linear-gradient(90deg, transparent, #fff, transparent);
       box-shadow: 0 0 18px rgba(255,255,255,.85);
-      animation: scanLineMove 1.9s ease-in-out infinite alternate;
+      animation: scanLineMove 2.1s ease-in-out infinite alternate;
     }
 
     @keyframes framePulse {
@@ -398,255 +184,519 @@
 
     @keyframes scanLineMove {
       from { transform: translateY(0); opacity: .25; }
-      to { transform: translateY(215px); opacity: .9; }
-    }
-
-    #bottomStatus {
-      position: fixed;
-      left: max(12px, env(safe-area-inset-left));
-      bottom: max(12px, env(safe-area-inset-bottom));
-      z-index: 9998;
-      padding: 9px 12px;
-      border-radius: var(--pill);
-      background: rgba(0,0,0,.62);
-      border: 1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.82);
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: .12em;
-      backdrop-filter: blur(11px);
-      pointer-events: none;
-      max-width: 55vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #fallbackBtn {
-      position: fixed;
-      right: max(12px, env(safe-area-inset-right));
-      bottom: max(12px, env(safe-area-inset-bottom));
-      z-index: 9998;
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--pill);
-      background: rgba(0,0,0,.58);
-      color: rgba(255,255,255,.84);
-      padding: 9px 12px;
-      min-width: auto;
-      font-size: 10px;
-      backdrop-filter: blur(11px);
-    }
-
-    #actionDock {
-      position: fixed;
-      left: 50%;
-      bottom: max(24px, calc(env(safe-area-inset-bottom) + 18px));
-      transform: translateX(-50%) translateY(18px) scale(.96);
-      z-index: 9999;
-      display: flex;
-      gap: 8px;
-      padding: 8px;
-      border-radius: var(--pill);
-      background: rgba(0,0,0,.60);
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(17px) saturate(155%);
-      -webkit-backdrop-filter: blur(17px) saturate(155%);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .24s ease, transform .24s ease;
-      box-shadow: 0 0 44px rgba(255,255,255,.13);
-    }
-
-    #actionDock.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0) scale(1);
-    }
-
-    #actionDock button {
-      min-width: auto;
-      border: 0;
-      border-radius: var(--pill);
-      padding: 12px 13px;
-      font-size: 10px;
-      background: rgba(255,255,255,.96);
-      color: #000;
-      box-shadow: 0 0 18px rgba(255,255,255,.20);
-      white-space: nowrap;
-    }
-
-    #actionDock button.gold {
-      background: var(--gold);
-      color: #000;
-      box-shadow: 0 0 30px rgba(255,179,71,.50);
-    }
-
-    #actionDock button.green {
-      background: linear-gradient(135deg, var(--green), var(--gold));
-      color: #000;
-      box-shadow:
-        0 0 28px rgba(72,255,155,.30),
-        0 0 34px rgba(255,179,71,.25);
-    }
-
-    #actionDock button.dark {
-      background: rgba(0,0,0,.82);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.34);
-    }
-
-    #digitalCard {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-      background:
-        radial-gradient(circle at center, rgba(255,255,255,.13), rgba(0,0,0,.96) 62%),
-        #000;
-      overflow: hidden;
-    }
-
-    .digital-inner {
-      width: min(460px, 94vw);
-      border: 1px solid rgba(255,255,255,.20);
-      border-radius: 34px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.02)),
-        rgba(0,0,0,.78);
-      backdrop-filter: blur(22px) saturate(145%);
-      -webkit-backdrop-filter: blur(22px) saturate(145%);
-      padding: 27px;
-      text-align: center;
-      box-shadow: 0 0 85px rgba(255,255,255,.13);
-    }
-
-    .digital-logo {
-      width: 88px;
-      height: 88px;
-      border-radius: 28px;
-      margin: 0 auto 14px;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,.98), transparent 15%),
-        linear-gradient(135deg, #ffffff, #ffb347 48%, #48ff9b);
-      position: relative;
-      box-shadow:
-        0 0 35px rgba(255,255,255,.26),
-        0 0 35px rgba(255,179,71,.16);
-      transform: rotate(8deg);
-    }
-
-    .digital-logo::after {
-      content: "SF";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: #080808;
-      font-size: 28px;
-      font-weight: 1000;
-    }
-
-    .digital-inner h2 {
-      margin: 16px 0 8px;
-      letter-spacing: .18em;
-      font-size: 26px;
-    }
-
-    .digital-inner p {
-      color: rgba(255,255,255,.74);
-      line-height: 1.52;
-      margin: 0 0 18px;
-    }
-
-    .digital-actions {
-      display: grid;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .digital-actions button,
-    .digital-actions a {
-      min-width: 0;
-      text-decoration: none;
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 999px;
-      padding: 13px 14px;
-      background: rgba(255,255,255,.94);
-      color: #000;
-      font-weight: 950;
-      letter-spacing: .12em;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .digital-actions .dark {
-      background: rgba(0,0,0,.74);
-      color: #fff;
-    }
-
-    .digital-actions .ghost {
-      background: rgba(255,255,255,.055);
-      color: rgba(255,255,255,.78);
+      to { transform: translateY(342px); opacity: .9; }
     }
 
     #debugBox {
       position: fixed;
       left: 12px;
       top: 54px;
-      z-index: 10002;
-      width: min(520px, calc(100vw - 24px));
-      max-height: 58vh;
-      overflow: auto;
+      z-index: 50;
+      width: min(460px, calc(100vw - 24px));
       padding: 10px 12px;
       border: 1px solid rgba(255,80,80,.35);
       border-radius: 16px;
-      background: rgba(0,0,0,.84);
-      color: rgba(255,255,255,.88);
+      background: rgba(0,0,0,.78);
+      color: rgba(255,255,255,.86);
       font-size: 11px;
       line-height: 1.38;
       display: none;
       white-space: pre-wrap;
+      pointer-events: none;
     }
 
     #debugBox.active {
       display: block;
     }
 
-    .a-loader-title {
-      display: none !important;
+    .hud {
+      position: fixed;
+      inset: 0;
+      z-index: 12;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 22px;
+      perspective: 1200px;
+      opacity: 0;
+      transform: scale(.96);
+      transition: opacity .28s ease, transform .28s ease;
     }
 
-    @media (max-width: 640px) {
-      .start-card {
-        padding: 30px 19px 23px;
+    .hud.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .floating-menu {
+      position: relative;
+      width: min(1160px, 96vw);
+      height: min(900px, 94vh);
+      transform-style: preserve-3d;
+      animation: softFloat 5.8s ease-in-out infinite;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,.24));
+      pointer-events: auto;
+    }
+
+    @keyframes softFloat {
+      0%, 100% {
+        transform: translateY(0) rotateX(0deg) rotateY(0deg);
       }
 
-      .mini-grid {
-        grid-template-columns: 1fr;
+      50% {
+        transform: translateY(-8px) rotateX(.6deg) rotateY(-.6deg);
+      }
+    }
+
+    .top {
+      position: absolute;
+      left: 62px;
+      right: 36px;
+      top: 12px;
+      height: 154px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .logo-orb {
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: rgba(255,255,255,.96);
+      box-shadow:
+        0 12px 28px rgba(0,0,0,.26),
+        0 0 0 5px rgba(255,255,255,.58);
+    }
+
+    .logo-orb::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
+      padding: 5px;
+      background: linear-gradient(135deg, #1d7cff, #6a4dff, #8b35ff, #f72585);
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .real-logo {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+      display: block;
+      position: relative;
+      z-index: 1;
+      filter: contrast(1.18) brightness(.88);
+    }
+
+    .title {
+      transform: translateZ(42px);
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: clamp(48px, 7vw, 84px);
+      line-height: .9;
+      font-weight: 900;
+      letter-spacing: -3px;
+      background: linear-gradient(90deg, #1d7cff, #386cff, #773cff, #a020ff);
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-stroke: .7px rgba(255,255,255,.35);
+      text-shadow:
+        0 3px 8px rgba(0,0,0,.34),
+        0 0 8px rgba(255,255,255,.14);
+    }
+
+    .title p {
+      margin: 10px 0 0;
+      font-size: clamp(22px, 3vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 3px 6px rgba(0,0,0,.76);
+    }
+
+    .rows {
+      position: absolute;
+      left: 16px;
+      right: 8px;
+      top: 190px;
+      bottom: 24px;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 292px 318px minmax(330px, 1fr) 62px;
+      gap: 22px;
+      align-items: center;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    .row:nth-child(1) { transform: translateZ(70px); }
+    .row:nth-child(2) { transform: translateZ(54px); }
+    .row:nth-child(3) { transform: translateZ(38px); }
+    .row:nth-child(4) { transform: translateZ(22px); }
+
+    .option {
+      height: 132px;
+      border-radius: 36px;
+      display: flex;
+      align-items: center;
+      padding: 18px 30px;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+
+    .option::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.27), transparent 42%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.16));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .option::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      top: 50%;
+      width: 78px;
+      height: 78px;
+      border-radius: 22px;
+      transform: translateY(-50%) rotate(45deg);
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.24);
+      z-index: 0;
+    }
+
+    .option-content {
+      position: relative;
+      z-index: 3;
+    }
+
+    .num {
+      display: block;
+      font-size: 72px;
+      line-height: .78;
+      letter-spacing: -4px;
+      text-shadow: 0 3px 6px rgba(0,0,0,.34);
+    }
+
+    .opt {
+      display: block;
+      margin-top: 8px;
+      font-size: 31px;
+      line-height: 1;
+      text-shadow: 0 2px 5px rgba(0,0,0,.35);
+    }
+
+    .label {
+      height: 112px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: white;
+      font-size: 40px;
+      font-weight: 900;
+      text-shadow:
+        0 3px 5px rgba(0,0,0,.78),
+        0 0 5px rgba(255,255,255,.12);
+    }
+
+    .icon {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      font-size: 50px;
+      line-height: 1;
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,.55));
+    }
+
+    .text-wrap {
+      position: relative;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .dots {
+      position: absolute;
+      left: 0;
+      bottom: -27px;
+      display: flex;
+      gap: 13px;
+    }
+
+    .dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 3px 5px rgba(0,0,0,.25);
+    }
+
+    .dot:nth-child(4) { opacity: .55; }
+    .dot:nth-child(5) { opacity: .32; }
+
+    .product {
+      height: 132px;
+      border-radius: 36px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0,0,0,.26);
+      border: 3px solid currentColor;
+      box-shadow: var(--shadow);
+    }
+
+    .product img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.08) saturate(1.22) brightness(1.03);
+    }
+
+    .product::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.20), transparent 48%, rgba(0,0,0,.34)),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.10));
+      pointer-events: none;
+    }
+
+    .product::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,.24);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .badge3d {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      z-index: 4;
+      width: 58px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,.42);
+      border: 2px solid currentColor;
+      color: white;
+      font-size: 23px;
+      font-weight: 900;
+      text-shadow: 0 2px 4px rgba(0,0,0,.55);
+      box-shadow: 0 8px 18px rgba(0,0,0,.24);
+    }
+
+    .arrow {
+      width: 56px;
+      height: 76px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      background: currentColor;
+      color: white;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .arrow::before {
+      content: "›";
+      font-size: 64px;
+      font-weight: 300;
+      line-height: 1;
+      color: white;
+      transform: translateY(-3px);
+      text-shadow: 0 2px 4px rgba(0,0,0,.3);
+    }
+
+    .orange { color: var(--orange); }
+    .green { color: var(--green); }
+    .cyan { color: var(--cyan); }
+    .pink { color: var(--pink); }
+
+    .bg-orange {
+      background: linear-gradient(135deg, #ff4d00, #ff7a18 50%, #ffb000);
+    }
+
+    .bg-green {
+      background: linear-gradient(135deg, #239d00, #57d600 50%, #94ef00);
+    }
+
+    .bg-cyan {
+      background: linear-gradient(135deg, #007a95, #00b8d9 50%, #00e0ff);
+    }
+
+    .bg-pink {
+      background: linear-gradient(135deg, #c90057, #f72585 50%, #ff5daf);
+    }
+
+    @media (max-width: 920px) {
+      .hud {
+        padding: 8px;
+        align-items: flex-start;
+      }
+
+      .floating-menu {
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .top {
+        left: 16px;
+        right: 12px;
+        top: 18px;
+        height: 108px;
+        grid-template-columns: 92px 1fr;
+        gap: 14px;
+      }
+
+      .logo-orb {
+        width: 78px;
+        height: 78px;
+      }
+
+      .logo-orb::before {
+        inset: -7px;
+        padding: 4px;
+      }
+
+      .real-logo {
+        width: 82%;
+        height: 82%;
+      }
+
+      .title h1 {
+        font-size: 41px;
+        letter-spacing: -2px;
+      }
+
+      .title p {
+        font-size: 18px;
+        margin-top: 5px;
+      }
+
+      .rows {
+        left: 8px;
+        right: 6px;
+        top: 150px;
+        bottom: 22px;
+        gap: 12px;
+      }
+
+      .row {
+        grid-template-columns: 104px 1fr 150px 30px;
+        gap: 7px;
+      }
+
+      .option {
+        height: 84px;
+        padding: 10px 13px;
+        border-radius: 24px;
+      }
+
+      .option::after {
+        width: 44px;
+        height: 44px;
+        right: -19px;
+        border-radius: 14px;
+      }
+
+      .num {
+        font-size: 39px;
+        letter-spacing: -2px;
+      }
+
+      .opt {
+        font-size: 16px;
+        margin-top: 5px;
+      }
+
+      .label {
+        height: 84px;
+        gap: 8px;
+        font-size: 22px;
+      }
+
+      .icon {
+        width: 34px;
+        height: 34px;
+        font-size: 30px;
+      }
+
+      .dots {
+        bottom: -16px;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+      }
+
+      .product {
+        height: 82px;
+        border-radius: 22px;
+        border-width: 2px;
+      }
+
+      .product::after {
+        inset: 2px;
+        border-radius: 18px;
+      }
+
+      .badge3d {
+        width: 38px;
+        height: 32px;
+        top: 8px;
+        right: 8px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+
+      .arrow {
+        width: 30px;
+        height: 54px;
+        border-radius: 16px;
+      }
+
+      .arrow::before {
+        font-size: 42px;
       }
 
       #topHud {
         font-size: 10px;
-      }
-
-      #actionDock {
-        width: calc(100vw - 20px);
-        justify-content: center;
-        border-radius: 26px;
-        gap: 5px;
-        flex-wrap: wrap;
-      }
-
-      #actionDock button {
-        flex: 1 1 28%;
-        padding: 12px 5px;
-        font-size: 7.4px;
-      }
-
-      #fallbackBtn {
-        display: none;
       }
 
       #bottomStatus {
@@ -654,12 +704,29 @@
       }
 
       #scanFrame {
-        width: min(82vw, 350px);
+        width: min(72vw, 315px);
+      }
+    }
+
+    @media (max-width: 420px) {
+      .row {
+        grid-template-columns: 96px 1fr 128px 24px;
       }
 
-      @keyframes scanLineMove {
-        from { transform: translateY(0); opacity: .25; }
-        to { transform: translateY(170px); opacity: .9; }
+      .label {
+        font-size: 20px;
+      }
+
+      .product {
+        height: 78px;
+      }
+
+      .title h1 {
+        font-size: 36px;
+      }
+
+      .title p {
+        font-size: 16px;
       }
     }
   </style>
@@ -669,81 +736,146 @@
   <canvas id="fxCanvas"></canvas>
   <div id="debugBox"></div>
 
-  <section id="startScreen">
-    <div class="start-card">
-      <div class="logo-mark"></div>
-
-      <h1>SOULFLAME AR</h1>
-      <div class="subtitle">BUSINESS CARD PORTAL</div>
-
-      <p>
-        Насочи камерата към SoulFlame визитката. Когато .mind target-ът се заключи,
-        ще се появи интерактивна AR визитка като 3D интерфейс.
-      </p>
-
-      <div class="start-actions">
-        <button id="startBtn">START CARD AR</button>
-        <button id="openDigitalFromStart" class="ghost-btn">DIGITAL CARD</button>
-        <button id="openTableFromStart" class="ghost-btn table-start">TABLE AR</button>
-      </div>
-
-      <span class="hint">
-        Target: ./targets/soulflame-black.mind<br />
-        Не отваряй през file://. Използвай Vercel/HTTPS или localhost.
-      </span>
-
-      <div class="mini-grid">
-        <span>SCAN</span>
-        <span>LOCK</span>
-        <span>CONTACT</span>
-      </div>
-    </div>
-  </section>
-
-  <div id="topHud">SCAN SOULFLAME CARD</div>
+  <div id="topHud">ДОКОСНИ ЕКРАНА · SCAN SOULFLAME CARD</div>
 
   <div id="scanFrame">
     <div id="scanLine"></div>
   </div>
 
   <div id="bottomStatus">READY</div>
-  <button id="fallbackBtn">DIGITAL CARD</button>
 
-  <div id="actionDock">
-    <button id="openSite" class="gold">WEBSITE</button>
-    <button id="callBtn">CALL</button>
-    <button id="emailBtn" class="dark">EMAIL</button>
-    <button id="tableBtn" class="green">TABLE</button>
-    <button id="cardBtn">CARD</button>
-    <button id="debugBtn" class="dark">DEBUG</button>
+  <div class="hud" id="floatingHud">
+    <main class="floating-menu">
+      <header class="top">
+        <div class="logo-orb">
+          <img
+            class="real-logo"
+            src="./soulflame-logo.png"
+            alt="SoulFlame Logo"
+            onerror="this.onerror=null; this.src='./ChatGPT Image 2.05.2026 г., 19_55_36.png';"
+          />
+        </div>
+
+        <div class="title">
+          <h1>SoulFlame AR</h1>
+          <p>Interactive 3D Experiences</p>
+        </div>
+      </header>
+
+      <section class="rows">
+        <article class="row orange" data-action="table">
+          <div class="option bg-orange">
+            <div class="option-content">
+              <span class="num">01</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">🍴</div>
+            <div class="text-wrap">
+              Ресторанти
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85" alt="Ресторанти AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+
+        <article class="row green" data-action="clothes">
+          <div class="option bg-green">
+            <div class="option-content">
+              <span class="num">02</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">👕</div>
+            <div class="text-wrap">
+              Дрехи
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85" alt="Дрехи AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+
+        <article class="row cyan" data-action="furniture">
+          <div class="option bg-cyan">
+            <div class="option-content">
+              <span class="num">03</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">🛋</div>
+            <div class="text-wrap">
+              Мебели
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=85" alt="Мебели AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+
+        <article class="row pink" data-action="cars">
+          <div class="option bg-pink">
+            <div class="option-content">
+              <span class="num">04</span>
+              <span class="opt">опция</span>
+            </div>
+          </div>
+
+          <div class="label">
+            <div class="icon">🚗</div>
+            <div class="text-wrap">
+              Коли
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=85" alt="Коли AR">
+            <div class="badge3d">3D</div>
+          </div>
+
+          <div class="arrow"></div>
+        </article>
+      </section>
+    </main>
   </div>
-
-  <section id="digitalCard" class="hidden">
-    <div class="digital-inner">
-      <div class="digital-logo"></div>
-
-      <h2>SOULFLAME</h2>
-
-      <p>
-        AR/NFC визитки, AR менюта, сайтове, AI системи и модерно дигитално представяне
-        за бизнеси, които искат да изглеждат като бъдещето.
-      </p>
-
-      <div class="digital-actions">
-        <a id="digitalWebsite" href="#" target="_blank" rel="noopener">OPEN WEBSITE</a>
-        <a id="digitalCall" href="#" class="dark">CALL NOW</a>
-        <a id="digitalEmail" href="#" class="dark">EMAIL</a>
-        <button id="closeDigital" class="ghost">BACK TO AR</button>
-      </div>
-    </div>
-  </section>
 
   <a-scene
     id="scene"
     mindar-image="
       imageTargetSrc: ./targets/soulflame-black.mind;
       autoStart: false;
-      uiScanning: yes;
+      uiScanning: no;
       uiLoading: no;
       warmupTolerance: 5;
       missTolerance: 80;
@@ -764,7 +896,9 @@
     device-orientation-permission-ui="enabled: false"
     embedded
   >
-    <a-assets timeout="60000"></a-assets>
+    <a-assets timeout="60000">
+      <a-asset-item id="pizzaGLB" src="./uploads_files_6479452_187.glb"></a-asset-item>
+    </a-assets>
 
     <a-camera
       position="0 0 0"
@@ -772,567 +906,113 @@
       camera="near: 0.001; far: 100000"
     ></a-camera>
 
-    <a-light type="ambient" intensity="0.95" color="#ffffff"></a-light>
-    <a-light type="directional" intensity="1.25" color="#ffffff" position="0 2 1"></a-light>
+    <a-light type="ambient" intensity="0.75" color="#ffffff"></a-light>
+    <a-light type="directional" intensity="1.1" color="#ffffff" position="0 2 1"></a-light>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <a-entity
-        id="arBusinessCard"
-        position="0 0 0"
-        rotation="0 0 0"
-        scale="1 1 1"
-      >
-        <a-plane
-          position="0 0 0.012"
-          width="2.64"
-          height="1.22"
-          color="#000000"
-          opacity="0.16"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-plane
-          position="-0.82 0.34 0.05"
-          width="0.66"
-          height="0.38"
-          color="#ffffff"
-          opacity="0.92"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-plane
-          position="-0.82 0.34 0.058"
-          width="0.60"
-          height="0.30"
-          color="#14375f"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-plane
-          position="-0.82 0.47 0.065"
-          width="0.60"
-          height="0.055"
-          color="#70c7ff"
-          opacity="0.92"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-plane
-          position="-0.82 0.21 0.065"
-          width="0.60"
-          height="0.055"
-          color="#70c7ff"
-          opacity="0.92"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-text
-          value="SOULFLAME"
-          position="-1.105 0.375 0.09"
-          width="0.75"
-          align="center"
-          color="#ffffff"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="AR BUSINESS CARD"
-          position="-1.095 0.295 0.09"
-          width="0.54"
-          align="center"
-          color="#ffffff"
-          opacity="0.86"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-plane
-          position="-0.82 -0.075 0.045"
-          width="0.66"
-          height="0.34"
-          color="#ffffff"
-          opacity="0.13"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-plane
-          position="-0.82 -0.075 0.055"
-          width="0.58"
-          height="0.24"
-          color="#ffffff"
-          opacity="0.12"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-text
-          value="SCAN · OPEN · SELL"
-          position="-1.095 -0.005 0.09"
-          width="0.70"
-          align="center"
-          color="#ffffff"
-          opacity="0.95"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="NFC + AR + AI"
-          position="-1.085 -0.115 0.09"
-          width="0.55"
-          align="center"
-          color="#ffb347"
-          opacity="0.95"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
+      <a-entity id="stableWorld" position="0 0 0">
         <a-circle
-          position="-0.16 0.38 0.075"
-          radius="0.155"
+          id="arTable"
+          position="0 -0.09 0.052"
+          radius="0.58"
           color="#ffffff"
-          opacity="0.96"
+          opacity="0.10"
           material="transparent: true; depthWrite: false; side: double"
+          animation="property: opacity; from: 0.055; to: 0.15; dur: 1600; dir: alternate; loop: true; easing: easeInOutSine"
         ></a-circle>
-
-        <a-circle
-          position="-0.16 0.38 0.085"
-          radius="0.128"
-          color="#0a0a0a"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-circle>
-
-        <a-text
-          value="SF"
-          position="-0.255 0.325 0.11"
-          width="0.34"
-          align="center"
-          color="#ffb347"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
 
         <a-ring
-          position="-0.16 0.38 0.095"
-          radius-inner="0.168"
-          radius-outer="0.184"
+          id="tableRing"
+          position="0 -0.09 0.064"
+          radius-inner="0.49"
+          radius-outer="0.505"
           color="#ffffff"
-          opacity="0.82"
+          opacity="0.58"
           material="transparent: true; depthWrite: false"
-          animation="property: rotation; to: 0 0 360; dur: 13000; loop: true; easing: linear"
+          animation="property: rotation; to: 0 0 360; dur: 16000; loop: true; easing: linear"
         ></a-ring>
 
         <a-text
-          value="SoulFlame"
-          position="0.075 0.46 0.09"
-          width="1.12"
-          align="left"
-          color="#ffffff"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="AR · AI · NFC · WEB"
-          position="0.085 0.285 0.09"
-          width="0.78"
-          align="left"
-          color="#ffb347"
-          opacity="0.92"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-plane
-          position="0.18 0.055 0.06"
-          width="0.62"
-          height="0.145"
-          color="#ffffff"
-          opacity="0.84"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-text
-          value="Website"
-          position="-0.015 0.016 0.095"
-          width="0.62"
-          align="center"
-          color="#000000"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-plane
-          position="0.18 -0.18 0.06"
-          width="0.62"
-          height="0.145"
-          color="#ffffff"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-text
-          value="Contact"
-          position="-0.015 -0.219 0.095"
-          width="0.62"
-          align="center"
-          color="#000000"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-circle
-          position="-0.60 -0.53 0.07"
-          radius="0.105"
-          color="#ffffff"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-circle>
-
-        <a-text
-          value="CHAT"
-          position="-0.70 -0.565 0.095"
-          width="0.34"
-          align="center"
-          color="#000000"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-circle
-          position="-0.26 -0.53 0.07"
-          radius="0.105"
-          color="#ffffff"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-circle>
-
-        <a-text
-          value="CALL"
-          position="-0.36 -0.565 0.095"
-          width="0.34"
-          align="center"
-          color="#000000"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-circle
-          position="0.08 -0.53 0.07"
-          radius="0.105"
-          color="#ffffff"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-circle>
-
-        <a-text
-          value="WEB"
-          position="-0.02 -0.565 0.095"
-          width="0.34"
-          align="center"
-          color="#000000"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-circle
-          position="0.42 -0.53 0.07"
-          radius="0.105"
-          color="#ffffff"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-circle>
-
-        <a-text
-          value="MAIL"
-          position="0.32 -0.565 0.095"
-          width="0.34"
-          align="center"
-          color="#000000"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-plane
-          position="1.02 0.07 0.045"
-          width="0.86"
-          height="0.78"
-          color="#ffffff"
-          opacity="0.94"
-          material="transparent: true; depthWrite: false; side: double"
-        ></a-plane>
-
-        <a-plane
-          position="1.02 0.405 0.06"
-          width="0.78"
-          height="0.075"
-          color="#f3f3f3"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-text
-          value="HOME   AR   AI   CONTACT"
-          position="0.68 0.382 0.09"
-          width="0.70"
-          align="left"
-          color="#111111"
-          opacity="0.85"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-circle
-          position="1.32 0.31 0.09"
-          radius="0.07"
-          color="#111111"
-          opacity="0.82"
-          material="transparent: true; depthWrite: false"
-        ></a-circle>
-
-        <a-text
-          value="SF"
-          position="1.272 0.285 0.12"
-          width="0.18"
-          align="center"
-          color="#ffb347"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="Nice to meet you!"
-          position="0.68 0.25 0.09"
-          width="0.78"
-          align="left"
-          color="#111111"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="I build AR cards, menus,\nwebsites and AI tools\nthat turn attention into clients."
-          position="0.68 0.085 0.09"
-          width="0.68"
-          align="left"
-          color="#111111"
-          opacity="0.85"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-plane
-          position="1.02 -0.20 0.06"
-          width="0.74"
-          height="0.20"
-          color="#090909"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-text
+          id="arSizeText"
           value="SOULFLAME AR"
-          position="0.72 -0.16 0.095"
-          width="0.72"
-          align="left"
-          color="#ffffff"
-          opacity="1"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-text
-          value="Business card that sells"
-          position="0.72 -0.255 0.095"
-          width="0.62"
-          align="left"
-          color="#ffb347"
-          opacity="0.96"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-plane
-          position="0.79 -0.43 0.06"
-          width="0.23"
-          height="0.13"
-          color="#111111"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-plane
-          position="1.02 -0.43 0.06"
-          width="0.23"
-          height="0.13"
-          color="#111111"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-plane
-          position="1.25 -0.43 0.06"
-          width="0.23"
-          height="0.13"
-          color="#111111"
-          opacity="0.98"
-          material="transparent: true; depthWrite: false"
-        ></a-plane>
-
-        <a-text
-          value="LIVE WEBSITE"
-          position="0.72 -0.58 0.09"
-          width="0.62"
+          position="-0.31 -0.73 0.083"
+          width="1"
           align="center"
-          color="#ffffff"
-          opacity="0.90"
-          material="transparent: true; depthWrite: false"
-        ></a-text>
-
-        <a-ring
-          position="0 0.70 0.035"
-          radius-inner="0.185"
-          radius-outer="0.198"
-          color="#ffffff"
-          opacity="0.82"
-          material="transparent: true; depthWrite: false"
-          animation="property: rotation; to: 0 0 360; dur: 12000; loop: true; easing: linear"
-        ></a-ring>
-
-        <a-ring
-          position="0 0.70 0.04"
-          radius-inner="0.260"
-          radius-outer="0.270"
           color="#ffb347"
-          opacity="0.42"
+          opacity="0.98"
           material="transparent: true; depthWrite: false"
-          animation="property: rotation; to: 0 0 -360; dur: 17000; loop: true; easing: linear"
-        ></a-ring>
-
-        <a-text
-          value="CARD AR ACTIVE"
-          position="-0.33 0.63 0.08"
-          width="0.82"
-          align="center"
-          color="#ffffff"
-          opacity="0.84"
-          material="transparent: true; depthWrite: false"
-          animation="property: position; from: -0.33 0.63 0.08; to: -0.33 0.665 0.08; dur: 2100; dir: alternate; loop: true; easing: easeInOutSine"
         ></a-text>
+
+        <a-entity
+          id="pizzaRig"
+          visible="false"
+          position="0 -0.09 0.17"
+          rotation="90 0 0"
+          scale="1 1 1"
+        >
+          <a-entity
+            id="pizzaModel"
+            gltf-model="#pizzaGLB"
+            position="0 0 0"
+            rotation="0 0 0"
+            scale="1 1 1"
+          ></a-entity>
+        </a-entity>
       </a-entity>
     </a-entity>
   </a-scene>
 
   <script>
     const CONFIG = {
-      siteUrl: "https://soulflame-ar-card.vercel.app",
       tableARUrl: "./table-ar.html",
+      siteUrl: "https://soulflame-ar-card.vercel.app",
       targetFile: "./targets/soulflame-black.mind",
-      email: "soulflame.mitko@gmail.com",
-      phone: "+359xxxxxxxxx",
-      mailSubject: "SoulFlame AR Business Card",
-      scanTimeoutMs: 14000,
-      autoFocusDelayMs: 650,
-      autoFocusRetryMs: 1200
+      glbFile: "./uploads_files_6479452_187.glb",
+      giantPizzaWidth: 3.33,
+      autoShowPizzaOnFirstScan: true,
+      keepMenuAfterLost: true
     };
-
-    const startScreen = document.getElementById("startScreen");
-    const startBtn = document.getElementById("startBtn");
-    const openDigitalFromStart = document.getElementById("openDigitalFromStart");
-    const openTableFromStart = document.getElementById("openTableFromStart");
-
-    const topHud = document.getElementById("topHud");
-    const bottomStatus = document.getElementById("bottomStatus");
-    const debugBox = document.getElementById("debugBox");
-    const scanFrame = document.getElementById("scanFrame");
-    const fallbackBtn = document.getElementById("fallbackBtn");
-
-    const actionDock = document.getElementById("actionDock");
-    const openSite = document.getElementById("openSite");
-    const callBtn = document.getElementById("callBtn");
-    const emailBtn = document.getElementById("emailBtn");
-    const tableBtn = document.getElementById("tableBtn");
-    const cardBtn = document.getElementById("cardBtn");
-    const debugBtn = document.getElementById("debugBtn");
-
-    const digitalCard = document.getElementById("digitalCard");
-    const closeDigital = document.getElementById("closeDigital");
-    const digitalWebsite = document.getElementById("digitalWebsite");
-    const digitalCall = document.getElementById("digitalCall");
-    const digitalEmail = document.getElementById("digitalEmail");
 
     const scene = document.getElementById("scene");
     const target = document.getElementById("target");
+    const floatingHud = document.getElementById("floatingHud");
+    const topHud = document.getElementById("topHud");
+    const bottomStatus = document.getElementById("bottomStatus");
+    const scanFrame = document.getElementById("scanFrame");
+    const debugBox = document.getElementById("debugBox");
+    const pizzaRig = document.getElementById("pizzaRig");
+    const pizzaModel = document.getElementById("pizzaModel");
+
     const fxCanvas = document.getElementById("fxCanvas");
     const fxCtx = fxCanvas.getContext("2d");
 
     let arSystem = null;
     let started = false;
     let visible = false;
-    let scanTimer = null;
+    let lockedOnce = false;
     let cameraTrack = null;
-    let autoFocusReady = false;
-    let autoFocusMode = "unknown";
-    let debugInfo = "";
+    let modelReady = false;
+    let startAttempted = false;
 
-    digitalWebsite.href = CONFIG.siteUrl;
-    digitalCall.href = `tel:${CONFIG.phone}`;
-    digitalEmail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
-
-    function openTableARPage() {
-      haptic(35);
-      window.location.href = CONFIG.tableARUrl;
-    }
-
-    openTableFromStart.addEventListener("click", openTableARPage);
-    tableBtn.addEventListener("click", openTableARPage);
-
-    openSite.addEventListener("click", () => {
-      window.open(CONFIG.siteUrl, "_blank", "noopener");
-      haptic(25);
-    });
-
-    callBtn.addEventListener("click", () => {
-      window.location.href = `tel:${CONFIG.phone}`;
-      haptic(25);
-    });
-
-    emailBtn.addEventListener("click", () => {
-      window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(CONFIG.mailSubject)}`;
-      haptic(25);
-    });
-
-    fallbackBtn.addEventListener("click", openDigitalCard);
-    openDigitalFromStart.addEventListener("click", openDigitalCard);
-    cardBtn.addEventListener("click", openDigitalCard);
-
-    closeDigital.addEventListener("click", () => {
-      digitalCard.classList.add("hidden");
-      haptic(20);
-    });
-
-    debugBtn.addEventListener("click", () => {
-      showDebug(
-        debugInfo +
-        "\n\nLIVE STATE" +
-        "\nStarted: " + started +
-        "\nVisible: " + visible +
-        "\nTarget: " + CONFIG.targetFile +
-        "\nSecure context: " + window.isSecureContext +
-        "\nProtocol: " + location.protocol +
-        "\nAutoFocus ready: " + autoFocusReady +
-        "\nAutoFocus mode: " + autoFocusMode +
-        "\nUserAgent: " + navigator.userAgent
-      );
-      haptic(20);
-    });
-
-    function openDigitalCard() {
-      digitalCard.classList.remove("hidden");
-      haptic(25);
-    }
-
-    function setStatus(top, bottom) {
+    function setStatus(top, bottom = "") {
       topHud.textContent = top;
       bottomStatus.textContent = bottom;
     }
 
+    function hideStatusSoon() {
+      clearTimeout(window.__statusTimer);
+      window.__statusTimer = setTimeout(() => {
+        topHud.classList.add("hidden");
+        bottomStatus.classList.add("hidden");
+      }, 4200);
+    }
+
+    function showStatus() {
+      topHud.classList.remove("hidden");
+      bottomStatus.classList.remove("hidden");
+    }
+
     function showDebug(message) {
-      debugInfo += "\n\n" + message;
       debugBox.classList.add("active");
       debugBox.textContent = message;
       console.warn(message);
@@ -1346,42 +1026,22 @@
       if (navigator.vibrate) navigator.vibrate(ms);
     }
 
-    function sleep(ms) {
+    function showFloatingMenu() {
+      floatingHud.classList.add("active");
+      scanFrame.classList.add("locked");
+    }
+
+    function hideFloatingMenu() {
+      floatingHud.classList.remove("active");
+      scanFrame.classList.remove("locked");
+    }
+
+    async function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function checkTargetFile() {
-      try {
-        const response = await fetch(CONFIG.targetFile, { cache: "no-store" });
-
-        if (!response.ok) {
-          throw new Error("Target file status: " + response.status);
-        }
-
-        debugInfo += "\nTarget file found: " + CONFIG.targetFile;
-        return true;
-      } catch (error) {
-        showDebug(
-          "MIND TARGET ERROR\n\n" +
-          "Не мога да намеря файла:\n" +
-          CONFIG.targetFile +
-          "\n\nПровери структурата:\n" +
-          "index.html\n" +
-          "targets/soulflame-black.mind\n\n" +
-          "Твоят Windows файл трябва да бъде:\n" +
-          "E:\\iamyann\\targets\\soulflame-black.mind\n\n" +
-          "Грешка: " + (error.message || error)
-        );
-
-        setStatus("MIND FILE ERROR", "CHECK TARGET PATH");
-        return false;
-      }
-    }
-
     async function getCameraTrackFromMindAR() {
-      const maxTries = 24;
-
-      for (let i = 0; i < maxTries; i++) {
+      for (let i = 0; i < 20; i++) {
         const videos = Array.from(document.querySelectorAll("video"));
 
         for (const video of videos) {
@@ -1403,241 +1063,236 @@
       return null;
     }
 
-    async function enableCameraAutoFocus(reason = "manual") {
+    async function enableCameraAutoFocus() {
       try {
         const track = cameraTrack || await getCameraTrackFromMindAR();
 
-        if (!track) {
-          autoFocusMode = "no-video-track";
-          debugInfo += "\nAUTOFOCUS: No live camera track found.";
-          return false;
-        }
-
-        if (!track.getCapabilities || !track.applyConstraints) {
-          autoFocusMode = "not-supported-api";
-          debugInfo += "\nAUTOFOCUS: Browser does not expose camera capabilities.";
-          return false;
-        }
+        if (!track || !track.getCapabilities || !track.applyConstraints) return false;
 
         const capabilities = track.getCapabilities();
-        const settingsBefore = track.getSettings ? track.getSettings() : {};
-        const advanced = [];
-
-        if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
-          advanced.push({ focusMode: "continuous" });
-          autoFocusMode = "continuous";
-        } else if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
-          advanced.push({ focusMode: "single-shot" });
-          autoFocusMode = "single-shot";
-        } else {
-          autoFocusMode = "focus-mode-not-exposed";
-          debugInfo += "\nAUTOFOCUS: focusMode not exposed by this device/browser.";
-          return false;
-        }
-
-        await track.applyConstraints({ advanced });
-
-        const settingsAfter = track.getSettings ? track.getSettings() : {};
-        autoFocusReady = true;
-
-        debugInfo +=
-          "\nAUTOFOCUS REASON: " + reason +
-          "\nAUTOFOCUS REQUEST: " + JSON.stringify(advanced) +
-          "\nFOCUS BEFORE: " + (settingsBefore.focusMode || "unknown") +
-          "\nFOCUS AFTER: " + (settingsAfter.focusMode || "unknown");
-
-        if (!visible) {
-          setStatus("AUTOFOCUS ON", "SCAN CARD SLOWLY");
-        }
-
-        return true;
-      } catch (error) {
-        autoFocusReady = false;
-        autoFocusMode = "error";
-        debugInfo += "\nAUTOFOCUS ERROR: " + (error.message || error);
-        console.warn("AUTOFOCUS ERROR:", error);
-        return false;
-      }
-    }
-
-    async function pulseSingleShotFocus() {
-      try {
-        const track = cameraTrack || await getCameraTrackFromMindAR();
-
-        if (!track || !track.getCapabilities || !track.applyConstraints) {
-          return false;
-        }
-
-        const capabilities = track.getCapabilities();
-
-        if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
-          await track.applyConstraints({
-            advanced: [{ focusMode: "single-shot" }]
-          });
-
-          autoFocusMode = "single-shot-pulse";
-          debugInfo += "\nAUTOFOCUS: single-shot pulse triggered.";
-          return true;
-        }
 
         if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
           await track.applyConstraints({
             advanced: [{ focusMode: "continuous" }]
           });
 
-          autoFocusMode = "continuous-refresh";
-          debugInfo += "\nAUTOFOCUS: continuous focus refreshed.";
+          return true;
+        }
+
+        if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
+          await track.applyConstraints({
+            advanced: [{ focusMode: "single-shot" }]
+          });
+
           return true;
         }
 
         return false;
       } catch (error) {
-        debugInfo += "\nFOCUS PULSE ERROR: " + (error.message || error);
+        console.warn("AUTOFOCUS ERROR:", error);
         return false;
       }
     }
 
-    window.addEventListener("error", (event) => {
-      showDebug("JS ERROR: " + event.message);
-    });
-
-    window.addEventListener("unhandledrejection", (event) => {
-      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason || "Unknown"));
-    });
-
-    scene.addEventListener("loaded", () => {
-      arSystem = scene.systems["mindar-image-system"];
-
-      if (scene.renderer && window.THREE) {
-        if (THREE.SRGBColorSpace) {
-          scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
-        }
-
-        scene.renderer.toneMappingExposure = 1.0;
-        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
-      }
-
-      debugInfo += "\nA-Frame scene loaded.";
-      debugInfo += "\nMindAR system: " + Boolean(arSystem);
-      debugInfo += "\nTarget path: " + CONFIG.targetFile;
-
-      setStatus("AR SYSTEM READY", "READY");
-    });
-
-    startBtn.addEventListener("click", async () => {
-      if (started) return;
-
-      if (location.protocol === "file:") {
-        showDebug(
-          "Не стартирай с двоен клик върху index.html.\n\n" +
-          "Камерата и MindAR искат HTTPS или localhost.\n\n" +
-          "Ползвай:\n" +
-          "npx serve .\n" +
-          "или качи във Vercel."
-        );
-
-        alert("Отвори през Vercel/HTTPS или localhost. Не през file://");
-        return;
-      }
-
-      const targetOk = await checkTargetFile();
-      if (!targetOk) return;
-
+    async function startAR() {
       try {
-        started = true;
-        startBtn.textContent = "STARTING...";
-        setStatus("STARTING CAMERA", "PLEASE ALLOW ACCESS");
+        if (started || startAttempted) return;
+
+        startAttempted = true;
+        showStatus();
+        setStatus("STARTING AR CAMERA", "ALLOW CAMERA");
+
+        if (location.protocol === "file:") {
+          startAttempted = false;
+          setStatus("НЕ СТАРТИРАЙ ПРЕЗ FILE", "ПУСНИ LOCALHOST ИЛИ VERCEL");
+          showDebug("Камерата и MindAR искат HTTPS или localhost. Не отваряй index.html с двоен клик.");
+          return;
+        }
 
         if (!arSystem) {
           await new Promise((resolve) => {
-            scene.addEventListener("loaded", resolve, { once: true });
+            if (scene.hasLoaded) resolve();
+            else scene.addEventListener("loaded", resolve, { once: true });
           });
 
           arSystem = scene.systems["mindar-image-system"];
         }
 
-        if (!arSystem) {
-          throw new Error("MindAR system not found");
-        }
+        if (!arSystem) throw new Error("MindAR system not found");
 
         await arSystem.start();
 
-        await sleep(CONFIG.autoFocusDelayMs);
-        await enableCameraAutoFocus("after-ar-start");
+        started = true;
+        startAttempted = false;
 
-        setTimeout(() => {
-          enableCameraAutoFocus("retry-after-start");
-        }, CONFIG.autoFocusRetryMs);
+        await sleep(650);
+        await enableCameraAutoFocus();
 
-        startScreen.classList.add("hidden");
-        scanFrame.classList.remove("locked");
-        hideDebug();
-
-        setStatus(autoFocusReady ? "AUTOFOCUS ON" : "SCAN SOULFLAME CARD", "SCANNING");
-
-        clearTimeout(scanTimer);
-        scanTimer = setTimeout(() => {
-          if (started && !visible) {
-            setStatus("TARGET NOT FOUND", "CHECK .MIND + LIGHT");
-
-            showDebug(
-              "Не намира визитката.\n\n" +
-              "1. Провери дали ./targets/soulflame-black.mind съществува.\n" +
-              "2. Сканирай същата визитка, от която е направен target-ът.\n" +
-              "3. Дръж телефона по-далече и приближавай бавно.\n" +
-              "4. Светлината трябва да е добра, без силни отблясъци.\n" +
-              "5. Отвори през Android Chrome / Safari, не през Viber/Facebook/Messenger browser.\n" +
-              "6. AUTOFOCUS MODE: " + autoFocusMode
-            );
-          }
-        }, CONFIG.scanTimeoutMs);
-
+        setStatus("SCAN SOULFLAME CARD", "ДРЪЖ ТЕЛЕФОНА СТАБИЛНО");
       } catch (error) {
+        startAttempted = false;
         started = false;
-        startBtn.textContent = "START CARD AR";
-        setStatus("CAMERA / MINDAR ERROR", "CHECK DEBUG");
+        setStatus("AR CAMERA ERROR", "ДОКОСНИ ПАК ЕКРАНА");
         showDebug(error.message || String(error));
-        openDigitalCard();
       }
+    }
+
+    scene.addEventListener("loaded", () => {
+      arSystem = scene.systems["mindar-image-system"];
+
+      if (scene.renderer && window.THREE) {
+        if (THREE.SRGBColorSpace) scene.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        scene.renderer.toneMappingExposure = 1.0;
+        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+      }
+
+      setStatus("AR SYSTEM READY", "ДОКОСНИ ЕКРАНА");
     });
 
     target.addEventListener("targetFound", async () => {
       visible = true;
+      lockedOnce = true;
 
-      clearTimeout(scanTimer);
       hideDebug();
+      showFloatingMenu();
 
-      await pulseSingleShotFocus();
+      if (CONFIG.autoShowPizzaOnFirstScan) {
+        pizzaRig.setAttribute("visible", "true");
+      }
 
-      setStatus("SOULFLAME CARD LOCKED", "AR BUSINESS CARD ACTIVE");
-      actionDock.classList.add("active");
-      scanFrame.classList.add("locked");
+      await enableCameraAutoFocus();
 
-      haptic(45);
+      setStatus("SOULFLAME AR LOCKED", "MENU FLOATING IN AIR");
+      hideStatusSoon();
+      haptic(38);
     });
 
     target.addEventListener("targetLost", () => {
       visible = false;
 
-      setStatus("TARGET LOST", "SHOW CARD TO CAMERA");
-      actionDock.classList.remove("active");
-      scanFrame.classList.remove("locked");
+      if (CONFIG.keepMenuAfterLost && lockedOnce) {
+        showFloatingMenu();
+        setStatus("SOULFLAME MENU LOCKED", "CARD NOT NEEDED");
+        hideStatusSoon();
+        return;
+      }
 
-      haptic(20);
+      hideFloatingMenu();
+      setStatus("TARGET LOST", "SHOW CARD TO CAMERA");
     });
 
-    document.addEventListener("click", async (event) => {
-      const clickable = event.target.closest("button, a");
-      if (clickable) return;
+    pizzaModel.addEventListener("model-loaded", () => {
+      try {
+        const model = pizzaModel.getObject3D("mesh");
 
-      if (started) {
-        const ok = await pulseSingleShotFocus();
-
-        if (ok && !visible) {
-          setStatus("FOCUS PULSE", "SCAN CARD");
+        if (!model || !window.THREE) {
+          modelReady = true;
+          return;
         }
+
+        model.traverse((node) => {
+          if (!node.isMesh) return;
+
+          node.frustumCulled = false;
+
+          const materials = Array.isArray(node.material) ? node.material : [node.material];
+
+          materials.forEach((mat) => {
+            if (!mat) return;
+
+            mat.side = THREE.DoubleSide;
+
+            if (mat.map && THREE.SRGBColorSpace) {
+              mat.map.colorSpace = THREE.SRGBColorSpace;
+              mat.map.needsUpdate = true;
+            }
+
+            mat.needsUpdate = true;
+          });
+        });
+
+        model.updateMatrixWorld(true);
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        const center = new THREE.Vector3();
+
+        box.getSize(size);
+        box.getCenter(center);
+
+        const maxSize = Math.max(size.x, size.y, size.z);
+
+        if (Number.isFinite(maxSize) && maxSize > 0) {
+          model.position.x -= center.x;
+          model.position.y -= center.y;
+          model.position.z -= center.z;
+
+          const scale = CONFIG.giantPizzaWidth / maxSize;
+          model.scale.setScalar(scale);
+          model.updateMatrixWorld(true);
+        }
+
+        modelReady = true;
+        setStatus("PIZZA GLB READY", "SCAN CARD");
+      } catch (error) {
+        showDebug("GLB AUTO-FIT ERROR: " + error.message);
       }
     });
+
+    pizzaModel.addEventListener("model-error", () => {
+      showDebug(
+        "GLB ERROR: Не се зареди файлът.\n" +
+        "Провери дали този файл съществува:\n" +
+        CONFIG.glbFile
+      );
+    });
+
+    document.querySelectorAll(".row").forEach((row) => {
+      row.addEventListener("click", () => {
+        const action = row.dataset.action;
+
+        haptic(25);
+
+        if (action === "table") {
+          window.location.href = CONFIG.tableARUrl;
+          return;
+        }
+
+        if (action === "clothes") {
+          setStatus("AR ДРЕХИ", "COMING NEXT");
+          showStatus();
+          hideStatusSoon();
+          return;
+        }
+
+        if (action === "furniture") {
+          setStatus("AR МЕБЕЛИ", "COMING NEXT");
+          showStatus();
+          hideStatusSoon();
+          return;
+        }
+
+        if (action === "cars") {
+          setStatus("AR КОЛИ", "COMING NEXT");
+          showStatus();
+          hideStatusSoon();
+        }
+      });
+    });
+
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        startAR();
+      }, 450);
+    });
+
+    document.body.addEventListener("click", () => {
+      startAR();
+    });
+
+    document.body.addEventListener("touchstart", () => {
+      startAR();
+    }, { passive: true });
 
     document.addEventListener("visibilitychange", async () => {
       if (document.hidden && arSystem && started) {
@@ -1645,18 +1300,14 @@
           await arSystem.stop();
 
           started = false;
+          startAttempted = false;
           visible = false;
           cameraTrack = null;
-          autoFocusReady = false;
-          autoFocusMode = "paused";
 
-          clearTimeout(scanTimer);
-
-          actionDock.classList.remove("active");
+          hideFloatingMenu();
           scanFrame.classList.remove("locked");
-          startScreen.classList.remove("hidden");
-          startBtn.textContent = "START CARD AR";
-          setStatus("AR PAUSED", "PAUSED");
+          showStatus();
+          setStatus("AR PAUSED", "ДОКОСНИ ЗА СТАРТ");
         } catch (error) {
           console.warn(error);
         }
@@ -1664,16 +1315,14 @@
     });
 
     const particles = [];
-    const PARTICLE_COUNT = 42;
+    const PARTICLE_COUNT = 34;
 
     function resizeFx() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.4);
-
       fxCanvas.width = Math.floor(window.innerWidth * dpr);
       fxCanvas.height = Math.floor(window.innerHeight * dpr);
       fxCanvas.style.width = window.innerWidth + "px";
       fxCanvas.style.height = window.innerHeight + "px";
-
       fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
@@ -1684,10 +1333,10 @@
         particles.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 1.7 + .35,
-          vx: (Math.random() - .5) * .18,
-          vy: (Math.random() - .5) * .18,
-          a: Math.random() * .48 + .12
+          r: Math.random() * 1.5 + .35,
+          vx: (Math.random() - .5) * .16,
+          vy: (Math.random() - .5) * .16,
+          a: Math.random() * .34 + .08
         });
       }
     }
@@ -1720,6 +1369,14 @@
       if (scene.renderer) {
         scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
+    });
+
+    window.addEventListener("error", (event) => {
+      showDebug("JS ERROR: " + event.message);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
     });
 
     resizeFx();
