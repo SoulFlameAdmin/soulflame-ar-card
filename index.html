@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>SoulFlame AR · External Menu Locked To Card</title>
+  <title>SoulFlame AR · External SF Menu Locked To Card</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -50,6 +50,19 @@
 
     .hidden {
       display: none !important;
+    }
+
+    #menuCaptureFrame {
+      position: fixed;
+      left: -12000px;
+      top: -12000px;
+      width: 1160px;
+      height: 900px;
+      border: 0;
+      opacity: 0.01;
+      pointer-events: none;
+      z-index: -1;
+      background: transparent;
     }
 
     #fxCanvas {
@@ -100,19 +113,6 @@
     @keyframes gridDrift {
       from { transform: translate3d(0,0,0); }
       to { transform: translate3d(44px,44px,0); }
-    }
-
-    #menuCaptureFrame {
-      position: fixed;
-      left: -99999px;
-      top: -99999px;
-      width: 1160px;
-      height: 900px;
-      border: 0;
-      opacity: 0;
-      pointer-events: none;
-      z-index: -1;
-      background: transparent;
     }
 
     #startScreen {
@@ -784,11 +784,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>SOULFLAME AR</h1>
-      <div class="subtitle">EXTERNAL MENU + CARD LOCK</div>
+      <div class="subtitle">SF-MENU.HTML + CARD LOCK</div>
 
       <p>
-        Дизайнът идва от <b>./menu_za_vizitka/sf-menu.html</b>,
-        превръща се в AR texture и се заключва към визитката.
+        Менюто се зарежда от <b>./menu_za_vizitka/sf-menu.html</b>,
+        превръща се в texture и се заключва върху визитката.
       </p>
 
       <div class="start-actions">
@@ -1082,6 +1082,7 @@
     let arMenuCanvas = null;
     let arMenuTexture = null;
     let menuTextureReady = false;
+    let menuTextureInProgress = false;
 
     const pizzaScales = [
       "0.55 0.55 0.55",
@@ -1139,13 +1140,33 @@
 
     function waitForIframeLoad(iframe) {
       return new Promise((resolve) => {
-        if (iframe.contentDocument && iframe.contentDocument.readyState === "complete") {
+        try {
+          if (iframe.contentDocument && iframe.contentDocument.readyState === "complete") {
+            resolve();
+            return;
+          }
+        } catch (error) {
           resolve();
           return;
         }
 
         iframe.addEventListener("load", () => resolve(), { once: true });
       });
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+      ctx.lineTo(x + w, y + h - radius);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
     }
 
     function drawMenuFallbackCanvas(reason = "fallback") {
@@ -1173,59 +1194,56 @@
       ctx.fill();
 
       ctx.fillStyle = "#fff";
-      ctx.font = "900 86px Arial";
+      ctx.font = "900 78px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("SoulFlame AR", 580, 250);
+      ctx.fillText("SoulFlame AR", 580, 240);
 
-      ctx.font = "800 44px Arial";
-      ctx.fillText("External menu texture failed", 580, 340);
+      ctx.font = "800 42px Arial";
+      ctx.fillText("SF menu texture failed", 580, 335);
 
-      ctx.font = "700 28px Arial";
-      ctx.fillText(reason, 580, 410);
+      ctx.font = "700 26px Arial";
+      ctx.fillText(String(reason).slice(0, 70), 580, 405);
 
-      ctx.font = "900 42px Arial";
-      ctx.fillText("Check ./menu_za_vizitka/sf-menu.html", 580, 600);
+      ctx.font = "900 38px Arial";
+      ctx.fillText("Check ./menu_za_vizitka/sf-menu.html", 580, 590);
+
+      ctx.font = "700 25px Arial";
+      ctx.fillText("Use localhost or Vercel. Do not open with file://", 580, 650);
 
       return canvas;
-    }
-
-    function roundRect(ctx, x, y, w, h, r) {
-      const radius = Math.min(r, w / 2, h / 2);
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + w - radius, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-      ctx.lineTo(x + w, y + h - radius);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-      ctx.lineTo(x + radius, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
     }
 
     async function captureExternalMenuToCanvas(forceReload = false) {
       try {
         if (forceReload) {
+          menuTextureReady = false;
           menuCaptureFrame.src = CONFIG.menuTextureUrl + "?v=" + Date.now();
         }
 
         await waitForIframeLoad(menuCaptureFrame);
-        await sleep(700);
+        await sleep(850);
 
         const doc = menuCaptureFrame.contentDocument;
-        if (!doc) throw new Error("Cannot access iframe document. Use localhost or HTTPS, not file://");
+
+        if (!doc) {
+          throw new Error("Cannot access iframe document. Use localhost or HTTPS, not file://");
+        }
 
         if (doc.fonts && doc.fonts.ready) {
           await doc.fonts.ready;
         }
 
         const targetMenu = doc.querySelector(".floating-menu") || doc.body;
-        if (!targetMenu) throw new Error("No .floating-menu found in sf-menu.html");
+
+        if (!targetMenu) {
+          throw new Error("No .floating-menu found in sf-menu.html");
+        }
 
         const images = Array.from(doc.images || []);
+
         await Promise.all(images.map((img) => {
           if (img.complete) return Promise.resolve();
+
           return new Promise((resolve) => {
             img.onload = resolve;
             img.onerror = resolve;
@@ -1235,7 +1253,7 @@
         const canvas = await html2canvas(targetMenu, {
           backgroundColor: null,
           useCORS: true,
-          allowTaint: false,
+          allowTaint: true,
           scale: 2,
           width: 1160,
           height: 900,
@@ -1257,45 +1275,56 @@
     async function applyExternalMenuTexture(forceReload = false) {
       if (!window.THREE) return;
 
-      arMenuCanvas = await captureExternalMenuToCanvas(forceReload);
+      if (menuTextureInProgress) return;
+      menuTextureInProgress = true;
 
-      if (arMenuTexture) {
-        arMenuTexture.dispose();
-        arMenuTexture = null;
-      }
+      try {
+        arMenuCanvas = await captureExternalMenuToCanvas(forceReload);
 
-      arMenuTexture = new THREE.CanvasTexture(arMenuCanvas);
-
-      if (THREE.SRGBColorSpace) {
-        arMenuTexture.colorSpace = THREE.SRGBColorSpace;
-      }
-
-      arMenuTexture.anisotropy = 8;
-      arMenuTexture.needsUpdate = true;
-
-      const planes = document.querySelectorAll('[data-role="ar-floating-menu-plane"]');
-
-      planes.forEach((plane) => {
-        const mesh = plane.getObject3D("mesh");
-
-        if (!mesh) {
-          plane.addEventListener("object3dset", () => {
-            applyExternalMenuTexture(false);
-          }, { once: true });
-          return;
+        if (arMenuTexture) {
+          arMenuTexture.dispose();
+          arMenuTexture = null;
         }
 
-        mesh.material = new THREE.MeshBasicMaterial({
-          map: arMenuTexture,
-          transparent: true,
-          side: THREE.DoubleSide,
-          depthWrite: false
+        arMenuTexture = new THREE.CanvasTexture(arMenuCanvas);
+
+        if (THREE.SRGBColorSpace) {
+          arMenuTexture.colorSpace = THREE.SRGBColorSpace;
+        }
+
+        arMenuTexture.anisotropy = 8;
+        arMenuTexture.needsUpdate = true;
+
+        const planes = document.querySelectorAll('[data-role="ar-floating-menu-plane"]');
+
+        planes.forEach((plane) => {
+          const mesh = plane.getObject3D("mesh");
+
+          if (!mesh) {
+            plane.addEventListener("object3dset", () => {
+              applyExternalMenuTexture(false);
+            }, { once: true });
+            return;
+          }
+
+          mesh.material = new THREE.MeshBasicMaterial({
+            map: arMenuTexture,
+            transparent: true,
+            side: THREE.DoubleSide,
+            depthWrite: false
+          });
+
+          mesh.material.needsUpdate = true;
         });
 
-        mesh.material.needsUpdate = true;
-      });
+        setStatus(
+          menuTextureReady ? "SF MENU READY" : "MENU FALLBACK ACTIVE",
+          menuTextureReady ? "SCAN CARD" : "CHECK sf-menu.html"
+        );
 
-      setStatus(menuTextureReady ? "MENU TEXTURE READY" : "MENU FALLBACK ACTIVE", menuTextureReady ? "SCAN CARD" : "CHECK FILE PATH");
+      } finally {
+        menuTextureInProgress = false;
+      }
     }
 
     function openTableARPage() {
@@ -1419,10 +1448,10 @@
     });
 
     reloadMenuBtn.addEventListener("click", async () => {
-      setStatus("RELOADING MENU", "WAIT");
+      setStatus("RELOADING SF MENU", "WAIT");
       await applyExternalMenuTexture(true);
       menuSheet.classList.remove("active");
-      setStatus("MENU RELOADED", "SCAN / LOCK ACTIVE");
+      setStatus("SF MENU RELOADED", "SCAN / LOCK ACTIVE");
       haptic(35);
     });
 
@@ -1650,7 +1679,9 @@
       scene.appendChild(frozenWorld);
 
       requestAnimationFrame(() => {
-        applyExternalMenuTexture(false);
+        if (arMenuTexture) {
+          applyExternalMenuTexture(false);
+        }
       });
 
       const clonedModels = frozenWorld.querySelectorAll('[data-role="pizza-model"], [gltf-model]');
@@ -1983,6 +2014,10 @@
 
       await pulseSingleShotFocus();
 
+      if (!menuTextureReady) {
+        await applyExternalMenuTexture(false);
+      }
+
       if (CONFIG.autoShowPizzaOnFirstScan) {
         pizzaVisible = true;
         setAllPizzaRigVisible(true);
@@ -1994,11 +2029,7 @@
         startLockPoseLoop();
       }
 
-      if (!menuTextureReady) {
-        await applyExternalMenuTexture(false);
-      }
-
-      setStatus("SOULFLAME MENU LOCKED", "EXTERNAL HTML ON CARD");
+      setStatus("SF MENU LOCKED", "FROM sf-menu.html");
       actionDock.classList.add("active");
       scanFrame.classList.add("locked");
 
