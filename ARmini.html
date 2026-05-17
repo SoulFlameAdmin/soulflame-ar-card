@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>Pizza Hit ARmini · No Board</title>
+  <title>Pizza Hit ARmini · HIT Pizza</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -19,6 +19,8 @@
       --green: #48ff9b;
       --red: #c8152a;
       --red2: #ef233c;
+      --blue: #1d7cff;
+      --purple: #8b35ff;
       --line: rgba(255,255,255,.22);
       --glass: rgba(0,0,0,.56);
       --pill: 999px;
@@ -776,7 +778,7 @@
 
       <p>
         Камерата се стартира автоматично. Покажи визитката към телефона,
-        за да се появи HIT пицата директно върху картата.
+        за да се появи HIT пицата върху картата.
       </p>
 
       <div class="start-actions">
@@ -900,36 +902,32 @@
       camera="near: 0.001; far: 100000"
     ></a-camera>
 
-    <a-light type="ambient" intensity="0.85" color="#ffffff"></a-light>
+    <a-light type="ambient" intensity="0.82" color="#ffffff"></a-light>
     <a-light type="directional" intensity="1.05" color="#ffffff" position="0 2 1"></a-light>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <a-light type="ambient" intensity="1.15" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="1.55" color="#ffffff" position="0 1.3 1"></a-light>
-      <a-light type="point" intensity="0.45" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="ambient" intensity="1.18" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="1.65" color="#ffffff" position="0 1.3 1"></a-light>
+      <a-light type="point" intensity="0.58" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity
         id="productStage"
         position="0 0 0"
         rotation="0 0 0"
         scale="1 1 1"
-        animation__softfloat="property: position; from: 0 -0.003 0; to: 0 0.003 0; dur: 2400; dir: alternate; loop: true; easing: easeInOutSine"
+        animation__softfloat="property: position; from: 0 -0.006 0; to: 0 0.006 0; dur: 2400; dir: alternate; loop: true; easing: easeInOutSine"
       >
 
-        <!-- 
-          ВАЖНО:
-          Тук нарочно НЯМА boardPlane.
-          Тук нарочно НЯМА shadowPlane.
-          Между GLB пицата и визитката няма никакъв plane/дъска/сянка.
-        -->
+        <!-- ДЪСКАТА И СЯНКАТА ПОД ПИЦАТА СА ПРЕМАХНАТИ. -->
+        <!-- Между GLB модела и визитката няма boardPlane/shadowPlane. -->
 
         <a-entity
           id="pizzaRig"
           visible="true"
-          position="0 -0.10 0.115"
+          position="0 -0.10 0.20"
           rotation="90 0 0"
           scale="1 1 1"
-          animation__pizzafloat="property: position; from: 0 -0.104 0.115; to: 0 -0.088 0.115; dur: 1900; dir: alternate; loop: true; easing: easeInOutSine"
+          animation__pizzafloat="property: position; from: 0 -0.108 0.20; to: 0 -0.078 0.20; dur: 1900; dir: alternate; loop: true; easing: easeInOutSine"
         >
           <a-entity
             id="pizzaModel"
@@ -940,6 +938,19 @@
           ></a-entity>
         </a-entity>
 
+        <a-plane
+          id="infoPlane"
+          position="0 0.50 0.24"
+          rotation="0 0 0"
+          width="1.58"
+          height="0.67"
+          material="
+            shader: flat;
+            transparent: true;
+            side: double;
+            depthWrite: false;
+          "
+        ></a-plane>
       </a-entity>
     </a-entity>
   </a-scene>
@@ -950,7 +961,6 @@
       glbFile: "./uploads_files_6479452_187.glb",
       usdzFile: "./uploads_files_6479452_187.usdz",
       indexUrl: "./index.html",
-
       scanTimeoutMs: 14000,
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200,
@@ -970,6 +980,7 @@
     const target = document.getElementById("target");
     const pizzaRig = document.getElementById("pizzaRig");
     const pizzaModel = document.getElementById("pizzaModel");
+    const infoPlane = document.getElementById("infoPlane");
 
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
@@ -981,6 +992,8 @@
     const arDecorFrame = document.getElementById("arDecorFrame");
     const orderDock = document.getElementById("orderDock");
     const miniDock = document.getElementById("miniDock");
+    const prevPizza = document.getElementById("prevPizza");
+    const nextPizza = document.getElementById("nextPizza");
 
     const resetScanBtn = document.getElementById("resetScanBtn");
     const sizeBtn = document.getElementById("sizeBtn");
@@ -989,71 +1002,67 @@
     const fallbackBtn = document.getElementById("fallbackBtn");
     const debugBtn = document.getElementById("debugBtn");
 
-    const fallbackPanel = document.getElementById("fallbackPanel");
-    const closeFallbackBtn = document.getElementById("closeFallbackBtn");
-
     const orderBtn = document.getElementById("orderBtn");
     const ingredientsBtn = document.getElementById("ingredientsBtn");
     const cartBtn = document.getElementById("cartBtn");
 
-    const prevPizza = document.getElementById("prevPizza");
-    const nextPizza = document.getElementById("nextPizza");
+    const fallbackPanel = document.getElementById("fallbackPanel");
+    const closeFallbackBtn = document.getElementById("closeFallbackBtn");
 
     const toast = document.getElementById("toast");
     const debugBox = document.getElementById("debugBox");
-
     const fxCanvas = document.getElementById("fxCanvas");
     const fxCtx = fxCanvas.getContext("2d");
 
-    let arSystem = null;
     let started = false;
     let visible = false;
-    let modelReady = false;
-
-    let cameraTrack = null;
-    let autoFocusReady = false;
-    let autoFocusMode = "unknown";
-
+    let arSystem = null;
     let scanTimer = null;
     let toastTimer = null;
+    let cameraTrack = null;
+    let autoFocusMode = "unknown";
 
-    let flipped = false;
-    let rotateOn = false;
-    let rotationFrame = null;
-    let rotationAngle = 0;
-
-    let cartCount = 0;
+    let modelReady = false;
     let normalizedModelScale = 1;
     let modelDebugInfo = "";
+    let infoTexture = null;
+
+    let sizeIndex = 1;
+    let flipped = false;
+    let rotationLoop = null;
+    let currentPizzaY = 0;
+    let cartCount = 0;
 
     const pizzaScales = [
-      { label: "1:1", value: 1.00 },
-      { label: "BIG", value: 1.18 },
-      { label: "MAX", value: 1.36 },
-      { label: "MINI", value: 0.82 }
+      { label: "MINI", width: 0.88, scale: "0.82 0.82 0.82" },
+      { label: "1:1", width: 1.12, scale: "1 1 1" },
+      { label: "BIG", width: 1.34, scale: "1.14 1.14 1.14" },
+      { label: "MAX", width: 1.56, scale: "1.32 1.32 1.32" }
     ];
-
-    let sizeIndex = 0;
 
     function setStatus(top, bottom) {
       topHud.textContent = top || "";
       bottomStatus.textContent = bottom || "";
     }
 
-    function haptic(ms = 30) {
-      if ("vibrate" in navigator) {
+    function haptic(ms = 22) {
+      if (navigator.vibrate) {
         navigator.vibrate(ms);
       }
     }
 
-    function showToast(message, duration = 2600) {
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function showToast(message, ms = 3200) {
       clearTimeout(toastTimer);
       toast.textContent = message;
       toast.classList.add("active");
 
       toastTimer = setTimeout(() => {
         toast.classList.remove("active");
-      }, duration);
+      }, ms);
     }
 
     function showDebug(message) {
@@ -1065,265 +1074,376 @@
       debugBox.classList.remove("active");
     }
 
-    function setOverlayActive(active) {
-      arDecorFrame.classList.toggle("active", active);
-      orderDock.classList.toggle("active", active);
-      miniDock.classList.toggle("active", active);
-      prevPizza.classList.toggle("active", active);
-      nextPizza.classList.toggle("active", active);
-    }
-
-    function applyPizzaSize() {
-      const selected = pizzaScales[sizeIndex];
-
-      if (pizzaModel && pizzaModel.object3D) {
-        const s = selected.value;
-        pizzaModel.object3D.scale.set(s, s, s);
-      }
-
-      sizeBtn.textContent = selected.label;
-    }
-
-    function setPizzaRotation() {
-      const baseX = 90;
-      const baseY = flipped ? 180 : 0;
-      pizzaRig.setAttribute("rotation", `${baseX} ${baseY} ${rotationAngle}`);
-    }
-
-    function startPizzaRotation() {
-      stopPizzaRotation();
-
-      const tick = () => {
-        if (!rotateOn) return;
-
-        rotationAngle += 0.55;
-        if (rotationAngle >= 360) rotationAngle = 0;
-
-        setPizzaRotation();
-        rotationFrame = requestAnimationFrame(tick);
-      };
-
-      tick();
-    }
-
-    function stopPizzaRotation() {
-      if (rotationFrame) {
-        cancelAnimationFrame(rotationFrame);
-        rotationFrame = null;
-      }
-    }
-
-    async function requestCameraTrack() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: { ideal: "environment" },
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            focusMode: "continuous"
-          },
-          audio: false
-        });
-
-        const track = stream.getVideoTracks()[0];
-
-        stream.getTracks().forEach(t => t.stop());
-
-        return track || null;
-      } catch (error) {
-        return null;
-      }
-    }
-
-    async function initCameraCapabilities() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: { ideal: "environment" },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-          audio: false
-        });
-
-        cameraTrack = stream.getVideoTracks()[0];
-
-        if (!cameraTrack) {
-          autoFocusReady = false;
-          autoFocusMode = "no-track";
+    function waitForSceneLoaded() {
+      return new Promise(resolve => {
+        if (scene.hasLoaded) {
+          resolve();
           return;
         }
 
-        const caps = cameraTrack.getCapabilities ? cameraTrack.getCapabilities() : {};
-        autoFocusReady = !!(caps.focusMode && caps.focusMode.length);
-        autoFocusMode = autoFocusReady ? "capable" : "not-supported";
-
-        stream.getTracks().forEach(t => t.stop());
-      } catch (error) {
-        autoFocusReady = false;
-        autoFocusMode = "blocked-or-unsupported";
-      }
+        scene.addEventListener("loaded", () => resolve(), { once: true });
+      });
     }
 
-    async function pulseSingleShotFocus() {
-      try {
-        const video = document.querySelector("video");
-        const stream = video && video.srcObject;
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
 
-        if (!stream) return false;
-
-        const track = stream.getVideoTracks()[0];
-
-        if (!track || !track.applyConstraints) return false;
-
-        const caps = track.getCapabilities ? track.getCapabilities() : {};
-
-        if (!caps.focusMode) return false;
-
-        if (caps.focusMode.includes("single-shot")) {
-          await track.applyConstraints({ advanced: [{ focusMode: "single-shot" }] });
-          autoFocusMode = "single-shot";
-          return true;
-        }
-
-        if (caps.focusMode.includes("continuous")) {
-          await track.applyConstraints({ advanced: [{ focusMode: "continuous" }] });
-          autoFocusMode = "continuous";
-          return true;
-        }
-
-        return false;
-      } catch (error) {
-        return false;
-      }
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+      ctx.lineTo(x + w, y + h - radius);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
     }
 
-    async function startARmini() {
-      if (started) return;
+    function drawRibbon(ctx, x, y, w, h) {
+      ctx.save();
 
-      startBtn.disabled = true;
-      startBtn.textContent = "STARTING CAMERA...";
-      setStatus("STARTING CAMERA", "ALLOW CAMERA");
+      ctx.beginPath();
+      ctx.moveTo(x + 46, y);
+      ctx.lineTo(x + w - 46, y);
+      ctx.lineTo(x + w - 6, y + h / 2);
+      ctx.lineTo(x + w - 46, y + h);
+      ctx.lineTo(x + 46, y + h);
+      ctx.lineTo(x + 6, y + h / 2);
+      ctx.closePath();
 
-      hideDebug();
+      const grad = ctx.createLinearGradient(x, y, x, y + h);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(1, "#e8e8e8");
 
-      if (!window.isSecureContext) {
-        const msg =
-          "Камерата изисква HTTPS или localhost.\n\n" +
-          "Пусни през Vercel/HTTPS или локално през localhost.";
+      ctx.fillStyle = grad;
+      ctx.shadowColor = "rgba(0,0,0,.22)";
+      ctx.shadowBlur = 22;
+      ctx.shadowOffsetY = 10;
+      ctx.fill();
 
-        showDebug(msg);
-        alert(msg);
-        startBtn.disabled = false;
-        startBtn.textContent = "TAP TO START CAMERA";
+      ctx.shadowColor = "transparent";
+      ctx.strokeStyle = "rgba(0,0,0,.08)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(0,0,0,.045)";
+      for (let i = 0; i < 110; i++) {
+        const px = x + Math.random() * w;
+        const py = y + Math.random() * h;
+        ctx.fillRect(px, py, Math.random() * 3 + 1, 1);
+      }
+
+      ctx.fillStyle = "#be1e33";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "italic 900 92px Arial";
+      ctx.fillText("-  " + CONFIG.pizzaName + "  -", x + w / 2, y + h / 2 + 5);
+
+      ctx.restore();
+    }
+
+    function drawPriceBadge(ctx, cx, cy, r) {
+      ctx.save();
+
+      ctx.beginPath();
+
+      const spikes = 18;
+
+      for (let i = 0; i < spikes * 2; i++) {
+        const angle = (Math.PI * 2 * i) / (spikes * 2);
+        const rr = i % 2 === 0 ? r : r * 0.91;
+        const x = cx + Math.cos(angle) * rr;
+        const y = cy + Math.sin(angle) * rr;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      ctx.closePath();
+
+      const grad = ctx.createRadialGradient(cx - 16, cy - 18, 8, cx, cy, r);
+      grad.addColorStop(0, "#ff3d52");
+      grad.addColorStop(1, "#c8152a");
+
+      ctx.fillStyle = grad;
+      ctx.shadowColor = "rgba(0,0,0,.30)";
+      ctx.shadowBlur = 18;
+      ctx.shadowOffsetY = 8;
+      ctx.fill();
+
+      ctx.shadowColor = "transparent";
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "900 62px Arial";
+      ctx.fillText("18", cx - 10, cy + 2);
+
+      ctx.font = "900 28px Arial";
+      ctx.fillText("лв", cx + 48, cy + 7);
+
+      ctx.restore();
+    }
+
+    function createInfoTexture() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1600;
+      canvas.height = 680;
+
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawRibbon(ctx, 340, 22, 850, 130);
+
+      ctx.save();
+
+      ctx.fillStyle = "rgba(0,0,0,.42)";
+      ctx.shadowColor = "rgba(0,0,0,.22)";
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+      roundRect(ctx, 210, 120, 1120, 270, 36);
+      ctx.fill();
+
+      ctx.shadowColor = "transparent";
+
+      ctx.fillStyle = "rgba(0,0,0,.62)";
+      roundRect(ctx, 560, 158, 340, 52, 26);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "900 30px Arial";
+      ctx.fillText("СЪСТАВКИ", 730, 185);
+
+      ctx.fillStyle = "rgba(255,255,255,.94)";
+      ctx.font = "700 42px Arial";
+      ctx.fillText("доматен сос, моцарела, италиански", 770, 260);
+      ctx.fillText("колбас, броколи, маслини, пармезан", 770, 315);
+
+      drawPriceBadge(ctx, 1310, 322, 76);
+
+      ctx.restore();
+
+      const texture = new THREE.CanvasTexture(canvas);
+
+      if (THREE.SRGBColorSpace) {
+        texture.colorSpace = THREE.SRGBColorSpace;
+      }
+
+      texture.anisotropy = 8;
+      texture.needsUpdate = true;
+
+      return texture;
+    }
+
+    function applyInfoTexture() {
+      if (!window.THREE) return;
+
+      const mesh = infoPlane.getObject3D("mesh");
+
+      if (!mesh) {
+        infoPlane.addEventListener("object3dset", applyInfoTexture, { once: true });
         return;
       }
 
+      if (infoTexture) {
+        infoTexture.dispose();
+        infoTexture = null;
+      }
+
+      infoTexture = createInfoTexture();
+
+      mesh.material = new THREE.MeshBasicMaterial({
+        map: infoTexture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+      mesh.material.needsUpdate = true;
+    }
+
+    function applyBoardTexture() {
+      // NO BOARD MODE:
+      // Тук нарочно НЕ създаваме дъска и НЕ слагаме сянка под пицата.
+      // Бутоните, стрелките, надписът и съставките остават активни.
+      return;
+    }
+
+    async function getCameraTrackFromMindAR() {
+      const maxTries = 20;
+
+      for (let i = 0; i < maxTries; i++) {
+        const videos = Array.from(document.querySelectorAll("video"));
+
+        for (const video of videos) {
+          const stream = video.srcObject;
+
+          if (stream && typeof stream.getVideoTracks === "function") {
+            const track = stream.getVideoTracks()[0];
+
+            if (track && track.readyState === "live") {
+              cameraTrack = track;
+              return track;
+            }
+          }
+        }
+
+        await sleep(150);
+      }
+
+      return null;
+    }
+
+    async function enableCameraAutoFocus(reason = "manual") {
       try {
-        await initCameraCapabilities();
+        const track = cameraTrack || await getCameraTrackFromMindAR();
+
+        if (!track) {
+          autoFocusMode = "no-video-track";
+          return false;
+        }
+
+        if (!track.getCapabilities || !track.applyConstraints) {
+          autoFocusMode = "not-supported-api";
+          return false;
+        }
+
+        const capabilities = track.getCapabilities();
+        const advanced = [];
+
+        if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
+          advanced.push({ focusMode: "continuous" });
+          autoFocusMode = "continuous";
+        } else if (capabilities.focusMode && capabilities.focusMode.includes("single-shot")) {
+          advanced.push({ focusMode: "single-shot" });
+          autoFocusMode = "single-shot";
+        } else {
+          autoFocusMode = "focus-mode-not-listed";
+        }
+
+        if (advanced.length) {
+          await track.applyConstraints({ advanced });
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        autoFocusMode = "focus-error";
+        console.warn("focus error", reason, error);
+        return false;
+      }
+    }
+
+    async function startAR() {
+      if (started) return;
+
+      try {
+        await waitForSceneLoaded();
+
+        startBtn.disabled = true;
+        startBtn.textContent = "STARTING CAMERA...";
+        setStatus("STARTING CAMERA", "ALLOW CAMERA");
 
         arSystem = scene.systems["mindar-image-system"];
 
         if (!arSystem) {
-          throw new Error("MindAR system is not ready.");
+          throw new Error("MindAR system not ready.");
         }
 
         await arSystem.start();
 
         started = true;
         startScreen.classList.add("hidden");
-
         scanFrame.classList.add("active");
-        scanFrame.classList.remove("locked");
-
         setStatus("SCAN CARD", "SHOW CARD");
 
-        setTimeout(() => {
-          pulseSingleShotFocus();
-        }, CONFIG.autoFocusDelayMs);
+        setTimeout(() => enableCameraAutoFocus("startup"), CONFIG.autoFocusDelayMs);
+        setTimeout(() => enableCameraAutoFocus("retry"), CONFIG.autoFocusRetryMs);
 
         clearTimeout(scanTimer);
         scanTimer = setTimeout(() => {
           if (!visible) {
-            setStatus("STILL SCANNING", "MOVE PHONE SLOWLY");
-            showToast("Ако не хваща картата: повече светлина, по-бавно движение, визитката да е цяла в кадър.", 4200);
+            setStatus("STILL SCANNING", "MOVE SLOWLY");
+            showToast(
+              "Ако не хваща: повече светлина, дръж визитката цяла в кадър, не я клати рязко.",
+              4200
+            );
+
+            showDebug(
+              "SCAN HELP:\n" +
+              "1. Отвори през Chrome/Safari, не през Messenger/Viber browser.\n" +
+              "2. Сканирай същата визитка, от която е направен target-ът.\n" +
+              "3. Дръж телефона по-далече и приближавай бавно.\n" +
+              "4. Не отваряй през Viber/Messenger/Facebook browser.\n" +
+              "5. AUTOFOCUS MODE: " + autoFocusMode
+            );
           }
         }, CONFIG.scanTimeoutMs);
 
-        haptic(40);
+        haptic(45);
+
       } catch (error) {
-        const msg =
-          "AR START ERROR\n" +
-          (error.message || error) +
-          "\n\nПровери:\n" +
-          "1. Дали сайтът е HTTPS/localhost\n" +
-          "2. Дали target файлът е тук: " + CONFIG.targetFile + "\n" +
-          "3. Дали GLB файлът е тук: " + CONFIG.glbFile;
-
-        showDebug(msg);
-        alert(msg);
-
+        started = false;
         startBtn.disabled = false;
         startBtn.textContent = "TAP TO START CAMERA";
-        setStatus("AR ERROR", "CHECK DEBUG");
+        setStatus("TAP TO START CAMERA", "BROWSER BLOCKED AUTOSTART");
+        showDebug(error.message || String(error));
       }
     }
 
-    function preparePizzaModel(model) {
-      if (!model || !window.THREE) return;
-
-      let meshCount = 0;
-      let materialCount = 0;
-      let textureCount = 0;
-
-      model.traverse(obj => {
-        if (!obj.isMesh) return;
-
-        meshCount += 1;
-
-        obj.frustumCulled = false;
-        obj.castShadow = false;
-        obj.receiveShadow = false;
-
-        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-
-        mats.forEach(mat => {
-          if (!mat) return;
-
-          materialCount += 1;
-
-          mat.transparent = mat.transparent || false;
-          mat.depthWrite = true;
-          mat.depthTest = true;
-          mat.side = THREE.FrontSide;
-
-          if (mat.map) {
-            textureCount += 1;
-
-            if (THREE.SRGBColorSpace) {
-              mat.map.colorSpace = THREE.SRGBColorSpace;
-            }
-
-            mat.map.needsUpdate = true;
-          }
-
-          if (mat.emissive) {
-            mat.emissive.setRGB(0, 0, 0);
-          }
-
-          mat.needsUpdate = true;
-        });
-      });
-
-      modelDebugInfo =
-        "GLB LOADED\n" +
-        "FILE: " + CONFIG.glbFile + "\n" +
-        "MESHES: " + meshCount + "\n" +
-        "MATERIALS: " + materialCount + "\n" +
-        "TEXTURES: " + textureCount + "\n";
+    function setOverlayActive(isActive) {
+      arDecorFrame.classList.toggle("active", isActive);
+      orderDock.classList.toggle("active", isActive);
+      miniDock.classList.toggle("active", isActive);
+      prevPizza.classList.toggle("active", isActive);
+      nextPizza.classList.toggle("active", isActive);
     }
 
-    function autoFitPizza(model) {
+    function applyPizzaSize() {
+      const selected = pizzaScales[sizeIndex] || pizzaScales[1];
+
+      CONFIG.basePizzaWidth = selected.width;
+      pizzaRig.setAttribute("scale", selected.scale);
+      sizeBtn.textContent = selected.label;
+
+      // Shadow plane е премахнат — няма какво да се скалира.
+    }
+
+    function setPizzaRotation() {
+      const baseX = flipped ? -90 : 90;
+      pizzaRig.setAttribute("rotation", `${baseX} ${currentPizzaY} 0`);
+    }
+
+    function startPizzaRotation() {
+      stopPizzaRotation();
+
+      const loop = () => {
+        currentPizzaY += 0.55;
+
+        if (currentPizzaY >= 360) {
+          currentPizzaY = 0;
+        }
+
+        setPizzaRotation();
+        rotationLoop = requestAnimationFrame(loop);
+      };
+
+      loop();
+    }
+
+    function stopPizzaRotation() {
+      if (rotationLoop) {
+        cancelAnimationFrame(rotationLoop);
+        rotationLoop = null;
+      }
+    }
+
+    function normalizeModel(model) {
+      if (!window.THREE || !model) return;
+
       model.updateMatrixWorld(true);
 
       const box = new THREE.Box3().setFromObject(model);
@@ -1335,8 +1455,8 @@
 
       const maxSize = Math.max(size.x, size.y, size.z);
 
-      if (!Number.isFinite(maxSize) || maxSize <= 0) {
-        throw new Error("Invalid GLB bounds");
+      if (!maxSize || !Number.isFinite(maxSize)) {
+        return;
       }
 
       model.position.x -= center.x;
@@ -1347,51 +1467,39 @@
       model.scale.setScalar(normalizedModelScale);
       model.updateMatrixWorld(true);
 
-      modelDebugInfo +=
-        "ORIGINAL SIZE: " + JSON.stringify({
-          x: Number(size.x.toFixed(4)),
-          y: Number(size.y.toFixed(4)),
-          z: Number(size.z.toFixed(4))
-        }) + "\n" +
-        "AUTO SCALE: " + Number(normalizedModelScale.toFixed(6)) + "\n" +
+      modelDebugInfo =
+        "MODEL SIZE:\n" +
+        "x: " + size.x.toFixed(4) + "\n" +
+        "y: " + size.y.toFixed(4) + "\n" +
+        "z: " + size.z.toFixed(4) + "\n" +
+        "scale: " + normalizedModelScale.toFixed(6) + "\n" +
         "BOARD: REMOVED\n" +
-        "SHADOW PLANE: REMOVED\n";
+        "SHADOW: REMOVED\n";
     }
 
     pizzaModel.addEventListener("model-loaded", () => {
       const model = pizzaModel.getObject3D("mesh");
 
-      if (!model || !window.THREE) {
-        showDebug("GLB loaded, but THREE object is not ready.");
-        return;
+      if (model) {
+        normalizeModel(model);
       }
 
-      try {
-        preparePizzaModel(model);
-        autoFitPizza(model);
-        applyPizzaSize();
+      modelReady = true;
+      applyPizzaSize();
 
-        modelReady = true;
+      if (visible) {
+        setStatus("HIT LOCKED", "PIZZA ON CARD");
+      } else {
         setStatus("PIZZA READY", "SHOW CARD");
-      } catch (error) {
-        showDebug("AUTO FIT ERROR: " + (error.message || error));
-        modelReady = true;
-        setStatus("PIZZA READY", "MANUAL SCALE");
       }
     });
 
-    pizzaModel.addEventListener("model-error", () => {
-      const msg =
-        "GLB ERROR\n" +
-        "Не може да зареди: " + CONFIG.glbFile + "\n" +
-        "Провери дали файлът uploads_files_6479452_187.glb е до ARmini.html.";
-
+    pizzaModel.addEventListener("model-error", event => {
+      showDebug("GLB ERROR:\n" + JSON.stringify(event.detail || {}, null, 2));
       setStatus("GLB ERROR", "CHECK FILE");
-      showDebug(msg);
-      alert(msg);
     });
 
-    scene.addEventListener("loaded", async () => {
+    scene.addEventListener("loaded", () => {
       arSystem = scene.systems["mindar-image-system"];
 
       if (scene.renderer && window.THREE) {
@@ -1403,6 +1511,8 @@
         scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       }
 
+      applyInfoTexture();
+      applyBoardTexture();
       applyPizzaSize();
 
       setStatus("ARmini READY", "AUTO STARTING");
@@ -1410,83 +1520,88 @@
 
     target.addEventListener("targetFound", async () => {
       visible = true;
-
       clearTimeout(scanTimer);
-      hideDebug();
-
-      await pulseSingleShotFocus();
-
-      pizzaRig.setAttribute("visible", "true");
-      setPizzaRotation();
-      applyPizzaSize();
-
-      setStatus(modelReady ? "HIT LOCKED" : "TARGET FOUND", modelReady ? "PIZZA ON CARD" : "MODEL LOADING");
 
       scanFrame.classList.add("locked");
+      scanFrame.classList.remove("active");
+      hideDebug();
+
+      pizzaRig.setAttribute("visible", "true");
       setOverlayActive(true);
 
-      haptic(60);
+      setStatus(modelReady ? "HIT LOCKED" : "TARGET FOUND", "PIZZA ON CARD");
+
+      await enableCameraAutoFocus("target-found");
+      haptic(65);
     });
 
     target.addEventListener("targetLost", () => {
       visible = false;
 
-      setStatus("TARGET LOST", "SHOW CARD AGAIN");
-
       scanFrame.classList.remove("locked");
       scanFrame.classList.add("active");
+
       setOverlayActive(false);
+      setStatus("TARGET LOST", "SHOW CARD");
     });
 
-    startBtn.addEventListener("click", startARmini);
+    startBtn.addEventListener("click", startAR);
 
     backBtn.addEventListener("click", () => {
-      haptic(25);
       window.location.href = CONFIG.indexUrl;
     });
 
-    resetScanBtn.addEventListener("click", () => {
-      scanFrame.classList.add("active");
-      scanFrame.classList.remove("locked");
-      setOverlayActive(false);
-      setStatus("SCAN RESET", "SHOW CARD AGAIN");
+    resetScanBtn.addEventListener("click", async () => {
       haptic(25);
+      setStatus("SCAN RESET", "SHOW CARD");
+
+      if (arSystem && started) {
+        try {
+          await arSystem.stop();
+          started = false;
+          visible = false;
+          setOverlayActive(false);
+          scanFrame.classList.add("active");
+          scanFrame.classList.remove("locked");
+          await sleep(300);
+          await startAR();
+        } catch (error) {
+          showDebug("RESET ERROR:\n" + (error.message || String(error)));
+        }
+      }
     });
 
     sizeBtn.addEventListener("click", () => {
       sizeIndex = (sizeIndex + 1) % pizzaScales.length;
       applyPizzaSize();
-
-      const selected = pizzaScales[sizeIndex];
-      setStatus("PIZZA SIZE", selected.label);
-      haptic(25);
+      haptic(20);
+      setStatus("SIZE " + pizzaScales[sizeIndex].label, "PIZZA HIT");
     });
 
     rotateBtn.addEventListener("click", () => {
-      rotateOn = !rotateOn;
-      rotateBtn.textContent = rotateOn ? "STOP" : "ROTATE";
-
-      if (rotateOn) {
-        startPizzaRotation();
-        setStatus("ROTATION ON", "HIT");
-      } else {
+      if (rotationLoop) {
         stopPizzaRotation();
-        setStatus("ROTATION OFF", "HIT");
+        rotateBtn.textContent = "ROTATE";
+        setStatus("ROTATE OFF", "PIZZA HIT");
+      } else {
+        startPizzaRotation();
+        rotateBtn.textContent = "STOP";
+        setStatus("ROTATE ON", "PIZZA HIT");
       }
 
-      haptic(25);
+      haptic(20);
     });
 
     flipBtn.addEventListener("click", () => {
       flipped = !flipped;
       setPizzaRotation();
-      setStatus(flipped ? "PIZZA FLIPPED" : "PIZZA NORMAL", "CARD");
-      haptic(25);
+      haptic(20);
+      setStatus(flipped ? "FLIPPED" : "NORMAL", "PIZZA HIT");
     });
 
     fallbackBtn.addEventListener("click", () => {
       fallbackPanel.classList.remove("hidden");
-      haptic(25);
+      haptic(20);
     });
 
     closeFallbackBtn.addEventListener("click", () => {
@@ -1494,14 +1609,32 @@
       haptic(20);
     });
 
+    debugBtn.addEventListener("click", () => {
+      const message =
+        "DEBUG:\n" +
+        "started: " + started + "\n" +
+        "visible: " + visible + "\n" +
+        "modelReady: " + modelReady + "\n" +
+        "autoFocusMode: " + autoFocusMode + "\n" +
+        "size: " + pizzaScales[sizeIndex].label + "\n" +
+        "BOARD: REMOVED\n" +
+        "SHADOW: REMOVED\n\n" +
+        modelDebugInfo;
+
+      showDebug(message);
+      haptic(20);
+    });
+
     prevPizza.addEventListener("click", () => {
-      showToast("Предишна пица — тук можеш да вържеш следващ GLB/продукт.");
       haptic(25);
+      showToast("Предишен продукт. Тук после ще вържем реална смяна на GLB.");
+      setStatus("PREVIOUS PRODUCT", "COMING SOON");
     });
 
     nextPizza.addEventListener("click", () => {
-      showToast("Следваща пица — тук можеш да вържеш следващ GLB/продукт.");
       haptic(25);
+      showToast("Следващ продукт. Тук после ще вържем реална смяна на GLB.");
+      setStatus("NEXT PRODUCT", "COMING SOON");
     });
 
     orderBtn.addEventListener("click", () => {
@@ -1512,135 +1645,76 @@
         return;
       }
 
-      showToast("Поръчка: HIT пица · 18 лв. Настрой CONFIG.orderUrl или телефон за реална поръчка.");
+      showToast("Поръчка: " + CONFIG.pizzaName + " · " + CONFIG.price);
+      setStatus("ORDER", CONFIG.pizzaName + " · " + CONFIG.price);
     });
 
     ingredientsBtn.addEventListener("click", () => {
       haptic(25);
       showToast("Съставки: " + CONFIG.ingredients, 4200);
+      setStatus("INGREDIENTS", CONFIG.pizzaName);
     });
 
     cartBtn.addEventListener("click", () => {
       cartCount += 1;
       cartBtn.innerHTML = `<span class="ico">🛒</span><span>ДОБАВЕНО<br>${cartCount} БР.</span>`;
-      setStatus("ADDED TO CART", "HIT · 18 ЛВ");
-      showToast("HIT пица е добавена в количката.");
+      showToast(CONFIG.pizzaName + " е добавена в количката.");
+      setStatus("ADDED TO CART", cartCount + " ITEM");
       haptic(45);
     });
 
-    debugBtn.addEventListener("click", () => {
-      showDebug(
-        "ARmini HIT LIVE DEBUG\n" +
-        "URL: " + location.href + "\n" +
-        "HTTPS: " + window.isSecureContext + "\n" +
-        "TARGET: " + CONFIG.targetFile + "\n" +
-        "GLB: " + CONFIG.glbFile + "\n" +
-        "STARTED: " + started + "\n" +
-        "VISIBLE: " + visible + "\n" +
-        "MODEL READY: " + modelReady + "\n" +
-        "AUTOFOCUS: " + autoFocusMode + "\n" +
-        "SIZE: " + pizzaScales[sizeIndex].label + "\n" +
-        "BOARD: REMOVED\n" +
-        "SHADOW PLANE: REMOVED\n\n" +
-        modelDebugInfo
-      );
+    async function autoStart() {
+      await waitForSceneLoaded();
 
-      haptic(20);
-    });
+      await sleep(CONFIG.autoStartDelayMs);
 
-    document.addEventListener("click", async event => {
-      const clickable = event.target.closest("button, a, model-viewer");
-      if (clickable) return;
-
-      if (started && !visible) {
-        const ok = await pulseSingleShotFocus();
-        if (ok) setStatus("FOCUS PULSE", "SCAN CARD");
-      }
-    });
-
-    document.addEventListener("visibilitychange", async () => {
-      if (document.hidden && arSystem && started) {
-        try {
-          await arSystem.stop();
-        } catch (error) {
-          console.warn(error);
-        }
-
-        started = false;
-        visible = false;
-        cameraTrack = null;
-        autoFocusReady = false;
-        autoFocusMode = "paused";
-
-        clearTimeout(scanTimer);
-        stopPizzaRotation();
-
-        setOverlayActive(false);
-        scanFrame.classList.remove("active", "locked");
-        startScreen.classList.remove("hidden");
+      try {
+        await startAR();
+      } catch (error) {
         startBtn.disabled = false;
         startBtn.textContent = "TAP TO START CAMERA";
-
-        setStatus("AR PAUSED", "TAP TO START");
       }
-    });
+    }
 
-    window.addEventListener("load", () => {
-      setStatus("STARTING CAMERA", "SHOW CARD");
-
-      setTimeout(() => {
-        startARmini();
-      }, CONFIG.autoStartDelayMs);
-    });
-
-    window.addEventListener("error", event => {
-      showDebug("JS ERROR: " + event.message);
-    });
-
-    window.addEventListener("unhandledrejection", event => {
-      showDebug("PROMISE ERROR: " + (event.reason?.message || event.reason));
-    });
-
-    const particles = [];
-    const PARTICLE_COUNT = 38;
-
-    function resizeFx() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.4);
-
+    function resizeFxCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
       fxCanvas.width = Math.floor(window.innerWidth * dpr);
       fxCanvas.height = Math.floor(window.innerHeight * dpr);
       fxCanvas.style.width = window.innerWidth + "px";
       fxCanvas.style.height = window.innerHeight + "px";
-
       fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    function createParticles() {
+    const particles = [];
+
+    function initParticles() {
       particles.length = 0;
 
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const count = Math.min(90, Math.floor(window.innerWidth / 7));
+
+      for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 1.6 + .35,
-          vx: (Math.random() - .5) * .18,
-          vy: (Math.random() - .5) * .18,
-          a: Math.random() * .48 + .12
+          r: Math.random() * 1.7 + .4,
+          vx: (Math.random() - .5) * .22,
+          vy: (Math.random() - .5) * .22,
+          a: Math.random() * .38 + .08
         });
       }
     }
 
-    function drawParticles() {
+    function drawFx() {
       fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0) p.x = window.innerWidth;
-        if (p.x > window.innerWidth) p.x = 0;
-        if (p.y < 0) p.y = window.innerHeight;
-        if (p.y > window.innerHeight) p.y = 0;
+        if (p.x < -10) p.x = window.innerWidth + 10;
+        if (p.x > window.innerWidth + 10) p.x = -10;
+        if (p.y < -10) p.y = window.innerHeight + 10;
+        if (p.y > window.innerHeight + 10) p.y = -10;
 
         fxCtx.beginPath();
         fxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -1648,21 +1722,28 @@
         fxCtx.fill();
       }
 
-      requestAnimationFrame(drawParticles);
+      requestAnimationFrame(drawFx);
     }
 
     window.addEventListener("resize", () => {
-      resizeFx();
-      createParticles();
-
-      if (scene.renderer) {
-        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
-      }
+      resizeFxCanvas();
+      initParticles();
     });
 
-    resizeFx();
-    createParticles();
-    drawParticles();
+    window.addEventListener("beforeunload", async () => {
+      try {
+        stopPizzaRotation();
+
+        if (arSystem && started) {
+          await arSystem.stop();
+        }
+      } catch (error) {}
+    });
+
+    resizeFxCanvas();
+    initParticles();
+    drawFx();
+    autoStart();
   </script>
 </body>
 </html>
