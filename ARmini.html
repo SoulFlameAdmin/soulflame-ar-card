@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030303" />
-  <title>Pizza Hit ARmini · HIT Pizza</title>
+  <title>Pizza Hit ARmini · Card Locked</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -19,10 +19,7 @@
       --green: #48ff9b;
       --red: #c8152a;
       --red2: #ef233c;
-      --blue: #1d7cff;
-      --purple: #8b35ff;
       --line: rgba(255,255,255,.22);
-      --glass: rgba(0,0,0,.56);
       --pill: 999px;
       --radius: 34px;
     }
@@ -502,7 +499,7 @@
     }
 
     .order-btn {
-      min-height: 80px;
+      min-height: 78px;
       border-radius: 20px;
       border: 1.5px solid rgba(255,255,255,.58);
       background: rgba(255,255,255,.16);
@@ -517,13 +514,13 @@
       gap: 3px;
       padding: 10px 8px;
       letter-spacing: .08em;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 950;
       text-transform: uppercase;
     }
 
     .order-btn .ico {
-      font-size: 26px;
+      font-size: 25px;
       line-height: 1;
       opacity: .94;
     }
@@ -585,6 +582,11 @@
     #miniDock button.green {
       background: linear-gradient(135deg, var(--green), var(--gold));
       color: #000;
+    }
+
+    #miniDock button.red {
+      background: linear-gradient(135deg, var(--red), var(--red2));
+      color: #fff;
     }
 
     #miniDock button.dark {
@@ -737,14 +739,14 @@
       }
 
       .order-btn {
-        min-height: 70px;
+        min-height: 68px;
         border-radius: 18px;
-        font-size: 11px;
+        font-size: 10px;
         padding: 8px 5px;
       }
 
       .order-btn .ico {
-        font-size: 22px;
+        font-size: 21px;
       }
 
       #miniDock {
@@ -774,11 +776,11 @@
     <div class="start-card">
       <div class="logo-mark"></div>
       <h1>ARmini</h1>
-      <div class="subtitle">PIZZA HIT · CARD PIZZA</div>
+      <div class="subtitle">PIZZA HIT · CARD LOCKED</div>
 
       <p>
-        Камерата се стартира автоматично. Покажи визитката към телефона,
-        за да се появи HIT пицата върху картата.
+        Камерата се стартира автоматично. Покажи визитката към телефона.
+        Пицата ще се заключи директно към картата.
       </p>
 
       <div class="start-actions">
@@ -830,7 +832,9 @@
 
   <div id="miniDock">
     <button id="resetScanBtn" class="gold">SCAN</button>
-    <button id="sizeBtn">1:1</button>
+    <button id="growBtn" class="green">+50%</button>
+    <button id="megaBtn" class="red">MAX x50</button>
+    <button id="resetSizeBtn">RESET SIZE</button>
     <button id="rotateBtn" class="green">ROTATE</button>
     <button id="flipBtn">FLIP</button>
     <button id="fallbackBtn" class="dark">3D</button>
@@ -874,9 +878,9 @@
       uiScanning: no;
       uiLoading: no;
       warmupTolerance: 5;
-      missTolerance: 95;
-      filterMinCF: 0.00004;
-      filterBeta: 0.0004;
+      missTolerance: 120;
+      filterMinCF: 0.0008;
+      filterBeta: 0.002;
     "
     color-space="sRGB"
     renderer="
@@ -897,37 +901,41 @@
     </a-assets>
 
     <a-camera
+      id="camera"
       position="0 0 0"
       look-controls="enabled: false"
       camera="near: 0.001; far: 100000"
     ></a-camera>
 
-    <a-light type="ambient" intensity="0.82" color="#ffffff"></a-light>
-    <a-light type="directional" intensity="1.05" color="#ffffff" position="0 2 1"></a-light>
+    <a-light type="ambient" intensity="0.88" color="#ffffff"></a-light>
+    <a-light type="directional" intensity="1.15" color="#ffffff" position="0 2 1"></a-light>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <a-light type="ambient" intensity="1.18" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="1.65" color="#ffffff" position="0 1.3 1"></a-light>
-      <a-light type="point" intensity="0.58" color="#ffcc88" position="0 0.7 0.65"></a-light>
+      <a-light type="ambient" intensity="1.16" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="1.55" color="#ffffff" position="0 1.3 1"></a-light>
+      <a-light type="point" intensity="0.48" color="#ffcc88" position="0 0.7 0.65"></a-light>
 
       <a-entity
         id="productStage"
         position="0 0 0"
         rotation="0 0 0"
         scale="1 1 1"
-        animation__softfloat="property: position; from: 0 -0.006 0; to: 0 0.006 0; dur: 2400; dir: alternate; loop: true; easing: easeInOutSine"
       >
 
-        <!-- ДЪСКАТА И СЯНКАТА ПОД ПИЦАТА СА ПРЕМАХНАТИ. -->
-        <!-- Между GLB модела и визитката няма boardPlane/shadowPlane. -->
+        <!-- 
+          STICKY MODE:
+          НЯМА boardPlane.
+          НЯМА shadowPlane.
+          НЯМА float animation.
+          Пицата е директно вързана към target-а.
+        -->
 
         <a-entity
           id="pizzaRig"
           visible="true"
-          position="0 -0.10 0.20"
+          position="0 -0.06 0.07"
           rotation="90 0 0"
           scale="1 1 1"
-          animation__pizzafloat="property: position; from: 0 -0.108 0.20; to: 0 -0.078 0.20; dur: 1900; dir: alternate; loop: true; easing: easeInOutSine"
         >
           <a-entity
             id="pizzaModel"
@@ -940,10 +948,10 @@
 
         <a-plane
           id="infoPlane"
-          position="0 0.50 0.24"
+          position="0 0.56 0.22"
           rotation="0 0 0"
-          width="1.58"
-          height="0.67"
+          width="1.72"
+          height="0.72"
           material="
             shader: flat;
             transparent: true;
@@ -961,20 +969,41 @@
       glbFile: "./uploads_files_6479452_187.glb",
       usdzFile: "./uploads_files_6479452_187.usdz",
       indexUrl: "./index.html",
+
       scanTimeoutMs: 14000,
       autoFocusDelayMs: 650,
       autoFocusRetryMs: 1200,
       autoStartDelayMs: 450,
 
-      pizzaName: "HIT",
-      price: "18 лв",
-      ingredients: "доматен сос, моцарела, италиански колбас, броколи, маслини, пармезан",
-
       orderUrl: "",
       phone: "+359xxxxxxxxx",
 
-      basePizzaWidth: 1.12
+      basePizzaWidth: 1.28,
+      growMultiplier: 1.5,
+      megaMultiplier: 50,
+      maxSafeScale: 80
     };
+
+    const PRODUCTS = [
+      {
+        name: "HIT",
+        price: "18 лв",
+        ingredients: "доматен сос, моцарела, италиански колбас, броколи, маслини, пармезан",
+        glb: "./uploads_files_6479452_187.glb"
+      },
+      {
+        name: "SPICY",
+        price: "21 лв",
+        ingredients: "доматен сос, моцарела, пикантен салам, халапеньо, маслини, риган",
+        glb: "./uploads_files_6479452_187.glb"
+      },
+      {
+        name: "CHEESE",
+        price: "19 лв",
+        ingredients: "моцарела, чедър, пармезан, синьо сирене, доматен сос",
+        glb: "./uploads_files_6479452_187.glb"
+      }
+    ];
 
     const scene = document.getElementById("scene");
     const target = document.getElementById("target");
@@ -996,7 +1025,9 @@
     const nextPizza = document.getElementById("nextPizza");
 
     const resetScanBtn = document.getElementById("resetScanBtn");
-    const sizeBtn = document.getElementById("sizeBtn");
+    const growBtn = document.getElementById("growBtn");
+    const megaBtn = document.getElementById("megaBtn");
+    const resetSizeBtn = document.getElementById("resetSizeBtn");
     const rotateBtn = document.getElementById("rotateBtn");
     const flipBtn = document.getElementById("flipBtn");
     const fallbackBtn = document.getElementById("fallbackBtn");
@@ -1008,6 +1039,7 @@
 
     const fallbackPanel = document.getElementById("fallbackPanel");
     const closeFallbackBtn = document.getElementById("closeFallbackBtn");
+    const fallbackModel = document.getElementById("fallbackModel");
 
     const toast = document.getElementById("toast");
     const debugBox = document.getElementById("debugBox");
@@ -1024,21 +1056,19 @@
 
     let modelReady = false;
     let normalizedModelScale = 1;
+    let userScale = 1;
     let modelDebugInfo = "";
     let infoTexture = null;
 
-    let sizeIndex = 1;
+    let productIndex = 0;
     let flipped = false;
     let rotationLoop = null;
     let currentPizzaY = 0;
     let cartCount = 0;
 
-    const pizzaScales = [
-      { label: "MINI", width: 0.88, scale: "0.82 0.82 0.82" },
-      { label: "1:1", width: 1.12, scale: "1 1 1" },
-      { label: "BIG", width: 1.34, scale: "1.14 1.14 1.14" },
-      { label: "MAX", width: 1.56, scale: "1.32 1.32 1.32" }
-    ];
+    function currentProduct() {
+      return PRODUCTS[productIndex];
+    }
 
     function setStatus(top, bottom) {
       topHud.textContent = top || "";
@@ -1046,9 +1076,7 @@
     }
 
     function haptic(ms = 22) {
-      if (navigator.vibrate) {
-        navigator.vibrate(ms);
-      }
+      if (navigator.vibrate) navigator.vibrate(ms);
     }
 
     function sleep(ms) {
@@ -1101,7 +1129,7 @@
       ctx.closePath();
     }
 
-    function drawRibbon(ctx, x, y, w, h) {
+    function drawRibbon(ctx, x, y, w, h, name) {
       ctx.save();
 
       ctx.beginPath();
@@ -1139,12 +1167,12 @@
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = "italic 900 92px Arial";
-      ctx.fillText("-  " + CONFIG.pizzaName + "  -", x + w / 2, y + h / 2 + 5);
+      ctx.fillText("-  " + name + "  -", x + w / 2, y + h / 2 + 5);
 
       ctx.restore();
     }
 
-    function drawPriceBadge(ctx, cx, cy, r) {
+    function drawPriceBadge(ctx, cx, cy, r, price) {
       ctx.save();
 
       ctx.beginPath();
@@ -1177,24 +1205,55 @@
       ctx.fillStyle = "#fff";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.font = "900 62px Arial";
-      ctx.fillText("18", cx - 10, cy + 2);
 
-      ctx.font = "900 28px Arial";
+      const clean = price.replace("лв", "").trim();
+
+      ctx.font = "900 58px Arial";
+      ctx.fillText(clean, cx - 10, cy + 2);
+
+      ctx.font = "900 26px Arial";
       ctx.fillText("лв", cx + 48, cy + 7);
 
       ctx.restore();
     }
 
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+      const words = text.split(" ");
+      let line = "";
+      let lines = [];
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+
+        if (testWidth > maxWidth && n > 0) {
+          lines.push(line.trim());
+          line = words[n] + " ";
+        } else {
+          line = testLine;
+        }
+      }
+
+      lines.push(line.trim());
+      lines = lines.slice(0, maxLines);
+
+      for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], x, y + i * lineHeight);
+      }
+    }
+
     function createInfoTexture() {
+      const product = currentProduct();
+
       const canvas = document.createElement("canvas");
-      canvas.width = 1600;
-      canvas.height = 680;
+      canvas.width = 1700;
+      canvas.height = 720;
 
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      drawRibbon(ctx, 340, 22, 850, 130);
+      drawRibbon(ctx, 360, 22, 880, 130, product.name);
 
       ctx.save();
 
@@ -1202,27 +1261,27 @@
       ctx.shadowColor = "rgba(0,0,0,.22)";
       ctx.shadowBlur = 24;
       ctx.shadowOffsetY = 8;
-      roundRect(ctx, 210, 120, 1120, 270, 36);
+      roundRect(ctx, 210, 120, 1190, 292, 38);
       ctx.fill();
 
       ctx.shadowColor = "transparent";
 
       ctx.fillStyle = "rgba(0,0,0,.62)";
-      roundRect(ctx, 560, 158, 340, 52, 26);
+      roundRect(ctx, 590, 158, 370, 54, 27);
       ctx.fill();
 
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.font = "900 30px Arial";
-      ctx.fillText("СЪСТАВКИ", 730, 185);
+      ctx.font = "900 31px Arial";
+      ctx.fillText("СЪСТАВКИ", 775, 186);
 
       ctx.fillStyle = "rgba(255,255,255,.94)";
       ctx.font = "700 42px Arial";
-      ctx.fillText("доматен сос, моцарела, италиански", 770, 260);
-      ctx.fillText("колбас, броколи, маслини, пармезан", 770, 315);
+      ctx.textAlign = "center";
+      wrapText(ctx, product.ingredients, 800, 270, 850, 55, 2);
 
-      drawPriceBadge(ctx, 1310, 322, 76);
+      drawPriceBadge(ctx, 1380, 336, 78, product.price);
 
       ctx.restore();
 
@@ -1259,23 +1318,19 @@
         map: infoTexture,
         transparent: true,
         side: THREE.DoubleSide,
-        depthWrite: false
+        depthWrite: false,
+        depthTest: true
       });
 
       mesh.material.needsUpdate = true;
     }
 
-    function applyBoardTexture() {
-      // NO BOARD MODE:
-      // Тук нарочно НЕ създаваме дъска и НЕ слагаме сянка под пицата.
-      // Бутоните, стрелките, надписът и съставките остават активни.
+    function applyNoBoardMode() {
       return;
     }
 
     async function getCameraTrackFromMindAR() {
-      const maxTries = 20;
-
-      for (let i = 0; i < maxTries; i++) {
+      for (let i = 0; i < 20; i++) {
         const videos = Array.from(document.querySelectorAll("video"));
 
         for (const video of videos) {
@@ -1368,7 +1423,7 @@
           if (!visible) {
             setStatus("STILL SCANNING", "MOVE SLOWLY");
             showToast(
-              "Ако не хваща: повече светлина, дръж визитката цяла в кадър, не я клати рязко.",
+              "Ако не хваща: повече светлина, дръж визитката цяла в кадър, движи бавно.",
               4200
             );
 
@@ -1377,8 +1432,7 @@
               "1. Отвори през Chrome/Safari, не през Messenger/Viber browser.\n" +
               "2. Сканирай същата визитка, от която е направен target-ът.\n" +
               "3. Дръж телефона по-далече и приближавай бавно.\n" +
-              "4. Не отваряй през Viber/Messenger/Facebook browser.\n" +
-              "5. AUTOFOCUS MODE: " + autoFocusMode
+              "4. AUTOFOCUS MODE: " + autoFocusMode
             );
           }
         }, CONFIG.scanTimeoutMs);
@@ -1402,19 +1456,39 @@
       nextPizza.classList.toggle("active", isActive);
     }
 
-    function applyPizzaSize() {
-      const selected = pizzaScales[sizeIndex] || pizzaScales[1];
-
-      CONFIG.basePizzaWidth = selected.width;
-      pizzaRig.setAttribute("scale", selected.scale);
-      sizeBtn.textContent = selected.label;
-
-      // Shadow plane е премахнат — няма какво да се скалира.
-    }
-
     function setPizzaRotation() {
       const baseX = flipped ? -90 : 90;
       pizzaRig.setAttribute("rotation", `${baseX} ${currentPizzaY} 0`);
+    }
+
+    function applyUserScale() {
+      const finalScale = Math.min(userScale, CONFIG.maxSafeScale);
+      pizzaRig.setAttribute("scale", `${finalScale} ${finalScale} ${finalScale}`);
+
+      if (finalScale >= CONFIG.maxSafeScale) {
+        showToast("Стигна максимален safe размер x" + CONFIG.maxSafeScale + ".");
+      }
+    }
+
+    function growPizza() {
+      userScale = Math.min(userScale * CONFIG.growMultiplier, CONFIG.maxSafeScale);
+      applyUserScale();
+      setStatus("PIZZA SCALE", "x" + userScale.toFixed(2));
+      showToast("Пицата е увеличена с +50%. Текущ размер: x" + userScale.toFixed(2));
+    }
+
+    function megaPizza() {
+      userScale = Math.min(CONFIG.megaMultiplier, CONFIG.maxSafeScale);
+      applyUserScale();
+      setStatus("MAX SIZE", "x" + userScale.toFixed(0));
+      showToast("Пицата е увеличена директно до x" + userScale.toFixed(0) + ".");
+    }
+
+    function resetPizzaSize() {
+      userScale = 1;
+      applyUserScale();
+      setStatus("SIZE RESET", "x1");
+      showToast("Размерът е върнат на x1.");
     }
 
     function startPizzaRotation() {
@@ -1455,9 +1529,7 @@
 
       const maxSize = Math.max(size.x, size.y, size.z);
 
-      if (!maxSize || !Number.isFinite(maxSize)) {
-        return;
-      }
+      if (!maxSize || !Number.isFinite(maxSize)) return;
 
       model.position.x -= center.x;
       model.position.y -= center.y;
@@ -1472,23 +1544,66 @@
         "x: " + size.x.toFixed(4) + "\n" +
         "y: " + size.y.toFixed(4) + "\n" +
         "z: " + size.z.toFixed(4) + "\n" +
-        "scale: " + normalizedModelScale.toFixed(6) + "\n" +
-        "BOARD: REMOVED\n" +
-        "SHADOW: REMOVED\n";
+        "normalizedScale: " + normalizedModelScale.toFixed(6) + "\n" +
+        "userScale: " + userScale.toFixed(2) + "\n" +
+        "board: removed\n" +
+        "shadow: removed\n" +
+        "floatAnimation: removed\n" +
+        "stickyMode: target child locked\n";
+    }
+
+    function loadProduct(index) {
+      productIndex = (index + PRODUCTS.length) % PRODUCTS.length;
+
+      const product = currentProduct();
+
+      modelReady = false;
+      setStatus("LOADING", product.name);
+
+      pizzaModel.setAttribute("gltf-model", product.glb);
+      fallbackModel.setAttribute("src", product.glb);
+
+      applyInfoTexture();
+      haptic(25);
+      showToast("Продукт: " + product.name + " · " + product.price);
     }
 
     pizzaModel.addEventListener("model-loaded", () => {
       const model = pizzaModel.getObject3D("mesh");
 
       if (model) {
+        model.traverse(obj => {
+          if (!obj.isMesh) return;
+
+          obj.castShadow = false;
+          obj.receiveShadow = false;
+          obj.frustumCulled = false;
+
+          const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+
+          materials.forEach(mat => {
+            if (!mat) return;
+
+            mat.depthWrite = true;
+            mat.depthTest = true;
+
+            if (mat.map && THREE.SRGBColorSpace) {
+              mat.map.colorSpace = THREE.SRGBColorSpace;
+              mat.map.needsUpdate = true;
+            }
+
+            mat.needsUpdate = true;
+          });
+        });
+
         normalizeModel(model);
       }
 
       modelReady = true;
-      applyPizzaSize();
+      applyUserScale();
 
       if (visible) {
-        setStatus("HIT LOCKED", "PIZZA ON CARD");
+        setStatus(currentProduct().name + " LOCKED", "CARD STICKY");
       } else {
         setStatus("PIZZA READY", "SHOW CARD");
       }
@@ -1512,8 +1627,8 @@
       }
 
       applyInfoTexture();
-      applyBoardTexture();
-      applyPizzaSize();
+      applyNoBoardMode();
+      applyUserScale();
 
       setStatus("ARmini READY", "AUTO STARTING");
     });
@@ -1529,7 +1644,10 @@
       pizzaRig.setAttribute("visible", "true");
       setOverlayActive(true);
 
-      setStatus(modelReady ? "HIT LOCKED" : "TARGET FOUND", "PIZZA ON CARD");
+      setStatus(
+        modelReady ? currentProduct().name + " LOCKED" : "TARGET FOUND",
+        "CARD STICKY"
+      );
 
       await enableCameraAutoFocus("target-found");
       haptic(65);
@@ -1558,11 +1676,14 @@
       if (arSystem && started) {
         try {
           await arSystem.stop();
+
           started = false;
           visible = false;
+
           setOverlayActive(false);
           scanFrame.classList.add("active");
           scanFrame.classList.remove("locked");
+
           await sleep(300);
           await startAR();
         } catch (error) {
@@ -1571,22 +1692,30 @@
       }
     });
 
-    sizeBtn.addEventListener("click", () => {
-      sizeIndex = (sizeIndex + 1) % pizzaScales.length;
-      applyPizzaSize();
+    growBtn.addEventListener("click", () => {
+      haptic(25);
+      growPizza();
+    });
+
+    megaBtn.addEventListener("click", () => {
+      haptic(35);
+      megaPizza();
+    });
+
+    resetSizeBtn.addEventListener("click", () => {
       haptic(20);
-      setStatus("SIZE " + pizzaScales[sizeIndex].label, "PIZZA HIT");
+      resetPizzaSize();
     });
 
     rotateBtn.addEventListener("click", () => {
       if (rotationLoop) {
         stopPizzaRotation();
         rotateBtn.textContent = "ROTATE";
-        setStatus("ROTATE OFF", "PIZZA HIT");
+        setStatus("ROTATE OFF", "CARD LOCKED");
       } else {
         startPizzaRotation();
         rotateBtn.textContent = "STOP";
-        setStatus("ROTATE ON", "PIZZA HIT");
+        setStatus("ROTATE ON", "CARD LOCKED");
       }
 
       haptic(20);
@@ -1596,7 +1725,7 @@
       flipped = !flipped;
       setPizzaRotation();
       haptic(20);
-      setStatus(flipped ? "FLIPPED" : "NORMAL", "PIZZA HIT");
+      setStatus(flipped ? "FLIPPED" : "NORMAL", "CARD LOCKED");
     });
 
     fallbackBtn.addEventListener("click", () => {
@@ -1615,10 +1744,14 @@
         "started: " + started + "\n" +
         "visible: " + visible + "\n" +
         "modelReady: " + modelReady + "\n" +
+        "product: " + currentProduct().name + "\n" +
         "autoFocusMode: " + autoFocusMode + "\n" +
-        "size: " + pizzaScales[sizeIndex].label + "\n" +
-        "BOARD: REMOVED\n" +
-        "SHADOW: REMOVED\n\n" +
+        "userScale: x" + userScale.toFixed(2) + "\n" +
+        "position: 0 -0.06 0.07\n" +
+        "board: removed\n" +
+        "shadow: removed\n" +
+        "floatAnimation: removed\n" +
+        "tracking: sticky target child\n\n" +
         modelDebugInfo;
 
       showDebug(message);
@@ -1626,15 +1759,13 @@
     });
 
     prevPizza.addEventListener("click", () => {
-      haptic(25);
-      showToast("Предишен продукт. Тук после ще вържем реална смяна на GLB.");
-      setStatus("PREVIOUS PRODUCT", "COMING SOON");
+      loadProduct(productIndex - 1);
+      setStatus("PREVIOUS PRODUCT", currentProduct().name);
     });
 
     nextPizza.addEventListener("click", () => {
-      haptic(25);
-      showToast("Следващ продукт. Тук после ще вържем реална смяна на GLB.");
-      setStatus("NEXT PRODUCT", "COMING SOON");
+      loadProduct(productIndex + 1);
+      setStatus("NEXT PRODUCT", currentProduct().name);
     });
 
     orderBtn.addEventListener("click", () => {
@@ -1645,27 +1776,26 @@
         return;
       }
 
-      showToast("Поръчка: " + CONFIG.pizzaName + " · " + CONFIG.price);
-      setStatus("ORDER", CONFIG.pizzaName + " · " + CONFIG.price);
+      showToast("Поръчка: " + currentProduct().name + " · " + currentProduct().price);
+      setStatus("ORDER", currentProduct().name + " · " + currentProduct().price);
     });
 
     ingredientsBtn.addEventListener("click", () => {
       haptic(25);
-      showToast("Съставки: " + CONFIG.ingredients, 4200);
-      setStatus("INGREDIENTS", CONFIG.pizzaName);
+      showToast("Съставки: " + currentProduct().ingredients, 4200);
+      setStatus("INGREDIENTS", currentProduct().name);
     });
 
     cartBtn.addEventListener("click", () => {
       cartCount += 1;
       cartBtn.innerHTML = `<span class="ico">🛒</span><span>ДОБАВЕНО<br>${cartCount} БР.</span>`;
-      showToast(CONFIG.pizzaName + " е добавена в количката.");
+      showToast(currentProduct().name + " е добавена в количката.");
       setStatus("ADDED TO CART", cartCount + " ITEM");
       haptic(45);
     });
 
     async function autoStart() {
       await waitForSceneLoaded();
-
       await sleep(CONFIG.autoStartDelayMs);
 
       try {
@@ -1678,10 +1808,12 @@
 
     function resizeFxCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+
       fxCanvas.width = Math.floor(window.innerWidth * dpr);
       fxCanvas.height = Math.floor(window.innerHeight * dpr);
       fxCanvas.style.width = window.innerWidth + "px";
       fxCanvas.style.height = window.innerHeight + "px";
+
       fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
@@ -1728,6 +1860,10 @@
     window.addEventListener("resize", () => {
       resizeFxCanvas();
       initParticles();
+
+      if (scene.renderer) {
+        scene.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+      }
     });
 
     window.addEventListener("beforeunload", async () => {
@@ -1738,6 +1874,14 @@
           await arSystem.stop();
         }
       } catch (error) {}
+    });
+
+    window.addEventListener("error", event => {
+      showDebug("JS ERROR:\n" + event.message);
+    });
+
+    window.addEventListener("unhandledrejection", event => {
+      showDebug("PROMISE ERROR:\n" + (event.reason?.message || event.reason));
     });
 
     resizeFxCanvas();
