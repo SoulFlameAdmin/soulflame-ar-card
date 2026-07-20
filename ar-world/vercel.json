@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/(.*)","destination":"/index.html"}]}
+{"rewrites":[{"source":"/ar_planeti.html","destination":"/index.html"},{"source":"/ar_stikeri.html","destination":"/index.html"},{"source":"/ar_echocard.html","destination":"/index.html"}],"headers":[{"source":"/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]}]}
