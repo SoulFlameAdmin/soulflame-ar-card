@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you reference SoulFlame AR Card, please cite the project and its creator."
+title: "SoulFlame AR Card"
+type: software
+authors:
+  - family-names: "Lambov"
+    given-names: "Dimitar Veselinov"
+url: "https://soulflame-twins.vercel.app/founder/dimitar-veselinov-lambov/"
+repository-code: "https://github.com/SoulFlameAdmin/soulflame-ar-card"
+abstract: "SoulFlame AR Card is an augmented-reality identity/card project within the SoulFlame ecosystem created by Dimitar Veselinov Lambov (Димитър Веселинов Ламбов)."
